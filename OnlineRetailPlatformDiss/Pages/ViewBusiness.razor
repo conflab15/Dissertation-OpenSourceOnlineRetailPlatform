@@ -1,0 +1,50 @@
+﻿@using OnlineRetailPlatformDiss.Models;
+@inject OnlineRetailPlatformDiss.Data.ApplicationDbContext _context;
+@using Microsoft.Extensions.Logging
+@inject User currentUser
+@inject ILogger<ViewBusiness> Logger
+@attribute [Authorize]
+
+<!-- This needs to be removed in the future to act as a component than an individual page -->
+@page "/business/view"
+
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <h1>My Businesses</h1>
+        </div>
+    </div>
+</div>
+
+<table class="table">
+  <thead>
+    <tr>
+      <th scope="col">Business Name</th>
+      <th scope="col">Business Description</th>
+      <th scope="col">Options</th>
+    </tr>
+  </thead>
+  <tbody>
+      @foreach (var business in businesses)
+        {
+            <tr>
+                <th>@business.BusinessName</th>
+                <th>@business.BusinessDesc</th>
+                <th>Manage Business</th>
+            </tr>
+        }
+  </tbody>
+</table>
+
+
+
+@code {
+
+    List<BusinessAccount> businesses;
+
+    protected override void OnInitialized()
+    {
+        businesses = _context.BusinessAccount.ToList();
+    }
+    
+}

@@ -1,9 +1,7 @@
 ﻿@using OnlineRetailPlatformDiss.Models;
 @inject OnlineRetailPlatformDiss.Data.ApplicationDbContext _context;
 @using Microsoft.Extensions.Logging
-@using Microsoft.AspNetCore.Identity
-@inject SignInManager<User> SignInManager
-@inject UserManager<User> UserManager
+@inject User currentUser
 @inject ILogger<CreateBusiness> Logger
 @attribute [Authorize]
 
@@ -54,6 +52,10 @@
             <InputText class="form-control" id="businessPostCode" @bind-Value="businessAccount.PostCode" placeholder="BU12 2ES" />
         </div>
 
+        <!-- Hidden Field binding this.... -->
+
+        <InputText type="hidden" id="businessManager" @bind-Value="businessAccount.ManagerID" placeholder="@currentUser.Id"/>
+
        <div class="mb-3">
             <button class="btn btn-primary" type="submit">Submit</button>
        </div>
@@ -64,11 +66,15 @@
 @code {
     private BusinessAccount businessAccount = new();
 
+    protected override void OnInitialized()
+    {
+        businessAccount.ManagerID = currentUser.Id;
+    }
+
     private async void SubmitBusinessAccount()
     {
         try
         {
-            businessAccount.ManagerID = 
             _context.BusinessAccount.Add(businessAccount);
             await _context.SaveChangesAsync();
         }  
