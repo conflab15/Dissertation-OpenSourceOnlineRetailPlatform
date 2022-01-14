@@ -20,9 +20,8 @@ namespace OnlineRetailPlatformDiss.Models
         public string County { get; set; }
         [Required, MaxLength(8)]
         public string PostCode { get; set; }
+        [Required]
         public string ManagerID { get; set; }
-
-        public string CreatedByUserID { get; set; }
 
     }
 }

@@ -21,7 +21,6 @@ namespace OnlineRetailPlatformDiss.Models
 
         //If User is a part of  a Business, these variables will be used...
         public bool IsBusiness { get; set; }
-        public string BusinessID { get; set; }
 
     }
 }

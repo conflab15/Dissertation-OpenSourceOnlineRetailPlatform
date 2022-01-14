@@ -1,7 +1,11 @@
 ﻿@using OnlineRetailPlatformDiss.Models;
 @inject OnlineRetailPlatformDiss.Data.ApplicationDbContext _context;
 @using Microsoft.Extensions.Logging
+@using Microsoft.AspNetCore.Identity
+@inject SignInManager<User> SignInManager
+@inject UserManager<User> UserManager
 @inject ILogger<CreateBusiness> Logger
+@attribute [Authorize]
 
 @page "/business/create"
 
@@ -64,6 +68,7 @@
     {
         try
         {
+            businessAccount.ManagerID = 
             _context.BusinessAccount.Add(businessAccount);
             await _context.SaveChangesAsync();
         }  

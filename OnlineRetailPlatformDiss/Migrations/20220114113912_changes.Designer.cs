@@ -12,8 +12,8 @@ using OnlineRetailPlatformDiss.Data;
 namespace OnlineRetailPlatformDiss.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20220114105734_init")]
-    partial class init
+    [Migration("20220114113912_changes")]
+    partial class changes
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -256,10 +256,6 @@ namespace OnlineRetailPlatformDiss.Migrations
                         .IsRequired()
                         .HasMaxLength(30)
                         .HasColumnType("nvarchar(30)");
-
-                    b.Property<string>("CreatedByUserID")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ManagerID")
                         .IsRequired()
