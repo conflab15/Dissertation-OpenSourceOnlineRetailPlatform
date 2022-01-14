@@ -1,0 +1,78 @@
+﻿@using OnlineRetailPlatformDiss.Models;
+@inject OnlineRetailPlatformDiss.Data.ApplicationDbContext _context;
+@using Microsoft.Extensions.Logging
+@inject ILogger<CreateBusiness> Logger
+
+@page "/business/create"
+
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <h1>Create your Business</h1>
+        </div>
+    </div>
+    <EditForm Model="@businessAccount" OnValidSubmit="@SubmitBusinessAccount">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+
+        <div class="mb-3">
+            <label for="businessName" class="form-label">Business Name</label>
+            <InputText class="form-control" id="businessName" @bind-Value="businessAccount.BusinessName" placeholder="name@example.com" />
+        </div>
+
+        <div class="mb-3">
+            <label for="businessDesc" class="form-label">Business Description</label>
+            <InputTextArea class="form-control" id="businessDesc" @bind-Value="businessAccount.BusinessDesc" placeholder="My business sells this and that..." />
+        </div>
+
+        <div class="mb-3">
+            <label for="businessAddr1" class="form-label">Address Line 1</label>
+            <InputText class="form-control" id="businessAddr1" @bind-Value="businessAccount.AddressLine1" placeholder="12 Business Street" />
+        </div>
+
+        <div class="mb-3">
+            <label for="businessAddr2" class="form-label">Address Line 2</label>
+            <InputText class="form-control" id="businessAddr2" @bind-Value="businessAccount.AddressLine2" placeholder="" />
+        </div>
+
+        <div class="mb-3">
+            <label for="businessTown" class="form-label">Town</label>
+            <InputText class="form-control" id="businessTown" @bind-Value="businessAccount.Town" placeholder="Business Town" />
+        </div>
+
+        <div class="mb-3">
+            <label for="businessCounty" class="form-label">County</label>
+            <InputText class="form-control" id="businessCounty" @bind-Value="businessAccount.County" placeholder="Business County" />
+        </div>
+
+        <div class="mb-3">
+            <label for="businessPostCode" class="form-label">Post Code</label>
+            <InputText class="form-control" id="businessPostCode" @bind-Value="businessAccount.PostCode" placeholder="BU12 2ES" />
+        </div>
+
+       <div class="mb-3">
+            <button class="btn btn-primary" type="submit">Submit</button>
+       </div>
+
+    </EditForm>
+</div>
+
+@code {
+    private BusinessAccount businessAccount = new();
+
+    private async void SubmitBusinessAccount()
+    {
+        try
+        {
+            _context.BusinessAccount.Add(businessAccount);
+            await _context.SaveChangesAsync();
+        }  
+        catch
+        {
+            base.StateHasChanged();
+
+        }
+        businessAccount = new BusinessAccount();
+        base.StateHasChanged();
+    }
+}

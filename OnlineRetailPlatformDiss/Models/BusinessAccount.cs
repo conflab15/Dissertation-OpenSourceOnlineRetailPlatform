@@ -20,9 +20,9 @@ namespace OnlineRetailPlatformDiss.Models
         public string County { get; set; }
         [Required, MaxLength(8)]
         public string PostCode { get; set; }
-        public User Manager { get; set; }
+        public string ManagerID { get; set; }
 
-        //Variable of a User Model who logs in and manages the account? 
+        public string CreatedByUserID { get; set; }
 
     }
 }
