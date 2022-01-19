@@ -44,7 +44,7 @@
 
     protected override void OnInitialized()
     {
-        businesses = _context.BusinessAccount.ToList();
+        businesses = _context.BusinessAccount.Where(x => x.ManagerID == currentUser.Id).ToList();
     }
     
 }
