@@ -19,13 +19,13 @@ namespace OnlineRetailPlatformDiss.Areas.Identity.Pages.Account
 {
     public class LoginWith2faModel : PageModel
     {
-        private readonly SignInManager<User> _signInManager;
-        private readonly UserManager<User> _userManager;
+        private readonly SignInManager<UserModel> _signInManager;
+        private readonly UserManager<UserModel> _userManager;
         private readonly ILogger<LoginWith2faModel> _logger;
 
         public LoginWith2faModel(
-            SignInManager<User> signInManager,
-            UserManager<User> userManager,
+            SignInManager<UserModel> signInManager,
+            UserManager<UserModel> userManager,
             ILogger<LoginWith2faModel> logger)
         {
             _signInManager = signInManager;

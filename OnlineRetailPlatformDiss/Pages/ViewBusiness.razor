@@ -1,7 +1,7 @@
 ﻿@using OnlineRetailPlatformDiss.Models;
 @inject OnlineRetailPlatformDiss.Data.ApplicationDbContext _context;
 @using Microsoft.Extensions.Logging
-@inject User currentUser
+
 @inject ILogger<ViewBusiness> Logger
 @attribute [Authorize]
 
@@ -40,11 +40,11 @@
 
 @code {
 
-    List<BusinessAccount> businesses;
+    List<BusinessAccountModel> businesses;
 
     protected override void OnInitialized()
     {
-        businesses = _context.BusinessAccount.Where(x => x.ManagerID == currentUser.Id).ToList();
+        //businesses = _context.BusinessAccount.Where(x => x.ManagerID == currentUser.Id).ToList();
     }
     
 }

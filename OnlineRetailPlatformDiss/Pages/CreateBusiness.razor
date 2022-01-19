@@ -1,8 +1,17 @@
 ﻿@using OnlineRetailPlatformDiss.Models;
+@using OnlineRetailPlatformDiss.Areas.Identity;
+@using Microsoft.AspNetCore.Components;
+@using Microsoft.AspNetCore.Components.Authorization;
+@using Microsoft.AspNetCore.Components.Web;
+@using Microsoft.AspNetCore.Identity;
+@using Microsoft.AspNetCore.Identity.UI;
+@using Microsoft.EntityFrameworkCore;
 @inject OnlineRetailPlatformDiss.Data.ApplicationDbContext _context;
 @using Microsoft.Extensions.Logging
-@inject User currentUser
 @inject ILogger<CreateBusiness> Logger
+@inject UserManager<UserModel> userManager;
+@inject SignInManager<UserModel> signInManager;
+
 @attribute [Authorize]
 
 @page "/business/create"
@@ -34,7 +43,7 @@
 
         <div class="mb-3">
             <label for="businessAddr2" class="form-label">Address Line 2</label>
-            <InputText class="form-control" id="businessAddr2" @bind-Value="businessAccount.AddressLine2" placeholder="" />
+            <InputText class="form-control" id="businessAddr2" @bind-Value="businessAccount.AddressLine2" placeholder="manager.Email" />
         </div>
 
         <div class="mb-3">
@@ -54,7 +63,7 @@
 
         <!-- Hidden Field binding this.... -->
 
-        <InputText type="hidden" id="businessManager" @bind-Value="businessAccount.ManagerID" placeholder="@currentUser.Id"/>
+        <InputText type="hidden" id="businessManager" @bind-Value="businessAccount.ManagerID" placeholder=""/>
 
        <div class="mb-3">
             <button class="btn btn-primary" type="submit">Submit</button>
@@ -64,11 +73,11 @@
 </div>
 
 @code {
-    private BusinessAccount businessAccount = new();
+    private BusinessAccountModel businessAccount = new();
 
     protected override void OnInitialized()
     {
-        businessAccount.ManagerID = currentUser.Id;
+        businessAccount.ManagerID = userManager.GetEmailAsync();
     }
 
     private async void SubmitBusinessAccount()
@@ -83,7 +92,7 @@
             base.StateHasChanged();
 
         }
-        businessAccount = new BusinessAccount();
+        businessAccount = new BusinessAccountModel();
         base.StateHasChanged();
     }
 }

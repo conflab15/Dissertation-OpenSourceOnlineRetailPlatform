@@ -2,7 +2,7 @@
 
 namespace OnlineRetailPlatformDiss.Models
 {
-    public class BusinessAccount
+    public class BusinessAccountModel
     {
         [Key]
         public Guid Id { get; set; }

@@ -20,15 +20,13 @@ namespace OnlineRetailPlatformDiss.Areas.Identity.Pages.Account
 {
     public class LoginModel : PageModel
     {
-        private readonly SignInManager<User> _signInManager;
+        private readonly SignInManager<UserModel> _signInManager;
         private readonly ILogger<LoginModel> _logger;
-        private User _user;
 
-        public LoginModel(SignInManager<User> signInManager, ILogger<LoginModel> logger, User user)
+        public LoginModel(SignInManager<UserModel> signInManager, ILogger<LoginModel> logger)
         {
             _signInManager = signInManager;
             _logger = logger;
-            _user = user;
         }
 
         /// <summary>
@@ -117,7 +115,6 @@ namespace OnlineRetailPlatformDiss.Areas.Identity.Pages.Account
                 var result = await _signInManager.PasswordSignInAsync(Input.Email, Input.Password, Input.RememberMe, lockoutOnFailure: false);
                 if (result.Succeeded)
                 {
-                    _user = _signInManager.UserManager.Users.SingleOrDefault(x => x.Email == Input.Email);
                     _logger.LogInformation("User logged in.");
                     return LocalRedirect(returnUrl);
                 }

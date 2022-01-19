@@ -2,7 +2,7 @@
 
 namespace OnlineRetailPlatformDiss.Models
 {
-    public class Product
+    public class ProductModel
     {
         [Key]
         public Guid ProductID { get; set; }

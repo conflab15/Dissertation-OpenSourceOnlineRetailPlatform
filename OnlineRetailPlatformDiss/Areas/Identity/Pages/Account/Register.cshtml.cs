@@ -24,17 +24,17 @@ namespace OnlineRetailPlatformDiss.Areas.Identity.Pages.Account
 {
     public class RegisterModel : PageModel
     {
-        private readonly SignInManager<User> _signInManager;
-        private readonly UserManager<User> _userManager;
-        private readonly IUserStore<User> _userStore;
-        private readonly IUserEmailStore<User> _emailStore;
+        private readonly SignInManager<UserModel> _signInManager;
+        private readonly UserManager<UserModel> _userManager;
+        private readonly IUserStore<UserModel> _userStore;
+        private readonly IUserEmailStore<UserModel> _emailStore;
         private readonly ILogger<RegisterModel> _logger;
         private readonly IEmailSender _emailSender;
 
         public RegisterModel(
-            UserManager<User> userManager,
-            IUserStore<User> userStore,
-            SignInManager<User> signInManager,
+            UserManager<UserModel> userManager,
+            IUserStore<UserModel> userStore,
+            SignInManager<UserModel> signInManager,
             ILogger<RegisterModel> logger,
             IEmailSender emailSender)
         {
@@ -98,21 +98,6 @@ namespace OnlineRetailPlatformDiss.Areas.Identity.Pages.Account
             [Display(Name = "Confirm password")]
             [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
             public string ConfirmPassword { get; set; }
-
-            [Required, MaxLength(30)]
-            public string Forename { get; set; }
-            [Required, MaxLength(30)]
-            public string Surname { get; set; }
-            [Required, MaxLength(50)]
-            public string AddressLine1 { get; set; }
-            [Required, MaxLength(50)]
-            public string AddressLine2 { get; set; }
-            [Required, MaxLength(30)]
-            public string Town { get; set; }
-            [Required, MaxLength(30)]
-            public string County { get; set; }
-            [Required, MaxLength(8)]
-            public string PostCode { get; set; }
         }
 
 
@@ -132,16 +117,6 @@ namespace OnlineRetailPlatformDiss.Areas.Identity.Pages.Account
 
                 await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
                 await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
-
-                user.Forename = Input.Forename;
-                user.Surname = Input.Surname;
-                user.AddressLine1 = Input.AddressLine1;
-                user.AddressLine2 = Input.AddressLine2;
-                user.Town = Input.Town;
-                user.County = Input.County;
-                user.PostCode = Input.PostCode;
-                user.IsBusiness = false;
-
                 var result = await _userManager.CreateAsync(user, Input.Password);
 
                 if (result.Succeeded)
@@ -180,27 +155,27 @@ namespace OnlineRetailPlatformDiss.Areas.Identity.Pages.Account
             return Page();
         }
 
-        private User CreateUser()
+        private UserModel CreateUser()
         {
             try
             {
-                return Activator.CreateInstance<User>();
+                return Activator.CreateInstance<UserModel>();
             }
             catch
             {
-                throw new InvalidOperationException($"Can't create an instance of '{nameof(User)}'. " +
-                    $"Ensure that '{nameof(User)}' is not an abstract class and has a parameterless constructor, or alternatively " +
+                throw new InvalidOperationException($"Can't create an instance of '{nameof(UserModel)}'. " +
+                    $"Ensure that '{nameof(UserModel)}' is not an abstract class and has a parameterless constructor, or alternatively " +
                     $"override the register page in /Areas/Identity/Pages/Account/Register.cshtml");
             }
         }
 
-        private IUserEmailStore<User> GetEmailStore()
+        private IUserEmailStore<UserModel> GetEmailStore()
         {
             if (!_userManager.SupportsUserEmail)
             {
                 throw new NotSupportedException("The default UI requires a user store with email support.");
             }
-            return (IUserEmailStore<User>)_userStore;
+            return (IUserEmailStore<UserModel>)_userStore;
         }
     }
 }

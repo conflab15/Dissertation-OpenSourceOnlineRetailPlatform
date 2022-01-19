@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace OnlineRetailPlatformDiss.Models
 {
-    public class User : IdentityUser
+    public class UserModel : IdentityUser
     {
         [Required, MaxLength(30)]
         public string Forename { get; set; }
