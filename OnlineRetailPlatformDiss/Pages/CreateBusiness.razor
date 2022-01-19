@@ -1,16 +1,8 @@
 ﻿@using OnlineRetailPlatformDiss.Models;
-@using OnlineRetailPlatformDiss.Areas.Identity;
-@using Microsoft.AspNetCore.Components;
-@using Microsoft.AspNetCore.Components.Authorization;
-@using Microsoft.AspNetCore.Components.Web;
-@using Microsoft.AspNetCore.Identity;
-@using Microsoft.AspNetCore.Identity.UI;
-@using Microsoft.EntityFrameworkCore;
 @inject OnlineRetailPlatformDiss.Data.ApplicationDbContext _context;
 @using Microsoft.Extensions.Logging
 @inject ILogger<CreateBusiness> Logger
-@inject UserManager<UserModel> userManager;
-@inject SignInManager<UserModel> signInManager;
+@inject AuthenticationStateProvider auth;
 
 @attribute [Authorize]
 
@@ -43,7 +35,7 @@
 
         <div class="mb-3">
             <label for="businessAddr2" class="form-label">Address Line 2</label>
-            <InputText class="form-control" id="businessAddr2" @bind-Value="businessAccount.AddressLine2" placeholder="manager.Email" />
+            <InputText class="form-control" id="businessAddr2" @bind-Value="businessAccount.AddressLine2" placeholder="Business Avenue" />
         </div>
 
         <div class="mb-3">
@@ -63,7 +55,7 @@
 
         <!-- Hidden Field binding this.... -->
 
-        <InputText type="hidden" id="businessManager" @bind-Value="businessAccount.ManagerID" placeholder=""/>
+        <InputText type="hidden" id="businessManager" @bind-Value="businessAccount.ManagerID" placeholder="@manager"/>
 
        <div class="mb-3">
             <button class="btn btn-primary" type="submit">Submit</button>
@@ -74,10 +66,12 @@
 
 @code {
     private BusinessAccountModel businessAccount = new();
+    private string manager;
 
     protected override void OnInitialized()
     {
-        businessAccount.ManagerID = userManager.GetEmailAsync();
+        manager = auth.GetAuthenticationStateAsync().Result.User.Identity.Name;
+        businessAccount.ManagerID = manager;
     }
 
     private async void SubmitBusinessAccount()

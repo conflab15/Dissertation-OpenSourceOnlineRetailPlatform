@@ -1,7 +1,7 @@
 ﻿@using OnlineRetailPlatformDiss.Models;
 @inject OnlineRetailPlatformDiss.Data.ApplicationDbContext _context;
 @using Microsoft.Extensions.Logging
-
+@inject AuthenticationStateProvider auth;
 @inject ILogger<ViewBusiness> Logger
 @attribute [Authorize]
 
@@ -44,7 +44,8 @@
 
     protected override void OnInitialized()
     {
-        //businesses = _context.BusinessAccount.Where(x => x.ManagerID == currentUser.Id).ToList();
+        string manager = auth.GetAuthenticationStateAsync().Result.User.Identity.Name;
+        businesses = _context.BusinessAccount.Where(x => x.ManagerID == manager).ToList();
     }
     
 }
