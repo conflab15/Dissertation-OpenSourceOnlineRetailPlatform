@@ -28,10 +28,6 @@
                 }
             </InputSelect>
         </div>
-
-
-
-
         <div class="mb-3">
             <label for="productName" class="form-label">Product Name</label>
             <InputText class="form-control" id="productName" @bind-Value="product.ProductName" placeholder="My Product" />
@@ -52,20 +48,9 @@
             <label for="productStock" class="form-label">Stock Level</label>
             <InputNumber class="form-control" id="productStock" @bind-Value="product.StockLevel" placeholder="20" />
         </div>
-
-
-        
-
-        <!-- Hidden Field binding this.... 
-
-        <InputText type="hidden" id="businessManager" @bind-Value="businessAccount.ManagerID" placeholder="@manager"/>
-
-        -->
-
        <div class="mb-3">
             <button class="btn btn-primary" type="submit">Submit</button>
        </div>
-
     </EditForm>
 </div>
 
@@ -77,11 +62,9 @@
     protected override void OnInitialized()
     {
         user = auth.GetAuthenticationStateAsync().Result.User.Identity.Name;
-        //businessAccount.ManagerID = manager;
         product.CreatedDate = DateTime.Now;
 
         businessesList = _context.BusinessAccount.Where(x => x.ManagerID == user).ToList(); //Retrieiving all of the businesses the current user manages.
-
     }
 
     private async void SubmitNewProduct()

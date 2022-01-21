@@ -14,9 +14,8 @@
             <h1>View Business Products</h1>
         </div>
     </div>
-</div>
 
-<!-- Select a Business to then view products from.
+    <!-- Select a Business to then view products from.
 
     Select a business, pass it to a function with business name
 
@@ -26,15 +25,93 @@
     
     -->
 
+    <!-- If there are no Businesses owned by the User, display this message: -->
+
+    @if (businesses == null)
+    {
+        <div class="alert alert-warning" role="alert">
+            <p>You must create a Business to be able to add Products to.</p>
+            <button class="btn btn-alert">Create a Business</button>
+        </div>
+    }
+    else
+    {
+        <!-- If there are businesses owned by the User, display this!-->
+
+        <EditForm @Model="SearchModel" OnSubmit="@FindBusinesses">
+            <div class="mb-3">
+                <label for="businessName" class="form-label">Please select your business:</label>
+                <InputSelect class="form-select" id="businessName" @bind-Value="search.BusinessNames" placeholder="20">
+                    <option value=""></option>
+                    @foreach (var business in businesses)
+                    {
+                        <option value="@business.BusinessName">@business.BusinessName</option>
+                    }
+                </InputSelect>
+            </div>
+
+        </EditForm>
+
+        @if(search.BusinessNames == "none")
+        {
+           <div class="alert alert-warning" role="alert">
+                <p>Please select a business to view products to amend</p>
+                <button class="btn btn-alert">Create a Business</button>
+            </div>
+        }
+        else
+        {
+            <table class="table">
+              <thead>
+                <tr>
+                  <th scope="col">Product Name</th>
+                  <th scope="col">Product Description</th>
+                  <th scope="col">Options</th>
+                </tr>
+              </thead>
+              <tbody>
+                  @foreach (var product in businessProducts)
+                    {
+                        <tr>
+                            <th>@product.ProductName</th>
+                            <th>@product.ProductDescription</th>
+                            <th>Manage Business</th>
+                        </tr>
+                    }
+              </tbody>
+            </table>
+        }
+    }
+
+</div>
+
 
 @code {
 
-    List<BusinessAccountModel> businesses;
+    private List<BusinessAccountModel> businesses; //List of Users businesses
+    private List<ProductModel> businessProducts; //List of Businesses products.
+    private string manager; //Manager of the business (User.Identity.Name)
+
+    private class SearchModel 
+    {
+        public string BusinessNames;
+    }
+
+    private SearchModel search; //Search Model to obtain a string of the business name from the Select DropDown form
 
     protected override void OnInitialized()
     {
-        string manager = auth.GetAuthenticationStateAsync().Result.User.Identity.Name;
-        businesses = _context.BusinessAccount.Where(x => x.ManagerID == manager).ToList();
+        search.BusinessNames = "none"; //Avoiding a Null Value exception?
+        manager = auth.GetAuthenticationStateAsync().Result.User.Identity.Name; //Finding the active users email address.
+        businesses = _context.BusinessAccount.Where(x => x.ManagerID == manager).ToList(); //Finding the businesses of the active user to select from. 
     }
-    
+
+    private async void FindBusinesses()
+    {
+        //Finding all products owned by the business, adding them to the businessProducts list.
+        businessProducts = _context.Products.Where(x => x.BusinessName == search.BusinessNames).ToList();
+
+        //Change the state of the page to refresh the page and populate the list...
+        base.StateHasChanged();
+    }
 }
