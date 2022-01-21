@@ -16,6 +16,9 @@ namespace OnlineRetailPlatformDiss.Models
         public decimal PromotionalPrice { get; set; }
         [Required]
         public DateTime CreatedDate { get; set; } = DateTime.Now;
+        [Required]
+        public string BusinessName { get; set; }
+
         [Required, Display(Name = "Available")]
         public int StockLevel { get; set; }
 

@@ -1,0 +1,40 @@
+﻿@using OnlineRetailPlatformDiss.Models;
+@inject OnlineRetailPlatformDiss.Data.ApplicationDbContext _context;
+@using Microsoft.Extensions.Logging
+@inject AuthenticationStateProvider auth;
+@inject ILogger<ViewProducts> Logger
+@attribute [Authorize]
+
+<!-- This needs to be removed in the future to act as a component than an individual page -->
+@page "/product/view"
+
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <h1>View Business Products</h1>
+        </div>
+    </div>
+</div>
+
+<!-- Select a Business to then view products from.
+
+    Select a business, pass it to a function with business name
+
+    Populate a List with products, base.StateHasChanged() to re render the component with a new list.
+
+    If list is null - please select a business to view products from.
+    
+    -->
+
+
+@code {
+
+    List<BusinessAccountModel> businesses;
+
+    protected override void OnInitialized()
+    {
+        string manager = auth.GetAuthenticationStateAsync().Result.User.Identity.Name;
+        businesses = _context.BusinessAccount.Where(x => x.ManagerID == manager).ToList();
+    }
+    
+}

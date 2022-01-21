@@ -4,7 +4,8 @@
 @inject ILogger<CreateProduct> Logger
 @inject AuthenticationStateProvider auth;
 
-@attribute [Authorize]
+<!-- Authorising the Area to ensure a User with a valid account can log into the page -->
+@attribute [Authorize] 
 
 @page "/product/create"
 
@@ -17,6 +18,19 @@
     <EditForm Model="@product" OnValidSubmit="@SubmitNewProduct">
         <DataAnnotationsValidator />
         <ValidationSummary />
+
+        <div class="mb-3">
+            <label for="businessName" class="form-label">Business Name</label>
+            <InputSelect class="form-control form-select" id="businessName" @bind-Value="product.BusinessName" placeholder="20">
+                @foreach (var business in businessesList)
+                {
+                    <option value="@business.BusinessName">@business.BusinessName</option>
+                }
+            </InputSelect>
+        </div>
+
+
+
 
         <div class="mb-3">
             <label for="productName" class="form-label">Product Name</label>
@@ -58,12 +72,16 @@
 @code {
     private ProductModel product = new();
     private string user;
+    private List<BusinessAccountModel> businessesList;
 
     protected override void OnInitialized()
     {
         user = auth.GetAuthenticationStateAsync().Result.User.Identity.Name;
         //businessAccount.ManagerID = manager;
-        //Date Created field must be auto assigned here with a hidden field.
+        product.CreatedDate = DateTime.Now;
+
+        businessesList = _context.BusinessAccount.Where(x => x.ManagerID == user).ToList(); //Retrieiving all of the businesses the current user manages.
+
     }
 
     private async void SubmitNewProduct()
