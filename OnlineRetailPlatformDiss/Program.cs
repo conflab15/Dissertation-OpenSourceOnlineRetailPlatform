@@ -1,8 +1,4 @@
-using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
-using Microsoft.AspNetCore.Components.Web;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.UI;
 using Microsoft.EntityFrameworkCore;
 using OnlineRetailPlatformDiss.Areas.Identity;
 using OnlineRetailPlatformDiss.Data;
@@ -20,7 +16,7 @@ builder.Services.AddDefaultIdentity<UserModel>(options => options.SignIn.Require
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 builder.Services.AddScoped<AuthenticationStateProvider, RevalidatingIdentityAuthenticationStateProvider<UserModel>>();
-//builder.Services.AddScoped<User>(); //Scoped Service to keep track of currently logged in users. 
+builder.Services.AddHttpClient();
 
 var app = builder.Build();
 

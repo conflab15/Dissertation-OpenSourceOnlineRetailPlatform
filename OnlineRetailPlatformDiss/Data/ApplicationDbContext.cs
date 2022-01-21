@@ -12,9 +12,9 @@ namespace OnlineRetailPlatformDiss.Data
         {
         }
 
-        public DbSet<BusinessAccountModel> BusinessAccount { get; set; }
+        public DbSet<BusinessAccountModel>? BusinessAccount { get; set; }
 
-        public DbSet<ProductModel> Products { get; set; }
+        public DbSet<ProductModel>? Products { get; set; }
 
 
     }

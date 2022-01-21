@@ -1,6 +1,8 @@
 ﻿@using OnlineRetailPlatformDiss.Models;
-@inject OnlineRetailPlatformDiss.Data.ApplicationDbContext _context;
 @using Microsoft.Extensions.Logging
+@using System.IO;
+@inject IWebHostEnvironment env
+@inject OnlineRetailPlatformDiss.Data.ApplicationDbContext _context;
 @inject ILogger<CreateProduct> Logger
 @inject AuthenticationStateProvider auth;
 
@@ -15,13 +17,24 @@
             <h1>Create a new Product:</h1>
         </div>
     </div>
-    <EditForm Model="@product" OnValidSubmit="@SubmitNewProduct">
+
+    <!-- If the current user owns no businesses, display the message... -->
+    @if (businessesList.Count == 0)
+    {
+        <div class="alert alert-danger" role="alert">
+            <p>You must create a Business to be able to create products for!</p>
+            <button class="btn btn-primary">Create a Business</button> <!-- Button needs a route -->
+        </div>
+    }
+    else
+    {
+        <EditForm Model="@product" OnValidSubmit="@SubmitNewProduct">
         <DataAnnotationsValidator />
         <ValidationSummary />
-
         <div class="mb-3">
             <label for="businessName" class="form-label">Business Name</label>
-            <InputSelect class="form-control form-select" id="businessName" @bind-Value="product.BusinessName" placeholder="20">
+            <InputSelect class="form-control form-select" id="businessName" @bind-Value="product.BusinessName" placeholder="">
+                <option>Select your Business...</option>
                 @foreach (var business in businessesList)
                 {
                     <option value="@business.BusinessName">@business.BusinessName</option>
@@ -48,29 +61,59 @@
             <label for="productStock" class="form-label">Stock Level</label>
             <InputNumber class="form-control" id="productStock" @bind-Value="product.StockLevel" placeholder="20" />
         </div>
+        <div class="mb-3">
+            <label for="imageUrl" class="form-label">Product Image</label>
+            <InputFile class="form-control" id="imageUrl" OnChange="OnInputFileChange" />
+        </div>
+        <div class="mb-3">
+            <div class="alert alert-success" role="alert">
+              @Message
+            </div>
+        </div>
        <div class="mb-3">
             <button class="btn btn-primary" type="submit">Submit</button>
        </div>
     </EditForm>
+    }
 </div>
 
 @code {
     private ProductModel product = new();
-    private string user;
-    private List<BusinessAccountModel> businessesList;
+    private string? user;
+    private List<BusinessAccountModel>? businessesList;
+    private string Message = "No Image(s) selected"; //Variables for handling the image upload
+    IReadOnlyList<IBrowserFile>? selectedImages;
 
     protected override void OnInitialized()
     {
         user = auth.GetAuthenticationStateAsync().Result.User.Identity.Name;
         product.CreatedDate = DateTime.Now;
-
         businessesList = _context.BusinessAccount.Where(x => x.ManagerID == user).ToList(); //Retrieiving all of the businesses the current user manages.
+    }
+
+    private void OnInputFileChange(InputFileChangeEventArgs e)
+    {
+        selectedImages = e.GetMultipleFiles();
+        Message = $"{selectedImages.Count} image(s) selected";
+        this.StateHasChanged();
     }
 
     private async void SubmitNewProduct()
     {
         try
         {
+            foreach (var image in selectedImages)
+            {
+                Stream stream = image.OpenReadStream();
+                product.ImageUrl = $"wwwroot/images/products/{image.Name}";
+                FileStream fs = File.Create(product.ImageUrl);
+                await stream.CopyToAsync(fs);
+                stream.Close();
+                fs.Close();
+            }
+
+            Message = $"{selectedImages.Count} image(s) uploaded";
+
             _context.Products.Add(product);
             await _context.SaveChangesAsync();
         }  

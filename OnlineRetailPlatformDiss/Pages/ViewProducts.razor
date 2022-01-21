@@ -1,6 +1,7 @@
 ﻿@using OnlineRetailPlatformDiss.Models;
-@inject OnlineRetailPlatformDiss.Data.ApplicationDbContext _context;
+@using Microsoft.EntityFrameworkCore;
 @using Microsoft.Extensions.Logging
+@inject OnlineRetailPlatformDiss.Data.ApplicationDbContext _context;
 @inject AuthenticationStateProvider auth;
 @inject ILogger<ViewProducts> Logger
 @attribute [Authorize]
@@ -15,53 +16,43 @@
         </div>
     </div>
 
-    <!-- Select a Business to then view products from.
-
-    Select a business, pass it to a function with business name
-
-    Populate a List with products, base.StateHasChanged() to re render the component with a new list.
-
-    If list is null - please select a business to view products from.
-    
-    -->
-
     <!-- If there are no Businesses owned by the User, display this message: -->
-
-    @if (businesses == null)
+    @if (businesses.Count == 0)
     {
-        <div class="alert alert-warning" role="alert">
-            <p>You must create a Business to be able to add Products to.</p>
-            <button class="btn btn-alert">Create a Business</button>
+        hasBusiness = false; //User has no businesses, preventing them 
+
+        <div class="alert alert-danger" role="alert">
+            <p>You must create a Business to be able to view its products</p>
+            <button class="btn btn-primary">Create a Business</button> <!-- Button needs a route -->
         </div>
     }
     else
     {
         <!-- If there are businesses owned by the User, display this!-->
-
-        <EditForm @Model="SearchModel" OnSubmit="@FindBusinesses">
+        <EditForm Model="@search">
             <div class="mb-3">
                 <label for="businessName" class="form-label">Please select your business:</label>
-                <InputSelect class="form-select" id="businessName" @bind-Value="search.BusinessNames" placeholder="20">
-                    <option value=""></option>
-                    @foreach (var business in businesses)
+                <InputSelect class="form-select" id="businessName" @bind-Value="search.BusinessNames" placeholder="20" enabled="@hasBusiness" @oninput="@GetProducts">
+                <option value="">Select a Business...</option>
+                @foreach (var business in businesses)
                     {
                         <option value="@business.BusinessName">@business.BusinessName</option>
                     }
                 </InputSelect>
             </div>
-
         </EditForm>
 
-        @if(search.BusinessNames == "none")
+        @if(search.BusinessNames == String.Empty)
         {
-           <div class="alert alert-warning" role="alert">
-                <p>Please select a business to view products to amend</p>
-                <button class="btn btn-alert">Create a Business</button>
+           <div class="alert alert-warning text-align-center" role="alert">
+                <h2>Please select a business to view products to amend!</h2>
             </div>
         }
         else
         {
-            <table class="table">
+            @if (businessProducts != null)
+            {
+              <table class="table">
               <thead>
                 <tr>
                   <th scope="col">Product Name</th>
@@ -70,7 +61,7 @@
                 </tr>
               </thead>
               <tbody>
-                  @foreach (var product in businessProducts)
+                  @foreach (var product in businessProducts) //This doesn't operate, products appear then quickly disappear...
                     {
                         <tr>
                             <th>@product.ProductName</th>
@@ -79,7 +70,15 @@
                         </tr>
                     }
               </tbody>
-            </table>
+              </table>
+            }
+            else
+            {
+                <div class="alert alert-warning" role="alert">
+                    <p>We couldn't find any products for your business!</p>
+                    <button class="btn btn-alert">Create a Product</button>
+                </div>
+            }
         }
     }
 
@@ -88,28 +87,31 @@
 
 @code {
 
-    private List<BusinessAccountModel> businesses; //List of Users businesses
-    private List<ProductModel> businessProducts; //List of Businesses products.
-    private string manager; //Manager of the business (User.Identity.Name)
+    private List<BusinessAccountModel>? businesses; //List of Users businesses
+    private List<ProductModel>? businessProducts; //List of Businesses products.
+    private string? manager; //Manager of the business (User.Identity.Name)
+    public bool hasBusiness = true; //User has a business unless otherwise declared
+    private string? BusinessName;//Empty string to assign a business name too. 
 
     private class SearchModel 
     {
-        public string BusinessNames;
+        public string? BusinessNames;
     }
-
-    private SearchModel search; //Search Model to obtain a string of the business name from the Select DropDown form
+    private SearchModel search = new SearchModel(); //Search Model to obtain a string of the business name from the Select DropDown form
 
     protected override void OnInitialized()
     {
-        search.BusinessNames = "none"; //Avoiding a Null Value exception?
+        BusinessName = String.Empty;
         manager = auth.GetAuthenticationStateAsync().Result.User.Identity.Name; //Finding the active users email address.
         businesses = _context.BusinessAccount.Where(x => x.ManagerID == manager).ToList(); //Finding the businesses of the active user to select from. 
     }
 
-    private async void FindBusinesses()
+    private async void GetProducts()
     {
+        var x = BusinessName;
+
         //Finding all products owned by the business, adding them to the businessProducts list.
-        businessProducts = _context.Products.Where(x => x.BusinessName == search.BusinessNames).ToList();
+        businessProducts = await _context.Products.Where(x => x.BusinessName == search.BusinessNames).ToListAsync();
 
         //Change the state of the page to refresh the page and populate the list...
         base.StateHasChanged();

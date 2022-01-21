@@ -98,6 +98,29 @@ namespace OnlineRetailPlatformDiss.Areas.Identity.Pages.Account
             [Display(Name = "Confirm password")]
             [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
             public string ConfirmPassword { get; set; }
+
+
+            [Required, MaxLength(30)]
+            public string Forename { get; set; }
+
+            [Required, MaxLength(30)]
+            public string Surname { get; set; }
+
+            [Required, MaxLength(50)]
+            public string AddressLine1 { get; set; }
+
+            [Required, MaxLength(50)]
+            public string AddressLine2 { get; set; }
+
+            [Required, MaxLength(30)]
+            public string Town { get; set; }
+
+            [Required, MaxLength(30)]
+            public string County { get; set; }
+
+            [Required, MaxLength(8)]
+            public string PostCode { get; set; }
+
         }
 
 
@@ -117,6 +140,16 @@ namespace OnlineRetailPlatformDiss.Areas.Identity.Pages.Account
 
                 await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
                 await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
+
+                user.Forename = Input.Forename;
+                user.Surname = Input.Surname;
+                user.AddressLine1 = Input.AddressLine1;
+                user.AddressLine2 = Input.AddressLine2;
+                user.Town = Input.Town;
+                user.County = Input.County;
+                user.PostCode = Input.PostCode;
+                user.IsBusiness = false;
+
                 var result = await _userManager.CreateAsync(user, Input.Password);
 
                 if (result.Succeeded)
