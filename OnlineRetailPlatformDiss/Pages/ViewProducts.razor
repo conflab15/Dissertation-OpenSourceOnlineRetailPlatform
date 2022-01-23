@@ -19,8 +19,6 @@
     <!-- If there are no Businesses owned by the User, display this message: -->
     @if (businesses.Count == 0)
     {
-        hasBusiness = false; //User has no businesses, preventing them 
-
         <div class="alert alert-danger" role="alert">
             <p>You must create a Business to be able to view its products</p>
             <button class="btn btn-primary">Create a Business</button> <!-- Button needs a route -->
@@ -32,7 +30,7 @@
         <EditForm Model="@search">
             <div class="mb-3">
                 <label for="businessName" class="form-label">Please select your business:</label>
-                <InputSelect class="form-select" id="businessName" @bind-Value="search.BusinessNames" placeholder="20" enabled="@hasBusiness" @oninput="@GetProducts">
+                <InputSelect class="form-select" id="businessName" @bind-Value="search.BusinessNames" placeholder="20" enabled="true" @oninput="@GetProducts">
                 <option value="">Select a Business...</option>
                 @foreach (var business in businesses)
                     {
@@ -42,43 +40,9 @@
             </div>
         </EditForm>
 
-        @if(search.BusinessNames == String.Empty)
+        @if(businessSelected)
         {
-           <div class="alert alert-warning text-align-center" role="alert">
-                <h2>Please select a business to view products to amend!</h2>
-            </div>
-        }
-        else
-        {
-            @if (businessProducts != null)
-            {
-              <table class="table">
-              <thead>
-                <tr>
-                  <th scope="col">Product Name</th>
-                  <th scope="col">Product Description</th>
-                  <th scope="col">Options</th>
-                </tr>
-              </thead>
-              <tbody>
-                  @foreach (var product in businessProducts) //This doesn't operate, products appear then quickly disappear...
-                    {
-                        <tr>
-                            <th>@product.ProductName</th>
-                            <th>@product.ProductDescription</th>
-                            <th>Manage Business</th>
-                        </tr>
-                    }
-              </tbody>
-              </table>
-            }
-            else
-            {
-                <div class="alert alert-warning" role="alert">
-                    <p>We couldn't find any products for your business!</p>
-                    <button class="btn btn-alert">Create a Product</button>
-                </div>
-            }
+            <ListProducts businessName="@BusinessName" @ref="productList" />
         }
     }
 
@@ -90,8 +54,9 @@
     private List<BusinessAccountModel>? businesses; //List of Users businesses
     private List<ProductModel>? businessProducts; //List of Businesses products.
     private string? manager; //Manager of the business (User.Identity.Name)
-    public bool hasBusiness = true; //User has a business unless otherwise declared
     private string? BusinessName;//Empty string to assign a business name too. 
+    public bool businessSelected = false;
+    public ListProducts? productList;
 
     private class SearchModel 
     {
@@ -106,14 +71,19 @@
         businesses = _context.BusinessAccount.Where(x => x.ManagerID == manager).ToList(); //Finding the businesses of the active user to select from. 
     }
 
-    private async void GetProducts()
+    private void GetProducts()
     {
+        businessSelected = true;
         var x = BusinessName;
 
-        //Finding all products owned by the business, adding them to the businessProducts list.
-        businessProducts = await _context.Products.Where(x => x.BusinessName == search.BusinessNames).ToListAsync();
+        x = search.BusinessNames; //When form is submitted, assign the name to this string
 
+        this.StateHasChanged(); //Reload the page
+
+        //var x = BusinessName;
+        //Finding all products owned by the business, adding them to the businessProducts list.
+        //businessProducts = await _context.Products.Where(x => x.BusinessName == search.BusinessNames).ToListAsync();
         //Change the state of the page to refresh the page and populate the list...
-        base.StateHasChanged();
+        //base.StateHasChanged();
     }
 }

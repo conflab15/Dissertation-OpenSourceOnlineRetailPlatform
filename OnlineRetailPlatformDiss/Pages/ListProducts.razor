@@ -1,0 +1,61 @@
+﻿@using OnlineRetailPlatformDiss.Models;
+@using Microsoft.EntityFrameworkCore;
+@using Microsoft.Extensions.Logging
+@inject OnlineRetailPlatformDiss.Data.ApplicationDbContext _context;
+
+<div class="container">
+    @if(Products != null)
+    {
+        <table class="table">
+            <thead>
+            <tr>
+                <th scope="col">Product Name</th>
+                <th scope="col">Product Description</th>
+                <th scope="col">Options</th>
+            </tr>
+            </thead>
+            <tbody>
+                @foreach (var product in Products) //This doesn't operate, products appear then quickly disappear...
+                {
+                    <tr>
+                        <th>@product.ProductName</th>
+                        <th>@product.ProductDescription</th>
+                        <th>Manage Business</th>
+                    </tr>
+                }
+            </tbody>
+        </table>
+        }
+        else
+        {
+            <div class="alert alert-warning" role="alert">
+                <p>We couldn't find any products for your business!</p>
+                <button class="btn btn-alert">Create a Product</button>
+            </div>
+    }
+</div>
+
+
+@code {
+
+    //Passing a string parameter when this component is called
+    [Parameter]
+    public string? businessName { get; set; }
+    public List<ProductModel>? Products;
+
+    protected override void OnInitialized()
+    {
+        Products = _context.Products.Where(x => x.BusinessName == businessName).ToList(); //Obtaining the products of the selected Business...
+
+
+        ///<summary>
+        ///
+        /// Currently this works if the Business Name is passed into the businessName variable is done using a breakpoint and typing the value in...
+        /// The Business Name currently is not obtained from the ViewProducts.Razor page...
+        /// 
+        ///</summary>
+
+    }
+
+
+}
