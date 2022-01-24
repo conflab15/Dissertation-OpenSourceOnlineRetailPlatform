@@ -19,9 +19,12 @@
     <!-- If there are no Businesses owned by the User, display this message: -->
     @if (businesses.Count == 0)
     {
-        <div class="alert alert-danger" role="alert">
+        <div class="alert alert-danger d-flex align-items-center" role="alert">
+          <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Danger:"><use xlink:href="#exclamation-triangle-fill"/></svg>
+          <div>
             <p>You must create a Business to be able to view its products</p>
-            <button class="btn btn-primary">Create a Business</button> <!-- Button needs a route -->
+            <a class="btn btn-primary" href="/business/create">Create Business</a>
+          </div>
         </div>
     }
     else

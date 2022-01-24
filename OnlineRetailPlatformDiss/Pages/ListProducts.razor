@@ -9,6 +9,7 @@
         <table class="table">
             <thead>
             <tr>
+                <th scope="col">Product Image</th>
                 <th scope="col">Product Name</th>
                 <th scope="col">Product Description</th>
                 <th scope="col">Options</th>
@@ -18,6 +19,17 @@
                 @foreach (var product in Products) //This doesn't operate, products appear then quickly disappear...
                 {
                     <tr>
+                        @if(product.ImageUrl != null)
+                        {
+                            //Show the image
+                            <th><image src="@product.ImageUrl" alt="Product Image" width="100" height="100" /></th>
+                        }
+                        else
+                        {
+                            //No image placeholder
+                            <th><image src="/images/products/noimageplaceholder.jpg" alt="Product Image Placeholder" width="100" height="100" /></th>
+
+                        }
                         <th>@product.ProductName</th>
                         <th>@product.ProductDescription</th>
                         <th>Manage Business</th>
@@ -28,9 +40,12 @@
         }
         else
         {
-            <div class="alert alert-warning" role="alert">
+            <div class="alert alert-warning d-flex align-items-center" role="alert">
+              <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Warning:"><use xlink:href="#exclamation-triangle-fill"/></svg>
+              <div>
                 <p>We couldn't find any products for your business!</p>
-                <button class="btn btn-alert">Create a Product</button>
+                <a class="btn btn-alert" href="/product/create">Create Product</a>
+              </div>
             </div>
     }
 </div>
