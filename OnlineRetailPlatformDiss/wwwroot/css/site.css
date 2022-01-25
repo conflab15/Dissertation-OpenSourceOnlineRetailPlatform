@@ -62,3 +62,10 @@ a, .btn-link {
     .blazor-error-boundary::after {
         content: "An error has occurred."
     }
+
+/* Custom CSS Components */
+
+.nav-item {
+    justify-content: center;
+    display: inline-flex;
+}
