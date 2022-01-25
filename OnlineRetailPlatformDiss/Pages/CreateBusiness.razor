@@ -58,7 +58,7 @@
         <InputText type="hidden" id="businessManager" @bind-Value="businessAccount.ManagerID" placeholder="@manager"/>
 
        <div class="mb-3">
-            <button class="btn btn-primary" type="submit">Submit</button>
+            <button class="btn btn-primary" type="submit" value="submit">Submit</button>
        </div>
 
     </EditForm>
@@ -70,7 +70,7 @@
 
     protected override void OnInitialized()
     {
-        manager = auth.GetAuthenticationStateAsync().Result.User.Identity.Name;
+        manager = auth.GetAuthenticationStateAsync().Result.User.Identity?.Name;
         businessAccount.ManagerID = manager;
     }
 
@@ -78,7 +78,7 @@
     {
         try
         {
-            _context.BusinessAccount.Add(businessAccount);
+            _context.BusinessAccount?.Add(businessAccount);
             await _context.SaveChangesAsync();
         }  
         catch

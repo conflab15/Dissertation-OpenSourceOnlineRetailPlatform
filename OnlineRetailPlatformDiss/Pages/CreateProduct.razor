@@ -1,6 +1,7 @@
 ﻿@using OnlineRetailPlatformDiss.Models;
 @using Microsoft.Extensions.Logging
 @using System.IO;
+@using System.Web;
 @inject IWebHostEnvironment env
 @inject OnlineRetailPlatformDiss.Data.ApplicationDbContext _context;
 @inject ILogger<CreateProduct> Logger
@@ -23,14 +24,14 @@
     {
         <div class="alert alert-danger" role="alert">
             <p>You must create a Business to be able to create products for!</p>
-            <button class="btn btn-primary">Create a Business</button> <!-- Button needs a route -->
+            <button class="btn btn-primary" href="/business/create">Create a Business</button> <!-- Button needs a route -->
         </div>
     }
     else
     {
-        <EditForm Model="@product" OnValidSubmit="@SubmitNewProduct">
+        <EditForm Model="@product" OnSubmit="@SubmitNewProduct">
         <DataAnnotationsValidator />
-        <ValidationSummary />
+        <!--<ValidationSummary />-->
         <div class="mb-3">
             <label for="businessName" class="form-label">Business Name</label>
             <InputSelect class="form-control form-select" id="businessName" @bind-Value="product.BusinessName" placeholder="">
@@ -74,24 +75,24 @@
             </div>
         </div>
        <div class="mb-3">
-            <button class="btn btn-primary" type="submit">Submit</button>
+            <button class="btn btn-primary" type="submit" value="submit">Submit</button>
        </div>
     </EditForm>
     }
 </div>
 
 @code {
-    private ProductModel product = new();
-    private string? user;
-    private List<BusinessAccountModel>? businessesList;
+    private ProductModel product = new(); //New product model to submit through the EditForm
+    private string? user; //Value for the User
+    private List<BusinessAccountModel>? businessesList; //List of businesses to select which one the product is for
     private string Message = "No Image(s) selected"; //Variables for handling the image upload
-    IReadOnlyList<IBrowserFile>? selectedImages;
+    IReadOnlyList<IBrowserFile>? selectedImages; //File to handle uploaded images
 
     protected override void OnInitialized()
     {
-        user = auth.GetAuthenticationStateAsync().Result.User.Identity.Name;
-        product.CreatedDate = DateTime.Now;
-        businessesList = _context.BusinessAccount.Where(x => x.ManagerID == user).ToList(); //Retrieiving all of the businesses the current user manages.
+        user = auth.GetAuthenticationStateAsync().Result.User.Identity?.Name; //Get the current user
+        product.CreatedDate = DateTime.Now; //Automatic setting of when the product will be made
+        businessesList = _context.BusinessAccount?.Where(x => x.ManagerID == user).ToList(); //Retrieiving all of the businesses the current user manages.
     }
 
     private void OnInputFileChange(InputFileChangeEventArgs e)
@@ -107,19 +108,20 @@
         {
             foreach (var image in selectedImages)
             {
-                Stream stream = image.OpenReadStream();
-                product.ImageUrl = $"/images/products/{image.Name}";
-                FileStream fs = File.Create(product.ImageUrl);
-                await stream.CopyToAsync(fs);
+                Stream stream = image.OpenReadStream(); //Open stream for the handled image
+                var path = $"/images/products/{image.Name}"; //Creating a product URL
+                FileStream fs = File.Create($"wwwroot{path}"); //Saving image in the URL
+                await stream.CopyToAsync(fs); 
                 stream.Close();
                 fs.Close();
+                product.ImageUrl = path;
             }
 
-            Message = $"{selectedImages.Count} image(s) uploaded";
+            Message = $"{selectedImages.Count} image(s) uploaded"; //Updating the message within the form...
 
-            _context.Products.Add(product);
-            await _context.SaveChangesAsync();
-            base.StateHasChanged();
+            _context.Products?.AddAsync(product); //Add the new product
+            await _context.SaveChangesAsync(); //Save the product to the db
+            base.StateHasChanged(); //Change the state, ideally would want a redirect to a new page?
         }  
         catch
         {

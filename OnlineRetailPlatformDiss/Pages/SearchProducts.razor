@@ -1,0 +1,49 @@
+﻿@using OnlineRetailPlatformDiss.Models;
+@using Microsoft.Extensions.Logging
+@inject OnlineRetailPlatformDiss.Data.ApplicationDbContext _context;
+
+<div class="text-center">
+    <input class="border-2 w-1/3 rounded m-6 p-6 h-8 border-blue-300" @bind-value="SearchText" placeholder="Search for a product" @oninput="@ShowProducts" />
+</div>
+
+@if(!Products.Any())
+{
+    <div class="alert alert-warning d-flex align-items-center" role="alert">
+        <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Warning:"><use xlink:href="#exclamation-triangle-fill"/></svg>
+        <div>
+        <p>We couldn't find any products! Please try again later!</p>
+        </div>
+    </div>
+}
+else
+{
+    <div class="row pt-5 mt-3 pl-3">
+        @foreach (var product in FilteredProducts)
+        {
+        <div class="col-3 align-items-center">
+            <ProductCard product="product" />
+        </div>
+        }
+    </div>
+    <div class="p-2 grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3">
+       
+    </div>
+}
+
+@code {
+    public string? SearchText = "";
+    public List<ProductModel>? Products;
+    public List<ProductModel>? FilteredProducts;
+
+    protected override void OnInitialized()
+    {
+        Products = _context.Products?.ToList();
+        FilteredProducts = Products;
+    }
+
+    private void ShowProducts()
+    {
+        FilteredProducts = _context.Products?.Where(x => x.ProductName.ToLower().Contains(SearchText.ToLower())).ToList();
+        base.StateHasChanged();
+    }
+}

@@ -17,7 +17,7 @@
     </div>
 
     <!-- If there are no Businesses owned by the User, display this message: -->
-    @if (businesses.Count == 0)
+    @if (businesses?.Count == 0)
     {
         <div class="alert alert-danger d-flex align-items-center" role="alert">
           <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Danger:"><use xlink:href="#exclamation-triangle-fill"/></svg>
@@ -55,7 +55,7 @@
 @code {
 
     private List<BusinessAccountModel>? businesses; //List of Users businesses
-    private List<ProductModel>? businessProducts; //List of Businesses products.
+    //private List<ProductModel>? businessProducts; //List of Businesses products.
     private string? manager; //Manager of the business (User.Identity.Name)
     private string? BusinessName;//Empty string to assign a business name too. 
     public bool businessSelected = false;
@@ -70,8 +70,8 @@
     protected override void OnInitialized()
     {
         BusinessName = String.Empty;
-        manager = auth.GetAuthenticationStateAsync().Result.User.Identity.Name; //Finding the active users email address.
-        businesses = _context.BusinessAccount.Where(x => x.ManagerID == manager).ToList(); //Finding the businesses of the active user to select from. 
+        manager = auth.GetAuthenticationStateAsync().Result.User.Identity?.Name; //Finding the active users email address.
+        businesses = _context.BusinessAccount?.Where(x => x.ManagerID == manager).ToList(); //Finding the businesses of the active user to select from. 
     }
 
     private void GetProducts()
