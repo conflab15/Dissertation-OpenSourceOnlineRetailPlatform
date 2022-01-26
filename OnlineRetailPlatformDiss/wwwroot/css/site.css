@@ -69,3 +69,9 @@ a, .btn-link {
     justify-content: center;
     display: inline-flex;
 }
+
+.divider {
+    border-top: 10px solid #bbb;
+    border-radius: 5px;
+    margin-top: 5px;
+}

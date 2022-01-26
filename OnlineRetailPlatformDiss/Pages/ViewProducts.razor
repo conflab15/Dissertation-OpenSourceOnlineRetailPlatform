@@ -7,86 +7,64 @@
 @attribute [Authorize]
 
 <!-- This needs to be removed in the future to act as a component than an individual page -->
-@page "/product/view"
+@page "/business/products/{businessName}"
+
+<h1 class="display-4 fw-bold">@businessName : Products</h1>
 
 <div class="container">
-    <div class="row">
-        <div class="col">
-            <h1>View Business Products</h1>
-        </div>
-    </div>
-
-    <!-- If there are no Businesses owned by the User, display this message: -->
-    @if (businesses?.Count == 0)
+    @if(products.Count != 0)
     {
-        <div class="alert alert-danger d-flex align-items-center" role="alert">
-          <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Danger:"><use xlink:href="#exclamation-triangle-fill"/></svg>
-          <div>
-            <p>You must create a Business to be able to view its products</p>
-            <a class="btn btn-primary" href="/business/create">Create Business</a>
-          </div>
-        </div>
-    }
-    else
-    {
-        <!-- If there are businesses owned by the User, display this!-->
-        <EditForm Model="@search">
-            <div class="mb-3">
-                <label for="businessName" class="form-label">Please select your business:</label>
-                <InputSelect class="form-select" id="businessName" @bind-Value="search.BusinessNames" placeholder="20" enabled="true" @oninput="@GetProducts">
-                <option value="">Select a Business...</option>
-                @foreach (var business in businesses)
-                    {
-                        <option value="@business.BusinessName">@business.BusinessName</option>
-                    }
-                </InputSelect>
-            </div>
-        </EditForm>
-
-        @if(businessSelected)
-        {
-            <ListProducts businessName="@BusinessName" @ref="productList" />
+        <table class="table" style="width:100%">
+            <thead>
+            <tr>
+                <th scope="col">Product Image</th>
+                <th scope="col">Product Name</th>
+                <th scope="col">Product Description</th>
+                <th scope="col">Options</th>
+            </tr>
+            </thead>
+            <tbody>
+                @foreach (var product in products) //This doesn't operate, products appear then quickly disappear...
+                {
+                    <tr>
+                        @if(product.ImageUrl != null)
+                        {
+                            //Show the image
+                            <td><image class="img-thumbnail img-responsive" src="@product.ImageUrl" alt="Product Image" width="100" height="100" /></td>
+                        }
+                        else
+                        {
+                            //No image placeholder
+                            <td><image class="img-thumbnail img-responsive" src="/images/products/noimageplaceholder.jpg" alt="Product Image Placeholder" width="100" height="100" /></td>
+                        }
+                        <td>@product.ProductName</td>
+                        <td>@product.ProductDescription</td>
+                        <td><a class="btn btn-primary btn-sm" href="">Manage Product</a></td>
+                    </tr>
+                }
+            </tbody>
+        </table>
         }
+        else
+        {
+            <div class="alert alert-warning d-flex align-items-center" role="alert">
+              <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Warning:"><use xlink:href="#exclamation-triangle-fill"/></svg>
+              <div>
+                <p>We couldn't find any products for your business!</p>
+                <a class="btn btn-alert" href="/product/create">Create Product</a>
+              </div>
+            </div>
     }
-
 </div>
 
 
 @code {
-
-    private List<BusinessAccountModel>? businesses; //List of Users businesses
-    //private List<ProductModel>? businessProducts; //List of Businesses products.
-    private string? manager; //Manager of the business (User.Identity.Name)
-    private string? BusinessName;//Empty string to assign a business name too. 
-    public bool businessSelected = false;
-    public ListProducts? productList;
-
-    private class SearchModel 
-    {
-        public string? BusinessNames;
-    }
-    private SearchModel search = new SearchModel(); //Search Model to obtain a string of the business name from the Select DropDown form
+    [Parameter] //Parameter of the razor component page
+    public string? businessName { get; set; }
+    List<ProductModel> products = new();
 
     protected override void OnInitialized()
     {
-        BusinessName = String.Empty;
-        manager = auth.GetAuthenticationStateAsync().Result.User.Identity?.Name; //Finding the active users email address.
-        businesses = _context.BusinessAccount?.Where(x => x.ManagerID == manager).ToList(); //Finding the businesses of the active user to select from. 
-    }
-
-    private void GetProducts()
-    {
-        businessSelected = true;
-        var x = BusinessName;
-
-        x = search.BusinessNames; //When form is submitted, assign the name to this string
-
-        this.StateHasChanged(); //Reload the page
-
-        //var x = BusinessName;
-        //Finding all products owned by the business, adding them to the businessProducts list.
-        //businessProducts = await _context.Products.Where(x => x.BusinessName == search.BusinessNames).ToListAsync();
-        //Change the state of the page to refresh the page and populate the list...
-        //base.StateHasChanged();
+        products = _context.Products?.Where(x => x.BusinessName == businessName).ToList();
     }
 }
