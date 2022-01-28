@@ -3,15 +3,18 @@
 @using Microsoft.Extensions.Logging
 @inject OnlineRetailPlatformDiss.Data.ApplicationDbContext _context;
 @inject AuthenticationStateProvider auth;
-@inject ILogger<ViewProducts> Logger
+@inject IJSRuntime js;
+@inject ILogger<ViewProducts> Logger;
+
 @attribute [Authorize]
 
 <!-- This needs to be removed in the future to act as a component than an individual page -->
 @page "/business/products/{businessName}"
 
-<h1 class="display-4 fw-bold">@businessName : Products</h1>
+<div class="container p-3">
 
-<div class="container">
+    <h1 class="display-4 fw-bold mb-3">@businessName : Products</h1>
+
     @if(products.Count != 0)
     {
         <table class="table" style="width:100%">
@@ -30,16 +33,16 @@
                         @if(product.ImageUrl != null)
                         {
                             //Show the image
-                            <td><image class="img-thumbnail img-responsive" src="@product.ImageUrl" alt="Product Image" width="100" height="100" /></td>
+                            <td><image src="@product.ImageUrl" id="productListImg" class="img-thumbnail img-responsive w-15" alt="Product Image" /></td>
                         }
                         else
                         {
                             //No image placeholder
-                            <td><image class="img-thumbnail img-responsive" src="/images/products/noimageplaceholder.jpg" alt="Product Image Placeholder" width="100" height="100" /></td>
+                            <td><image src="/images/products/noimageplaceholder.jpg" id="productListImg" class="img-thumbnail img-responsive w-15" alt="Product Image Placeholder" /></td>
                         }
                         <td>@product.ProductName</td>
                         <td>@product.ProductDescription</td>
-                        <td><a class="btn btn-primary btn-sm" href="">Manage Product</a></td>
+                        <td><a class="btn btn-primary" href="">Edit</a><button class="btn btn-danger" @onclick="(() => DeleteProduct(product))">Delete</button></td>
                     </tr>
                 }
             </tbody>
@@ -57,14 +60,35 @@
     }
 </div>
 
-
 @code {
     [Parameter] //Parameter of the razor component page
     public string? businessName { get; set; }
-    List<ProductModel> products = new();
+    List<ProductModel>? products = new();
 
     protected override void OnInitialized()
     {
         products = _context.Products?.Where(x => x.BusinessName == businessName).ToList();
+    }
+
+    private async void DeleteProduct(ProductModel prodToDelete)
+    {
+        //Await for js SweetAlert Button to return a true or false value.
+        var result = await js.InvokeAsync<bool>("confirmDelete",
+            "Confirmation",
+            "Are you sure about this? It cannot be undone later?",
+            "question"); 
+
+        if (result)
+        {
+            _context.Products?.Remove(prodToDelete);
+            await _context.SaveChangesAsync();
+            products = _context.Products?.Where(x => x.BusinessName == businessName).ToList(); //Reloads a new list with the deleted products removed from the db
+
+            var accepted = js.InvokeAsync<bool>("confirmChanges",
+                "Deleted",
+                "The product has been successfully deleted!",
+                "success");
+            base.StateHasChanged();
+        }
     }
 }

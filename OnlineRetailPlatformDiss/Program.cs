@@ -4,6 +4,7 @@ using OnlineRetailPlatformDiss.Areas.Identity;
 using OnlineRetailPlatformDiss.Data;
 using OnlineRetailPlatformDiss.Models;
 
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.

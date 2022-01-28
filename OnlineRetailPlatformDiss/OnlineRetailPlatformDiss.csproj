@@ -8,6 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="CurrieTechnologies.Razor.SweetAlert2" Version="5.1.0" />
     <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="6.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="6.0.1" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="6.0.1" />
@@ -23,6 +24,7 @@
   <ItemGroup>
     <Folder Include="wwwroot\images\business\" />
     <Folder Include="wwwroot\images\products\" />
+    <Folder Include="wwwroot\lib\" />
   </ItemGroup>
 
 </Project>
