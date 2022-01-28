@@ -6,7 +6,7 @@ namespace OnlineRetailPlatformDiss.Models
     {
         [Key]
         public Guid ProductID { get; set; }
-        [Required, StringLength(20), Display(Name = "Name")]  
+        [Required, StringLength(50), Display(Name = "Name")]  
         public string? ProductName { get; set; }
         [Required, StringLength(200), Display(Name = "Description")]
         public string? ProductDescription { get; set; }  

@@ -3,6 +3,8 @@
 @using Microsoft.Extensions.Logging
 @inject ILogger<CreateBusiness> Logger
 @inject AuthenticationStateProvider auth;
+@inject IJSRuntime js;
+
 
 @attribute [Authorize]
 
@@ -111,6 +113,11 @@
 
             _context.BusinessAccount?.AddAsync(businessAccount);
             await _context.SaveChangesAsync();
+
+            var accepted = js.InvokeAsync<bool>("confirmChanges",
+                "Added",
+                "You've successfully added a business!",
+                "success"); //Swal for declaring success in adding a business
             base.StateHasChanged();
         }  
         catch

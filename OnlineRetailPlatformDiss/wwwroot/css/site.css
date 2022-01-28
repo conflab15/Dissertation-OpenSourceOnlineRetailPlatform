@@ -86,3 +86,16 @@ td {
     vertical-align: middle;
     font-size: 18px;
 }
+
+#productCard {
+    width: 22rem;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+}
+
+#outOfStock {
+    padding-top: 2px;
+    background-color: darkred!important;
+    font-weight: bold;
+}

@@ -30,15 +30,16 @@
                 @foreach (var product in products) //This doesn't operate, products appear then quickly disappear...
                 {
                     <tr>
-                        @if(product.ImageUrl != null)
-                        {
-                            //Show the image
-                            <td><image src="@product.ImageUrl" id="productListImg" class="img-thumbnail img-responsive w-15" alt="Product Image" /></td>
-                        }
-                        else
+                        @if(product.ImageUrl == null)
                         {
                             //No image placeholder
                             <td><image src="/images/products/noimageplaceholder.jpg" id="productListImg" class="img-thumbnail img-responsive w-15" alt="Product Image Placeholder" /></td>
+                            
+                        }
+                        else
+                        {
+                            //Show the image
+                            <td><image src="@product.ImageUrl" id="productListImg" class="img-thumbnail img-responsive w-15" alt="Product Image" /></td>
                         }
                         <td>@product.ProductName</td>
                         <td>@product.ProductDescription</td>
@@ -73,21 +74,14 @@
     private async void DeleteProduct(ProductModel prodToDelete)
     {
         //Await for js SweetAlert Button to return a true or false value.
-        var result = await js.InvokeAsync<bool>("confirmDelete",
-            "Confirmation",
-            "Are you sure about this? It cannot be undone later?",
-            "question"); 
+        var result = await js.InvokeAsync<bool>("confirmDelete", "Confirmation", "Are you sure about this? It cannot be undone later?", "question"); 
 
         if (result)
         {
             _context.Products?.Remove(prodToDelete);
             await _context.SaveChangesAsync();
             products = _context.Products?.Where(x => x.BusinessName == businessName).ToList(); //Reloads a new list with the deleted products removed from the db
-
-            var accepted = js.InvokeAsync<bool>("confirmChanges",
-                "Deleted",
-                "The product has been successfully deleted!",
-                "success");
+            var accepted = js.InvokeAsync<bool>("confirmChanges", "Deleted", "The product has been successfully deleted!", "success");
             base.StateHasChanged();
         }
     }

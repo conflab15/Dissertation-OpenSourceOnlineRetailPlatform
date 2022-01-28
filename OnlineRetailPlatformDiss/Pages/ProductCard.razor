@@ -3,14 +3,14 @@
 @using Microsoft.Extensions.Logging;
 @inject OnlineRetailPlatformDiss.Data.ApplicationDbContext _context;
 
-<div class="card" style="width: 18rem;">
+<div class="card" id="productCard">
     @if(product.ImageUrl == null)
     {
-        <img class="card-img-top" src="/images/products/noimageplaceholder.jpg" alt="Placeholder Image" />
+        <img class="card-img-top m-2" src="/images/products/noimageplaceholder.jpg" alt="Placeholder Image" />
     }
     else
     {
-        <img class="card-img-top" src="@product.ImageUrl" alt="Product Image">
+        <img class="card-img-top m-2" src="@product.ImageUrl" alt="Product Image">
     }
     <div class="card-body">
         <h5 class="card-title text-center">@product.ProductName</h5>
@@ -23,7 +23,16 @@
         {
             <p class="card-text">@product.ProductPrice</p>
         }
-        <a href="#" class="btn btn-primary">View</a><span><a href="#" class="btn btn-success">Buy</a></span>
+        <a href="#" class="btn btn-primary">View</a>
+            @if(product.StockLevel <= 0)
+            {
+                <span class="b-1"><a class="btn btn-danger disabled">Out of Stock</a></span>
+                
+            }
+            else
+            {
+                <span class="b-1"><a href="#" class="btn btn-success">Buy</a></span>
+            }          
     </div>
 </div>
 
