@@ -1,7 +1,12 @@
 ﻿@using OnlineRetailPlatformDiss.Models;
+@using OnlineRetailPlatformDiss.ViewModels;
 @using Microsoft.EntityFrameworkCore;
 @using Microsoft.Extensions.Logging;
+@using OnlineRetailPlatformDiss.Services;
 @inject OnlineRetailPlatformDiss.Data.ApplicationDbContext _context;
+@inject BasketService basket;
+@inject IJSRuntime js; //JS functionality to create a SweetAlert.
+
 
 <div class="card" id="productCard">
     @if(product.ImageUrl == null)
@@ -31,7 +36,7 @@
             }
             else
             {
-                <span class="b-1"><a href="#" class="btn btn-success">Buy</a></span>
+                <span class="b-1"><a class="btn btn-success" @onclick="(() => addToBasket(product))">Buy</a></span>
             }          
     </div>
 </div>
@@ -39,4 +44,22 @@
 @code {
     [Parameter]
     public ProductModel? product { get; set; }
+    BasketItemsMessageViewModel? vm;
+
+    //Add To Basket Method...
+    private async void addToBasket(ProductModel product)
+    {
+        try
+        {
+            vm = await basket.AddToBasket(product.ProductID);
+            var accepted = js.InvokeAsync<bool>("confirmChanges", "Added to Basket", vm.Message, "success");
+        }
+        catch
+        {
+            var accepted = js.InvokeAsync<bool>("confirmChanges", "Failed", "The product could not be added to your Basket...", "warning");
+        }
+        
+        StateHasChanged();
+    }
+
 }

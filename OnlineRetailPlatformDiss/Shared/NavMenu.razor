@@ -1,4 +1,6 @@
-﻿<nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-3">
+﻿@inject AppState appState
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-3">
   <div class="container-fluid">
     <NavLink class="navbar-brand" href="#">Online Retail Platform Diss</NavLink>
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
@@ -12,6 +14,9 @@
         <li class="nav-item">
           <NavLink class="nav-link" href="/product/view">View Product</NavLink>
         </li>
+        <li class="nav-item">
+            <NavLink class="nav-link" href="/MyBasket">Basket @(appState.basketQuantity.HasValue && appState.basketQuantity.Value != 0 ? $"{appState.basketQuantity.Value}" : "")</NavLink>
+        </li>
       </ul>
       <LoginDisplay />
     </div>
@@ -19,5 +24,8 @@
 </nav>
 
 @code {
-    
+    protected override void OnInitialized()
+    {
+        appState.OnChange += StateHasChanged;
+    }
 }

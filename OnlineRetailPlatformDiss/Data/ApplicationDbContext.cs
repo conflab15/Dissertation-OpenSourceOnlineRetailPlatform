@@ -16,6 +16,7 @@ namespace OnlineRetailPlatformDiss.Data
 
         public DbSet<ProductModel>? Products { get; set; }
 
+        public DbSet<BasketsModel>? Baskets { get; set; }
 
     }
 }
