@@ -15,8 +15,10 @@
 
     <h1 class="display-4 fw-bold mb-3">@businessName : Products</h1>
 
-    @if(products.Count != 0)
+    @if(products is not null)
     {
+        @if(products.Count != 0)
+        {
         <table class="table" style="width:100%">
             <thead>
             <tr>
@@ -58,7 +60,10 @@
                 <a class="btn btn-alert" href="/product/create">Create Product</a>
               </div>
             </div>
+        }
     }
+
+    
 </div>
 
 @code {

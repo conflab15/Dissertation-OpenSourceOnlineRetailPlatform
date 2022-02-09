@@ -20,7 +20,7 @@
     </div>
 
     <!-- If the current user owns no businesses, display the message... -->
-    @if (businessesList.Count == 0)
+    @if (businessesList is not null && businessesList.Count == 0)
     {
         <div class="alert alert-danger" role="alert">
             <p>You must create a Business to be able to create products for!</p>
@@ -36,9 +36,12 @@
             <label for="businessName" class="form-label">Business Name</label>
             <InputSelect class="form-control form-select" id="businessName" @bind-Value="product.BusinessName" placeholder="">
                 <option>Select your Business...</option>
-                @foreach (var business in businessesList)
+                @if(businessesList is not null)
                 {
-                    <option value="@business.BusinessName">@business.BusinessName</option>
+                    @foreach (var business in businessesList)
+                    {
+                        <option value="@business.BusinessName">@business.BusinessName</option>
+                    }
                 }
             </InputSelect>
         </div>
@@ -106,7 +109,9 @@
     {
         try
         {
-            foreach (var image in selectedImages)
+            if(selectedImages is not null)
+            {
+              foreach (var image in selectedImages)
             {
                 Stream stream = image.OpenReadStream(); //Open stream for the handled image
                 var path = $"/images/products/{image.Name}"; //Creating a product URL
@@ -121,7 +126,8 @@
 
             _context.Products?.AddAsync(product); //Add the new product
             await _context.SaveChangesAsync(); //Save the product to the db
-            base.StateHasChanged(); //Change the state, ideally would want a redirect to a new page?
+            base.StateHasChanged(); //Change the state, ideally would want a redirect to a new page?  
+            }
         }  
         catch
         {

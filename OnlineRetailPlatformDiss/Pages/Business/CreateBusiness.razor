@@ -3,6 +3,7 @@
 @using Microsoft.Extensions.Logging
 @inject ILogger<CreateBusiness> Logger
 @inject AuthenticationStateProvider auth;
+@inject NavigationManager nav;
 @inject IJSRuntime js;
 
 
@@ -98,27 +99,35 @@
     {
         try
         {
-            foreach (var image in selectedImages)
+            if (selectedImages is not null)
             {
-                Stream stream = image.OpenReadStream(); //Open stream for the handled image
-                var path = $"/images/business/{image.Name}"; //Creating a product URL
-                FileStream fs = File.Create($"wwwroot{path}"); //Saving image in the URL
-                await stream.CopyToAsync(fs); 
-                stream.Close();
-                fs.Close();
-                businessAccount.BannerUrl = path;
+                foreach (var image in selectedImages)
+                {
+                    Stream stream = image.OpenReadStream(); //Open stream for the handled image
+                    var path = $"/images/business/{image.Name}"; //Creating a product URL
+                    FileStream fs = File.Create($"wwwroot{path}"); //Saving image in the URL
+                    await stream.CopyToAsync(fs); 
+                    stream.Close();
+                    fs.Close();
+                    businessAccount.BannerUrl = path;
+                }
+
+                Message = $"{selectedImages.Count} image(s) uploaded"; //Updating the message within the form...
+
+                //Value is created for GoogleMaps API
+                businessAccount.MapsAddr = String.Concat(businessAccount.AddressLine1 + " " + businessAccount.AddressLine2 + " " + businessAccount.Town + " " + businessAccount.PostCode);
+
+                _context.BusinessAccount?.AddAsync(businessAccount);
+                await _context.SaveChangesAsync();
+
+                var accepted = js.InvokeAsync<bool>("confirmChanges",
+                    "Added",
+                    "You've successfully added your business!",
+                    "success"); //Swal for declaring success in adding a business
+                nav.NavigateTo("/business/view");
             }
 
-            Message = $"{selectedImages.Count} image(s) uploaded"; //Updating the message within the form...
-
-            _context.BusinessAccount?.AddAsync(businessAccount);
-            await _context.SaveChangesAsync();
-
-            var accepted = js.InvokeAsync<bool>("confirmChanges",
-                "Added",
-                "You've successfully added a business!",
-                "success"); //Swal for declaring success in adding a business
-            base.StateHasChanged();
+            
         }  
         catch
         {

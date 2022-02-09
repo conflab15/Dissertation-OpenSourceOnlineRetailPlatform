@@ -4,7 +4,7 @@ using OnlineRetailPlatformDiss;
 using OnlineRetailPlatformDiss.Areas.Identity;
 using OnlineRetailPlatformDiss.Data;
 using OnlineRetailPlatformDiss.Models;
-using OnlineRetailPlatformDiss.Services;
+
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -20,10 +20,6 @@ builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 builder.Services.AddScoped<AuthenticationStateProvider, RevalidatingIdentityAuthenticationStateProvider<UserModel>>();
 builder.Services.AddHttpClient();
-
-//Custom Service Implementations
-builder.Services.AddScoped<BasketService>();
-builder.Services.AddScoped<AppState>();
 
 var app = builder.Build();
 

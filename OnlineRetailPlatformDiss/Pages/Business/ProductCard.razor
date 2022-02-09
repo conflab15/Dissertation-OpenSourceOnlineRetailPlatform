@@ -1,0 +1,66 @@
+﻿@using OnlineRetailPlatformDiss.Models;
+@using Microsoft.EntityFrameworkCore;
+@using Microsoft.Extensions.Logging;
+@inject OnlineRetailPlatformDiss.Data.ApplicationDbContext _context;
+@inject IJSRuntime js; //JS functionality to create a SweetAlert.
+
+
+
+    @if(product is not null)
+    {
+        <div class="card" id="productCard">
+        @if(product.ImageUrl == null)
+        {
+            <img class="card-img-top m-2" src="/images/products/noimageplaceholder.jpg" alt="Placeholder Image" />
+        }
+        else
+        {
+            <img class="card-img-top m-2" src="@product.ImageUrl" alt="Product Image">
+        }
+        <div class="card-body">
+            <h5 class="card-title text-center">@product.ProductName</h5>
+            <p class="card-text text-center">@product.ProductDescription</p>
+            @if (product.PromotionalPrice.Equals(null))
+            {
+                <strike><p class="card-text">£@product.ProductPrice</p></strike><span><p class="card-text">£@product.PromotionalPrice</p></span>
+            }
+            else
+            {
+                <p class="card-text">@product.ProductPrice</p>
+            }
+            <a href="#" class="btn btn-primary">View</a>
+                @if(product.StockLevel <= 0)
+                {
+                    <span class="b-1"><a class="btn btn-danger disabled">Out of Stock</a></span>
+                
+                }
+                else
+                {
+                    <span class="b-1"><a class="btn btn-success" @onclick="(() => addToBasket(product))">Buy</a></span>
+                }          
+        </div>
+    </div>
+    }
+
+    
+
+@code {
+    [Parameter]
+    public ProductModel? product { get; set; }
+
+    //Add To Basket Method...
+    private void addToBasket(ProductModel product)
+    {
+        try
+        {
+            var accepted = js.InvokeAsync<bool>("confirmChanges", "Added to Basket", $"{product.ProductName} has been added to your basket!", "success");
+        }
+        catch
+        {
+            var accepted = js.InvokeAsync<bool>("confirmChanges", "Failed", "The product could not be added to your Basket...", "warning");
+        }
+        
+        StateHasChanged();
+    }
+
+}

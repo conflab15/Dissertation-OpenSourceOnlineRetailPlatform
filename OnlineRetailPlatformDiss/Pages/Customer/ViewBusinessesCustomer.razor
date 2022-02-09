@@ -1,0 +1,41 @@
+﻿@using OnlineRetailPlatformDiss.Models;
+@inject OnlineRetailPlatformDiss.Data.ApplicationDbContext _context;
+@using Microsoft.Extensions.Logging
+@inject AuthenticationStateProvider auth;
+@attribute [Authorize]
+
+<!-- This needs to be removed in the future to act as a component than an individual page -->
+@page "/customer/business/view"
+
+<div class="container">
+    <div class="row pt-3">
+        <div class="col text-center align-items-center">
+            <h1 class="display-4 fw-bold">Businesses</h1>
+        </div>
+    </div>
+</div>
+
+<div class="divider" />
+
+<div class="container">
+    @foreach (var business in businesses)
+    {
+        <div class="row pt-2">
+            <BusinessCustomerListComponent business="@business" />
+            <div class="divider" />
+            <br>
+        </div>
+    }
+</div>
+
+
+
+@code {
+    List<BusinessAccountModel>? businesses;
+
+    protected override void OnInitialized()
+    {
+        string manager = auth.GetAuthenticationStateAsync().Result.User.Identity.Name;
+        businesses = _context.BusinessAccount?.Where(x => x.ManagerID == manager).ToList();
+    }
+}

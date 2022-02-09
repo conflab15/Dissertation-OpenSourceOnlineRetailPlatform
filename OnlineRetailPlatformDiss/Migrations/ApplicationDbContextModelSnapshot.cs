@@ -159,31 +159,6 @@ namespace OnlineRetailPlatformDiss.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("OnlineRetailPlatformDiss.Models.BasketsModel", b =>
-                {
-                    b.Property<Guid>("BasketID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<decimal>("BasketPrice")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<Guid?>("BasketProductProductID")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<int>("BasketQuantity")
-                        .HasColumnType("int");
-
-                    b.Property<Guid>("BasketServiceID")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("BasketID");
-
-                    b.HasIndex("BasketProductProductID");
-
-                    b.ToTable("Baskets");
-                });
-
             modelBuilder.Entity("OnlineRetailPlatformDiss.Models.BusinessAccountModel", b =>
                 {
                     b.Property<Guid>("Id")
@@ -220,6 +195,9 @@ namespace OnlineRetailPlatformDiss.Migrations
 
                     b.Property<string>("ManagerID")
                         .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("MapsAddr")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("PostCode")
@@ -427,15 +405,6 @@ namespace OnlineRetailPlatformDiss.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("OnlineRetailPlatformDiss.Models.BasketsModel", b =>
-                {
-                    b.HasOne("OnlineRetailPlatformDiss.Models.ProductModel", "BasketProduct")
-                        .WithMany()
-                        .HasForeignKey("BasketProductProductID");
-
-                    b.Navigation("BasketProduct");
                 });
 #pragma warning restore 612, 618
         }

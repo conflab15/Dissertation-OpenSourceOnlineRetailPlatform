@@ -28,6 +28,14 @@ namespace OnlineRetailPlatformDiss.Migrations
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Forename = table.Column<string>(type: "nvarchar(30)", maxLength: 30, nullable: false),
+                    Surname = table.Column<string>(type: "nvarchar(30)", maxLength: 30, nullable: false),
+                    AddressLine1 = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    AddressLine2 = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    Town = table.Column<string>(type: "nvarchar(30)", maxLength: 30, nullable: false),
+                    County = table.Column<string>(type: "nvarchar(30)", maxLength: 30, nullable: false),
+                    PostCode = table.Column<string>(type: "nvarchar(8)", maxLength: 8, nullable: false),
+                    IsBusiness = table.Column<bool>(type: "bit", nullable: false),
                     UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
@@ -60,12 +68,32 @@ namespace OnlineRetailPlatformDiss.Migrations
                     Town = table.Column<string>(type: "nvarchar(30)", maxLength: 30, nullable: false),
                     County = table.Column<string>(type: "nvarchar(30)", maxLength: 30, nullable: false),
                     PostCode = table.Column<string>(type: "nvarchar(8)", maxLength: 8, nullable: false),
+                    BannerUrl = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     ManagerID = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    CreatedByUserID = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    MapsAddr = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_BusinessAccount", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Products",
+                columns: table => new
+                {
+                    ProductID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ProductName = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    ProductDescription = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
+                    ProductPrice = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    PromotionalPrice = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    BusinessName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    StockLevel = table.Column<int>(type: "int", nullable: false),
+                    ImageUrl = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Products", x => x.ProductID);
                 });
 
             migrationBuilder.CreateTable(
@@ -233,6 +261,9 @@ namespace OnlineRetailPlatformDiss.Migrations
 
             migrationBuilder.DropTable(
                 name: "BusinessAccount");
+
+            migrationBuilder.DropTable(
+                name: "Products");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");

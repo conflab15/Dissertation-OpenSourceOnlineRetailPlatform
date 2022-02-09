@@ -23,6 +23,6 @@ namespace OnlineRetailPlatformDiss.Models
         public string? BannerUrl { get; set; }
         [Required]
         public string? ManagerID { get; set; }
-
+        public string? MapsAddr { get; set; }
     }
 }

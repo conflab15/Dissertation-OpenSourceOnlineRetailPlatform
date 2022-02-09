@@ -12,8 +12,8 @@ using OnlineRetailPlatformDiss.Data;
 namespace OnlineRetailPlatformDiss.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20220121212934_updateProd")]
-    partial class updateProd
+    [Migration("20220209220458_init")]
+    partial class init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -177,6 +177,9 @@ namespace OnlineRetailPlatformDiss.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
+                    b.Property<string>("BannerUrl")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("BusinessDesc")
                         .IsRequired()
                         .HasMaxLength(500)
@@ -194,6 +197,9 @@ namespace OnlineRetailPlatformDiss.Migrations
 
                     b.Property<string>("ManagerID")
                         .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("MapsAddr")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("PostCode")
@@ -234,8 +240,8 @@ namespace OnlineRetailPlatformDiss.Migrations
 
                     b.Property<string>("ProductName")
                         .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<decimal>("ProductPrice")
                         .HasColumnType("decimal(18,2)");
