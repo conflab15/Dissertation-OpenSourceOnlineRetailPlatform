@@ -2,8 +2,8 @@
 @inject OnlineRetailPlatformDiss.Data.ApplicationDbContext _context;
 @using Microsoft.Extensions.Logging
 @inject AuthenticationStateProvider auth;
-@attribute [Authorize]
 
+<!-- This does not need to be authorised at this is publically visible to potential customers. -->
 <!-- This needs to be removed in the future to act as a component than an individual page -->
 @page "/customer/business/view"
 
@@ -35,7 +35,6 @@
 
     protected override void OnInitialized()
     {
-        string manager = auth.GetAuthenticationStateAsync().Result.User.Identity.Name;
-        businesses = _context.BusinessAccount?.Where(x => x.ManagerID == manager).ToList();
+        businesses = _context.BusinessAccount?.ToList();
     }
 }

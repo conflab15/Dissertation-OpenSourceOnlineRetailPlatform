@@ -18,23 +18,16 @@
     </div>
 
 
-    <div class="row">
-        <div class="col"> <!-- Google Maps of the Business -->
-            <iframe
-                width="600"
-                height="450"
-                style="border:0"
-                loading="lazy"
-                allowfullscreen
-                src = "https://www.google.com/maps/embed/v1/place?key=AIzaSyBKrSM-EhXfIZlWYB_ROHD71K8RsyXMyok&q=@(business.MapsAddr)">
-            </iframe>
+    <div class="row pt-3">
+        <div class="col align-items-center justify-content-center"> <!-- Google Maps of the Business -->
+            <p>*map goes here*</p>
         </div>
         <div class="col"> <!-- Business Details -->
             <h1 class="display-4 fw-bold">@business.BusinessName</h1>
             <div class="col-lg-6 mx-auto">
               <p class="lead mb-4">@business.BusinessDesc</p>
                 <div class="d-grid gap-2 d-sm-flex justify-content-sm-center mb-5">
-                    <a class="btn btn-outline-secondary btn-lg px-4 disabled" href="">View Products</a>
+                    <a class="btn btn-outline-secondary btn-lg px-4 disabled" href="/customer/business/@business.BusinessName">View Business</a>
                 </div>
             </div>
         </div>

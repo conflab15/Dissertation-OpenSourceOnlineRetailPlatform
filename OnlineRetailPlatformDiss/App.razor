@@ -1,7 +1,19 @@
 ﻿<CascadingAuthenticationState>
     <Router AppAssembly="@typeof(App).Assembly">
         <Found Context="routeData">
-            <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" />
+            <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)">
+                <NotAuthorized>
+                    <div class="m-4 pt-7">
+                         <div class="alert alert-danger alert-dismissible fade show">
+                            <h4 class="alert-heading"><i class="bi-exclamation-octagon-fill"></i> Oops! Something went wrong.</h4>
+                            <p>You must be logged in with a valid account to access this part of the site!</p>
+                            <hr>
+                            <p class="mb-0">Click the Login Button below to sign into your account.</p>
+                            <a type="button" class="btn btn-danger mt-3" href="Identity/Account/Login">Login</a>
+                        </div>
+                    </div>
+                </NotAuthorized>
+            </AuthorizeRouteView>
             <FocusOnNavigate RouteData="@routeData" Selector="h1" />
         </Found>
         <NotFound>
