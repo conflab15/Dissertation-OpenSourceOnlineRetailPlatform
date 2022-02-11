@@ -12,7 +12,7 @@ using OnlineRetailPlatformDiss.Data;
 namespace OnlineRetailPlatformDiss.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20220209220458_init")]
+    [Migration("20220211091813_init")]
     partial class init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
