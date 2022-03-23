@@ -36,11 +36,12 @@ else
     protected override void OnInitialized()
     {
         Products = _context.Products?.ToList();
-        FilteredProducts = Products;
+        FilteredProducts = Products; //This is always overriding the search field.
     }
 
     private void ShowProducts()
     {
+        //String value is needed here, if the field is empty, then the list should not be filtered...
         FilteredProducts = _context.Products?.Where(x => x.ProductName.ToLower().Contains(SearchText.ToLower())).ToList();
         base.StateHasChanged();
     }

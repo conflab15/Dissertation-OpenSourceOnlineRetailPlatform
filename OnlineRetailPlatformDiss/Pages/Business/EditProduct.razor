@@ -1,7 +1,9 @@
 ﻿@using OnlineRetailPlatformDiss.Models;
 @using Microsoft.Extensions.Logging
+@using Microsoft.EntityFrameworkCore;
 @using System.IO;
 @using System.Web;
+@using System.Linq;
 @inject IWebHostEnvironment env
 @inject OnlineRetailPlatformDiss.Data.ApplicationDbContext _context;
 @inject ILogger<CreateProduct> Logger
@@ -9,14 +11,13 @@
 @inject NavigationManager nav;
 @inject IJSRuntime js;
 
-<!-- Authorising the Area to ensure a User with a valid account can log into the page -->
 @attribute [Authorize] 
-@page "/product/edit{productId}"
+@page "/business/products/edit/{productId:guid}"
 
 <div class="container">
     <div class="row">
         <div class="col">
-            <h1>Edit the Product: @product.ProductName</h1>
+            <h1>Edit Product:</h1>
         </div>
     </div>
 
@@ -24,37 +25,44 @@
     @if (product is null)
     {
         <div class="alert alert-danger" role="alert">
-            <p>Sorry, we could not find this product?</p>
-            <button class="btn btn-outline-danger" href="/product/create">Create a Product</button> <!-- Button needs a route -->
+            <p>Uh Oh! We couldn't find the product...' </p>
+            <button class="btn btn-primary" href="">Back</button> <!-- Button needs a route -->
         </div>
     }
     else
     {
         <EditForm Model="@product" OnSubmit="@SubmitProductChanges">
         <DataAnnotationsValidator />
-        <!--<ValidationSummary />-->S
+        <!--<ValidationSummary />-->
+        <div class="mb-3">
+            <label for="businessName" class="form-label">Business Name</label>
+            <label class="alert-warning">The product cannot be assigned to another business. Please create a new product for the correct business!</label>
+            <InputText class="form-control" id="businessName" @bind-Value="product.BusinessName" disabled/>
+
+        </div>
         <div class="mb-3">
             <label for="productName" class="form-label">Product Name</label>
-            <InputText class="form-control" id="productName" @bind-Value="product.ProductName" placeholder="My Product" />
+            <InputText class="form-control" id="productName" @bind-Value="product.ProductName" />
         </div>
         <div class="mb-3">
             <label for="productDesc" class="form-label">Product Description</label>
-            <InputText class="form-control" id="productDesc" @bind-Value="product.ProductDescription" placeholder="My Product does this and that!" />
+            <InputText class="form-control" id="productDesc" @bind-Value="product.ProductDescription" />
         </div>
         <div class="mb-3">
             <label for="productPrice" class="form-label">Product Price</label>
-            <InputNumber class="form-control" id="productPrice" @bind-Value="product.ProductPrice" placeholder="5.99" />
+            <InputNumber class="form-control" id="productPrice" @bind-Value="product.ProductPrice" />
         </div>
         <div class="mb-3">
             <label for="productPromo" class="form-label">Promotional Price</label>
-            <InputNumber class="form-control" id="productPromo" @bind-Value="product.PromotionalPrice" placeholder="2.99" />
+            <InputNumber class="form-control" id="productPromo" @bind-Value="product.PromotionalPrice" />
         </div>
         <div class="mb-3">
             <label for="productStock" class="form-label">Stock Level</label>
-            <InputNumber class="form-control" id="productStock" @bind-Value="product.StockLevel" placeholder="20" />
+            <InputNumber class="form-control" id="productStock" @bind-Value="product.StockLevel" />
         </div>
        <div class="mb-3">
-            <button class="btn btn-primary" type="submit" value="submit">Submit</button>
+            <button class="btn btn-primary" type="submit" value="submit">Submit Changes</button>
+            <button class="btn btn-danger" value="submit" href="/business/products/@product.BusinessName">Cancel</button>
        </div>
     </EditForm>
     }
@@ -62,35 +70,34 @@
 
 @code {
     [Parameter]
-    public Guid productId { get; set; } 
-    private ProductModel? product; //New product model to submit through the EditForm
-    private string? user; //Value for the User
+    public Guid? productId { get; set; } //Page parameter
+    private ProductModel? product; //Product to edit
 
     protected override void OnInitialized()
     {
-        user = auth.GetAuthenticationStateAsync().Result.User.Identity?.Name; //Get the current user
-        product = _context.Products?.Single(p => p.ProductID == productId);
+        product = _context.Products?.FirstOrDefault(x => x.ProductID == productId);
     }
 
     private async void SubmitProductChanges()
     {
+        //Submit Product Changes
         try
         {
-            _context.Products?.Update(product); //Add the new product
-            await _context.SaveChangesAsync(); //Save the product to the db
+            _context.Products?.Update(product);
+            await _context.SaveChangesAsync();
             var accepted = js.InvokeAsync<bool>("confirmChanges",
-                "Product Added!",
-                "You've successfully added a product!",
+                "Product Amended!",
+                "Your product changes have been saved!",
                 "success"); //Swal for declaring success in adding a business
-            nav.NavigateTo($"/business/products/{product.BusinessName}");
-        }  
+            nav.NavigateTo($"/business/products/{product?.BusinessName}");
+        }
         catch (Exception e)
         {
-             var accepted = js.InvokeAsync<bool>("confirmChanges",
+            var accepted = js.InvokeAsync<bool>("confirmChanges",
                     "Error",
-                    $"The changes could not be made to your product: {e.Message}",
-                    "error"); //Swal for declaring success in adding a business
+                    $"The product could not be edited: {e.Message}",
+                    "error"); //Swal for declaring error in the 
         }
-
     }
 }
+
