@@ -1,0 +1,27 @@
+﻿@using OnlineRetailPlatformDiss.Models;
+@using Microsoft.EntityFrameworkCore;
+@using Microsoft.Extensions.Logging;
+@inject OnlineRetailPlatformDiss.Data.ApplicationDbContext _context;
+@inject IJSRuntime js; //JS functionality to create a SweetAlert.
+
+
+@if(product is not null)
+{
+<div class="card flex-md-row mb-4 box-shadow h-md-250">
+        <div class="card-body d-flex flex-column align-items-start">
+            <h3 class="mb-0">
+            <a class="text-dark" href="#">@product.Product.ProductName</a>
+            </h3>
+            <div class="mb-1 text-muted">Quantity: @product.Quantity</div>
+            <div class="mb-1 text-muted">Unit Price: £@product.Product.ProductPrice</div>
+            <a href="#" class="btn alert-danger btn-sm">Remove</a>
+        </div>
+        <img class="card-img-right flex-auto d-none d-md-block" width="200" height="250" src="@product.Product.ImageUrl" alt="Card image cap">
+    </div>
+}
+
+
+@code {
+    [Parameter]
+    public ShoppingBasketProductModel? product { get; set; }
+}

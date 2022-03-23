@@ -2,8 +2,15 @@
 @using Microsoft.Extensions.Logging
 @inject OnlineRetailPlatformDiss.Data.ApplicationDbContext _context;
 
-<div class="text-center">
-    <input class="w-100" @bind-value="SearchText" placeholder="Search for a product" @oninput="@ShowProducts" />
+<div class="container justify-content-center p-2">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="input-group mb-3"> <input type="text" class="form-control input-text" name="SearchString" @bind-value="SearchText" placeholder="Search by description....">
+                <div class="input-group-append"> <input type="submit" class="btn btn-outline-warning btn-lg" value="Submit" @onclick="ShowProducts" /> </div>
+            </div>
+            @message
+        </div>
+    </div>
 </div>
 
 @if(!Products.Any())
@@ -18,7 +25,7 @@
 else
 {
     <div class="row pt-5 mt-3 pl-3">
-        @foreach (var product in FilteredProducts)
+        @foreach (var product in Products)
         {
         <div class="col-lg-4 d-flex align-items-center">
             <ProductCard product="product" />
@@ -30,19 +37,24 @@ else
 
 @code {
     public string? SearchText = "";
+    public string? message = "";
     public List<ProductModel>? Products;
     public List<ProductModel>? FilteredProducts;
 
     protected override void OnInitialized()
     {
         Products = _context.Products?.ToList();
-        FilteredProducts = Products; //This is always overriding the search field.
+        //FilteredProducts = Products; //This is always overriding the search field.
     }
 
     private void ShowProducts()
     {
-        //String value is needed here, if the field is empty, then the list should not be filtered...
-        FilteredProducts = _context.Products?.Where(x => x.ProductName.ToLower().Contains(SearchText.ToLower())).ToList();
+        //Searching for products by Title...
+        Products = _context.Products?.ToList(); //This will ensure that the list is reset before the products are searched for again
+        //Reassign the list to show products which only match the search criteria
+        Products = Products.Where(p => p.ProductName.ToLower().Contains(SearchText.ToLower())).ToList();
+        message = "Showing Products which contain: " + SearchText;
+        SearchText = ""; //Empty the search text field once assigned...
         base.StateHasChanged();
     }
 }

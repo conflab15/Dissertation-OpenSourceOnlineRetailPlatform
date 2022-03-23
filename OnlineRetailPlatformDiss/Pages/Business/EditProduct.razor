@@ -21,7 +21,7 @@
         </div>
     </div>
 
-    <!-- If the current user owns no businesses, display the message... -->
+    <!-- If the product isn't found... -->
     @if (product is null)
     {
         <div class="alert alert-danger" role="alert">
@@ -36,7 +36,7 @@
         <!--<ValidationSummary />-->
         <div class="mb-3">
             <label for="businessName" class="form-label">Business Name</label>
-            <label class="alert-warning">The product cannot be assigned to another business. Please create a new product for the correct business!</label>
+            <label class="alert-warning">The product cannot be assigned to another business. Please create a new product for the correct business!</label> <!-- Message because this field is disabled -->
             <InputText class="form-control" id="businessName" @bind-Value="product.BusinessName" disabled/>
 
         </div>
@@ -61,8 +61,8 @@
             <InputNumber class="form-control" id="productStock" @bind-Value="product.StockLevel" />
         </div>
        <div class="mb-3">
-            <button class="btn btn-primary" type="submit" value="submit">Submit Changes</button>
-            <button class="btn btn-danger" value="submit" href="/business/products/@product.BusinessName">Cancel</button>
+            <button class="btn btn-primary p-2" type="submit" value="submit">Submit Changes</button> 
+            <button class="btn btn-danger p-2" value="submit" href="/business/products/@product.BusinessName">Cancel</button>
        </div>
     </EditForm>
     }
@@ -75,7 +75,7 @@
 
     protected override void OnInitialized()
     {
-        product = _context.Products?.FirstOrDefault(x => x.ProductID == productId);
+        product = _context.Products?.FirstOrDefault(x => x.ProductID == productId); <!-- Finding the product to edit... -->
     }
 
     private async void SubmitProductChanges()
@@ -83,7 +83,7 @@
         //Submit Product Changes
         try
         {
-            _context.Products?.Update(product);
+            _context.Products?.Update(product); <!-- Updating product and saving changes... -->
             await _context.SaveChangesAsync();
             var accepted = js.InvokeAsync<bool>("confirmChanges",
                 "Product Amended!",

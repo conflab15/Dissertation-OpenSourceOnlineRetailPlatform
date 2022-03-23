@@ -2,9 +2,8 @@
 @using Microsoft.EntityFrameworkCore;
 @using Microsoft.Extensions.Logging;
 @inject OnlineRetailPlatformDiss.Data.ApplicationDbContext _context;
+@inject ShoppingBasketModel _shoppingBasket;
 @inject IJSRuntime js; //JS functionality to create a SweetAlert.
-
-
 
     @if(product is not null)
     {
@@ -53,11 +52,12 @@
     {
         try
         {
+            _shoppingBasket.AddToBasket(product, 1);
             var accepted = js.InvokeAsync<bool>("confirmChanges", "Added to Basket", $"{product.ProductName} has been added to your basket!", "success");
         }
-        catch
+        catch (Exception e)
         {
-            var accepted = js.InvokeAsync<bool>("confirmChanges", "Failed", "The product could not be added to your Basket...", "warning");
+            var accepted = js.InvokeAsync<bool>("confirmChanges", "Failed", $"The product could not be added to your Basket: {e.Message}", "warning");
         }
         
         StateHasChanged();

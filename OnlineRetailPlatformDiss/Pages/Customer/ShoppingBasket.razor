@@ -1,0 +1,59 @@
+﻿@using OnlineRetailPlatformDiss.Models;
+@inject OnlineRetailPlatformDiss.Data.ApplicationDbContext _context;
+@inject ShoppingBasketModel _shoppingBasket;
+@using Microsoft.Extensions.Logging
+@inject AuthenticationStateProvider auth;
+
+@page "/basket"
+
+<h2>Your Shopping Basket</h2>
+<h4>Here are the products in your shopping basket:</h4>
+
+@if(vm.ShoppingBasket.ShoppingBasketItems.Count == 0)
+{
+    <div class="alert alert-warning" role="alert">
+        <h4 class="alert alert-warning">Whoops!</h4>
+        <p>It looks like your shopping basket is empty!</p>
+        <p>You need at least one product in your basket to place an order!</p>
+        <hr>
+        <a class="btn btn-outline-light mb-0" href="">Shop for products</a>
+    </div>
+}
+else
+{
+    <!-- List of ShoppingBasketItems within the basket.... -->
+    @foreach (var product in vm.ShoppingBasket.ShoppingBasketItems)
+    {
+        <div>
+            <BasketProductCard product=product />
+        </div>
+    }
+}
+
+<div>
+    <p>Total: £@_shoppingBasket.GetShoppingBasketTotal().ToString()</p>
+</div>
+
+<div class="text-center">
+    <a class="btn btn-primary" name="checkout" asp-controller="Order" asp-action="Checkout">Proceed to Checkout</a>
+    <a class="btn btn-danger ms-3" name="emptyCart" asp-controller="ShoppingCart" asp-action="ClearCart">Empty Basket</a>
+</div>
+
+
+@code {
+    ShoppingBasketViewModel vm;
+
+    protected override void OnInitialized()
+    {
+        var items = _shoppingBasket.GetShoppingBasketProducts();
+        _shoppingBasket.ShoppingBasketItems = items;
+
+        vm = new ShoppingBasketViewModel
+            {
+                ShoppingBasket = _shoppingBasket,
+                ShoppingBasketTotal = _shoppingBasket.GetShoppingBasketTotal()
+            };
+    }
+
+    //Function to create an order?
+}
