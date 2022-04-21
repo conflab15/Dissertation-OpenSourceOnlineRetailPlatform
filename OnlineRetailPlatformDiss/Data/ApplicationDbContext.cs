@@ -7,6 +7,10 @@ namespace OnlineRetailPlatformDiss.Data
 {
     public class ApplicationDbContext : IdentityDbContext<UserModel>
     {
+        public ApplicationDbContext()
+        {
+        }
+
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
         {
@@ -16,7 +20,10 @@ namespace OnlineRetailPlatformDiss.Data
 
         public DbSet<ProductModel>? Products { get; set; }
 
-        public DbSet<ShoppingBasketProductModel> ShoppingBasketProducts { get; set;}
+        public DbSet<Baskets>? Baskets { get; set; }
+
+
+        //public DbSet<ShoppingBasketProductModel> ShoppingBasketProducts { get; set;}
 
     }
 }

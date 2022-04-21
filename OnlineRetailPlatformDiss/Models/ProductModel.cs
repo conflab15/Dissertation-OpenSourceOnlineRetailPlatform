@@ -12,8 +12,6 @@ namespace OnlineRetailPlatformDiss.Models
         public string? ProductDescription { get; set; }  
         [Required, Display(Name = "Price")]
         public decimal ProductPrice { get; set; }   
-        [Display(Name = "Promotional Price")]
-        public decimal PromotionalPrice { get; set; }
         [Required]
         public DateTime CreatedDate { get; set; } = DateTime.Now;
         [Required, Display(Name = "Business Name")]
