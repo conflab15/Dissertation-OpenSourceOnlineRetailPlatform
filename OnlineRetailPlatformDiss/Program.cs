@@ -4,6 +4,7 @@ using OnlineRetailPlatformDiss;
 using OnlineRetailPlatformDiss.Areas.Identity;
 using OnlineRetailPlatformDiss.Data;
 using OnlineRetailPlatformDiss.Models;
+using OnlineRetailPlatformDiss.Services;
 
 
 
@@ -19,7 +20,7 @@ builder.Services.AddDefaultIdentity<UserModel>(options => options.SignIn.Require
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 builder.Services.AddScoped<AuthenticationStateProvider, RevalidatingIdentityAuthenticationStateProvider<UserModel>>();
-builder.Services.AddScoped<ShoppingBasketModel>(); //Adding Shopping Basket Service here...
+builder.Services.AddScoped<ShoppingBasketService>(); //Adding Shopping Basket Service here...
 builder.Services.AddHttpClient();
 
 builder.Services.AddSession();

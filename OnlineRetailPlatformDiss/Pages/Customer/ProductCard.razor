@@ -1,8 +1,9 @@
 ﻿@using OnlineRetailPlatformDiss.Models;
 @using Microsoft.EntityFrameworkCore;
 @using Microsoft.Extensions.Logging;
+@using OnlineRetailPlatformDiss.Services;
 @inject OnlineRetailPlatformDiss.Data.ApplicationDbContext _context;
-@inject ShoppingBasketModel _shoppingBasket;
+@inject ShoppingBasketService basket;
 @inject IJSRuntime js; //JS functionality to create a SweetAlert.
 
     @if(product is not null)
@@ -19,14 +20,7 @@
         <div class="card-body">
             <h5 class="card-title text-center">@product.ProductName</h5>
             <p class="card-text text-center">@product.ProductDescription</p>
-            @if (product.PromotionalPrice.Equals(null))
-            {
-                <strike><p class="card-text">£@product.ProductPrice</p></strike><span><p class="card-text">£@product.PromotionalPrice</p></span>
-            }
-            else
-            {
-                <p class="card-text">@product.ProductPrice</p>
-            }
+            <p class="card-text">@product.ProductPrice</p>
             <a href="#" class="btn btn-primary">View</a>
                 @if(product.StockLevel <= 0)
                 {
@@ -52,7 +46,7 @@
     {
         try
         {
-            _shoppingBasket.AddToBasket(product, 1);
+            basket.AddToBasket(product);
             var accepted = js.InvokeAsync<bool>("confirmChanges", "Added to Basket", $"{product.ProductName} has been added to your basket!", "success");
         }
         catch (Exception e)

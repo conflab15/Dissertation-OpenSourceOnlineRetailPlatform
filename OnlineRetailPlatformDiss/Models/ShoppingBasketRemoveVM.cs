@@ -6,6 +6,6 @@
         public decimal BasketTotal { get; set; }
         public int BasketCount { get; set; }
         public int ProductCount { get; set; }
-        public int DeleteId { get; set; }
+        public Guid DeleteId { get; set; }
     }
 }
