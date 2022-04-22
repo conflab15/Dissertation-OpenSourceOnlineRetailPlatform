@@ -15,15 +15,15 @@ namespace OnlineRetailPlatformDiss.Services
             return await Task.FromResult(basket);
         }
 
-        //The Shopping Basket
+        //The Shopping Basket to return details to the view via the viewmodel
         public async Task<ShoppingBasketVM> shoppingBasket()
         {
-            var basket = await ShoppingBasketService.GetBasket();
+            var basket = await GetBasket();
 
             //Implementing ViewModel
             var vm = new ShoppingBasketVM
             {
-                BasketItems = await basket.getProducts()
+                BasketItems = await basket.GetBasketItems()
             };
             return vm; 
         }
@@ -35,7 +35,7 @@ namespace OnlineRetailPlatformDiss.Services
             ProductModel? productToAdd = await context.Products.SingleAsync(p => p.ProductID == id);
 
             //Add it to the Shopping Basket
-            var basket = await ShoppingBasketService.GetBasket();
+            var basket = await GetBasket();
             int count = await basket.AddToBasket(productToAdd);
 
             //ViewModel to present a message to the user
@@ -53,7 +53,7 @@ namespace OnlineRetailPlatformDiss.Services
         //Remove an item from the basket...
         public async Task<ShoppingBasketRemoveVM> RemoveFromBasket(Guid id)
         {
-            var basket = await ShoppingBasketService.GetBasket();
+            var basket = await GetBasket();
 
             //Get Item name to display within the message...
             string? productName = context.Products?.Single(p => p.ProductID == id).ProductName;
@@ -79,20 +79,22 @@ namespace OnlineRetailPlatformDiss.Services
 
         public async Task<int> BasketCount()
         {
-            var basket = await ShoppingBasketService.GetBasket();
+            var basket = await GetBasket();
             return await basket.GetCount();
         }
 
         public async Task<int> AddToBasket(ProductModel product)
         {
-            Baskets? basketItem = await context.Baskets.SingleOrDefaultAsync(
+            BasketModel? basketItem = null; //Allows the function to run if it cannot find a pre-existing basket...
+
+            basketItem = await context.Baskets.SingleOrDefaultAsync(
                 b => b.BasketId == BasketId
                 && b.ProductId == product.ProductID);
 
             if (basketItem == null)
             {
                 //Create a Basket Item if it doesn't exist... If it does exist, increase the quantity by 1
-                basketItem = new Baskets
+                basketItem = new BasketModel
                 {
                     ProductId = product.ProductID,
                     BasketId = BasketId,
@@ -116,7 +118,7 @@ namespace OnlineRetailPlatformDiss.Services
         public async Task<int> RemoveFromBasketItem(Guid id)
         {
             //Get the Basket
-            Baskets basketItem = await context.Baskets.SingleAsync(
+            BasketModel basketItem = await context.Baskets.SingleAsync(
                 b => b.BasketId == BasketId
                      && b.ProductId == id);
 
@@ -141,7 +143,7 @@ namespace OnlineRetailPlatformDiss.Services
         //Empty everything from basket...
         public async Task EmptyCart()
         {
-            IQueryable<Baskets>? basketItems = context.Baskets?.Where(
+            IQueryable<BasketModel>? basketItems = context.Baskets?.Where(
                 b => b.BasketId == BasketId);
 
             if (basketItems != null)
@@ -157,7 +159,7 @@ namespace OnlineRetailPlatformDiss.Services
 
         //Tasks
         //Get Cart Items
-        public async Task<List<Baskets>> GetBasketItems()
+        public async Task<List<BasketModel>> GetBasketItems()
         {
             return await context.Baskets.Include("Product").Where(
                 b => b.BasketId == BasketId).ToListAsync();

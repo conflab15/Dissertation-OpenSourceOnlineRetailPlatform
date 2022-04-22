@@ -2,16 +2,15 @@
 @inject OnlineRetailPlatformDiss.Data.ApplicationDbContext _context;
 @using Microsoft.Extensions.Logging
 @inject AuthenticationStateProvider auth;
-@inject ILogger<ViewBusiness> Logger
+@inject ILogger<OwnerViewBusiness> Logger
 @attribute [Authorize]
 
-<!-- This needs to be removed in the future to act as a component than an individual page -->
 @page "/business/view"
 
 <div class="container">
     <div class="row pt-3">
         <div class="col text-center align-items-center">
-            <h1 class="display-4 fw-bold">My Businesses</h1>
+            <h1 class="display-4 fw-bold">Businesses managed by: @manager</h1>
         </div>
     </div>
 </div>
@@ -19,7 +18,18 @@
 <div class="divider" />
 
 <div class="container">
-    @foreach (var business in businesses)
+    @if (businesses == null)
+    {
+    <div class="alert alert-warning d-flex align-items-center" role="alert">
+    <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Warning:"><use xlink:href="#exclamation-triangle-fill"/></svg>
+        <div>
+            Hmmm... it looks like @manager does not manage any businesses...
+        </div>
+    </div> 
+    }
+    else
+    {
+        @foreach (var business in businesses)
     {
         <div class="row pt-2">
             <BusinessListItem business="@business" />
@@ -27,16 +37,19 @@
             <br>
         </div>
     }
+    }
+    
 </div>
 
 
 
 @code {
     List<BusinessAccountModel>? businesses;
+    string? manager;
 
     protected override void OnInitialized()
     {
-        string manager = auth.GetAuthenticationStateAsync().Result.User.Identity.Name;
+        manager = auth.GetAuthenticationStateAsync().Result.User.Identity.Name;
         businesses = _context.BusinessAccount?.Where(x => x.ManagerID == manager).ToList();
     }
 }

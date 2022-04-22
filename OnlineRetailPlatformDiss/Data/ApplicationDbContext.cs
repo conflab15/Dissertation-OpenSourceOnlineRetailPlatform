@@ -20,10 +20,17 @@ namespace OnlineRetailPlatformDiss.Data
 
         public DbSet<ProductModel>? Products { get; set; }
 
-        public DbSet<Baskets>? Baskets { get; set; }
+        public DbSet<BasketModel>? Baskets { get; set; }
 
-
-        //public DbSet<ShoppingBasketProductModel> ShoppingBasketProducts { get; set;}
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            if (!optionsBuilder.IsConfigured)
+            {
+                //WARNING: Sensitive Data is potentially being exposed here... 
+                //This should ideally be moved out of here, or stored within a secret and accessed using that!
+                optionsBuilder.UseSqlServer("Server=(localdb)\\mssqllocaldb;Database=aspnet-OnlineRetailPlatformDiss-32E64638-FAD9-49BB-A45C-39BA988FBBF2;Trusted_Connection=True;MultipleActiveResultSets=true");
+            }
+        }
 
     }
 }

@@ -1,0 +1,37 @@
+﻿@using OnlineRetailPlatformDiss.Models
+@using OnlineRetailPlatformDiss.Services
+@inject ShoppingBasketService basket
+
+@attribute [Authorize]
+
+@page "/ShoppingBasket"
+
+<h3>Your Shopping Basket</h3>
+
+@if (basketVM?.BasketItems == null)
+{
+    <div class="alert alert-warning d-flex align-items-center" role="alert">
+      <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Warning:"><use xlink:href="#exclamation-triangle-fill"/></svg>
+      <div>
+        It looks like you haven't added any products to your basket! Please add something!
+      </div>
+    </div>
+}
+else
+{
+    @foreach(var basket in basketVM.BasketItems)
+    {
+        <BasketProductCard basket=basket/>
+    }
+}
+
+@code 
+{
+    ShoppingBasketVM? basketVM;
+
+    //Get the Basket when the page is initialised
+    protected override async Task OnInitializedAsync()
+    {
+        basketVM = await basket.shoppingBasket();
+    }
+}

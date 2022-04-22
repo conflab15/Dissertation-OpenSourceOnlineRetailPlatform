@@ -159,6 +159,33 @@ namespace OnlineRetailPlatformDiss.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("OnlineRetailPlatformDiss.Models.BasketModel", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<string>("BasketId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Count")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("DateCreated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("ProductId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProductId");
+
+                    b.ToTable("Baskets");
+                });
+
             modelBuilder.Entity("OnlineRetailPlatformDiss.Models.BusinessAccountModel", b =>
                 {
                     b.Property<Guid>("Id")
@@ -242,9 +269,6 @@ namespace OnlineRetailPlatformDiss.Migrations
                         .HasColumnType("nvarchar(50)");
 
                     b.Property<decimal>("ProductPrice")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<decimal>("PromotionalPrice")
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<int>("StockLevel")
@@ -405,6 +429,17 @@ namespace OnlineRetailPlatformDiss.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("OnlineRetailPlatformDiss.Models.BasketModel", b =>
+                {
+                    b.HasOne("OnlineRetailPlatformDiss.Models.ProductModel", "Product")
+                        .WithMany()
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Product");
                 });
 #pragma warning restore 612, 618
         }

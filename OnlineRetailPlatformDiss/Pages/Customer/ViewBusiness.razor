@@ -18,17 +18,29 @@
 <div class="divider" />
 
 <div class="container">
-    @foreach (var business in businesses)
+    @if (businesses == null)
     {
+        <div class="alert alert-warning d-flex align-items-center" role="alert">
+          <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Warning:"><use xlink:href="#exclamation-triangle-fill"/></svg>
+          <div>
+            Hmmm, we couldn't find any businesses to show you...
+          </div>
+        </div>
+    }
+    else
+    {
+        @foreach (var business in businesses)
+        {
         <div class="row pt-2">
-            <BusinessCustomerListComponent business="@business" />
+            <BusinessDetailsComponent business="@business" />
             <div class="divider" />
             <br>
         </div>
+        }
     }
+
+    
 </div>
-
-
 
 @code {
     List<BusinessAccountModel>? businesses;

@@ -5,23 +5,23 @@
 @inject IJSRuntime js; //JS functionality to create a SweetAlert.
 
 
-@if(product is not null)
+@if(basket is not null)
 {
 <div class="card flex-md-row mb-4 box-shadow h-md-250">
         <div class="card-body d-flex flex-column align-items-start">
             <h3 class="mb-0">
-            <a class="text-dark" href="#">@product.Product.ProductName</a>
+            <a class="text-dark" href="#">@basket.Product?.ProductName</a>
             </h3>
-            <div class="mb-1 text-muted">Quantity: @product.Quantity</div>
-            <div class="mb-1 text-muted">Unit Price: £@product.Product.ProductPrice</div>
+            <div class="mb-1 text-muted">Quantity: @basket.Count</div>
+            <div class="mb-1 text-muted">Unit Price: £@basket.Product?.ProductPrice</div>
             <a href="#" class="btn alert-danger btn-sm">Remove</a>
         </div>
-        <img class="card-img-right flex-auto d-none d-md-block" width="200" height="250" src="@product.Product.ImageUrl" alt="Card image cap">
+        <img class="card-img-right flex-auto d-none d-md-block" width="200" height="250" src="@basket.Product?.ImageUrl" alt="Card image cap">
     </div>
 }
 
 
 @code {
     [Parameter]
-    public ShoppingBasketProductModel? product { get; set; }
+    public BasketModel? basket { get; set; }
 }

@@ -1,6 +1,6 @@
 ﻿namespace OnlineRetailPlatformDiss.Models
 {
-    public class Baskets
+    public class BasketModel
     {
         public int Id { get; set; }
         public string? BasketId { get; set; }

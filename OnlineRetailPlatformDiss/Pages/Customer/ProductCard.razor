@@ -6,6 +6,8 @@
 @inject ShoppingBasketService basket;
 @inject IJSRuntime js; //JS functionality to create a SweetAlert.
 
+<!-- Product Card to be displayed within the Index of the application... -->
+
     @if(product is not null)
     {
         <div class="card" id="productCard">
@@ -42,11 +44,11 @@
     public ProductModel? product { get; set; }
 
     //Add To Basket Method...
-    private void addToBasket(ProductModel product)
+    private async void addToBasket(ProductModel product)
     {
         try
         {
-            basket.AddToBasket(product);
+            await basket.AddToBasket(product);
             var accepted = js.InvokeAsync<bool>("confirmChanges", "Added to Basket", $"{product.ProductName} has been added to your basket!", "success");
         }
         catch (Exception e)

@@ -20,14 +20,7 @@
         <div class="card-body">
             <h5 class="card-title text-center">@product.ProductName</h5>
             <p class="card-text text-center">@product.ProductDescription</p>
-            @if (product.PromotionalPrice.Equals(null))
-            {
-                <strike><p class="card-text">£@product.ProductPrice</p></strike><span><p class="card-text">£@product.PromotionalPrice</p></span>
-            }
-            else
-            {
-                <p class="card-text">@product.ProductPrice</p>
-            }
+            <p class="card-text">@product.ProductPrice</p>
             <a href="#" class="btn btn-primary">View</a>
                 @if(product.StockLevel <= 0)
                 {
