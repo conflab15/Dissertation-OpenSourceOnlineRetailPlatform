@@ -1,17 +1,29 @@
 ﻿@using OnlineRetailPlatformDiss.Pages.Customer
+@using OnlineRetailPlatformDiss.Pages.Business
 @page "/"
+@attribute [Authorize]
+@inject OnlineRetailPlatformDiss.Data.ApplicationDbContext _context;
+@inject AuthenticationStateProvider auth;
 
 <PageTitle>Welcome</PageTitle>
 
+@if (BusinessCount != 0)
+{
+    <BusinessManagerOptions UserEmail=@user />
+}
+
 <SearchProducts />
 
-<div class="text-center pt-4">
-    <h1>Business Manager Options</h1>
-    <a class="btn btn-primary" href="/product/create">Create Product</a>
+@code 
+{
+    public int BusinessCount { get; set; }
+    public string? user { get; set; }
 
-    <a class="btn btn-primary" href="/business/create">Create Business</a>
-
-    <a class="btn btn-primary" href="/business/view">View My Businesses</a>
-</div>
+    protected override void OnInitialized()
+    {
+        user =  auth.GetAuthenticationStateAsync().Result.User.Identity?.Name; //Get the current user
+        BusinessCount = _context.BusinessAccount.Where(x => x.ManagerID == user).Count();
+    }
+}
 
 

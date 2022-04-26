@@ -7,6 +7,7 @@
 <!-- This needs to be removed in the future to act as a component than an individual page -->
 @page "/customer/business/view"
 
+<!-- Page Header -->
 <div class="container">
     <div class="row pt-3">
         <div class="col text-center align-items-center">
@@ -17,6 +18,22 @@
 
 <div class="divider" />
 
+<!-- Search Box to search by town/location... -->
+<div class="container justify-content-center p-2">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="input-group mb-3"> <input type="text" class="form-control input-text" name="SearchString" @bind-value="SearchText" placeholder="Search by town....">
+                <div class="input-group-append"> <input type="submit" class="btn btn-outline-warning btn-lg" value="Submit" @onclick="ShowBusinesses" /> </div>
+            </div>
+            @message
+        </div>
+    </div>
+</div>
+
+
+
+
+<!-- List Businesses... -->
 <div class="container">
     @if (businesses == null)
     {
@@ -44,9 +61,24 @@
 
 @code {
     List<BusinessAccountModel>? businesses;
+    List<BusinessAccountModel>? businessSearch;
+    public string? message { get; set; }
+    public string? SearchText { get; set; }
 
     protected override void OnInitialized()
     {
         businesses = _context.BusinessAccount?.ToList();
+    }
+
+    private void ShowBusinesses()
+    {
+        //Resetting the list, which ensures search results are not restricted to the results of the previous search
+        businesses = _context.BusinessAccount?.ToList();
+        //Filter the list to show results which are 
+        businessSearch = _context.BusinessAccount?.Where(b => b.Town.ToLower().Contains(SearchText.ToLower())).ToList();
+        businesses = businessSearch;
+        message = "Showing Businesses within: '" + SearchText + "'";
+
+
     }
 }
