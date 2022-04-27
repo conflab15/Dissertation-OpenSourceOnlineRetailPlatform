@@ -113,9 +113,6 @@
 
                 Message = $"{selectedImages.Count} image(s) uploaded"; //Updating the message within the form...
 
-                //Value is created for GoogleMaps API
-                businessAccount.MapsAddr = String.Concat(businessAccount.AddressLine1 + " " + businessAccount.AddressLine2 + " " + businessAccount.Town + " " + businessAccount.PostCode);
-
                 _context.BusinessAccount?.AddAsync(businessAccount);
                 await _context.SaveChangesAsync();
 
@@ -125,8 +122,6 @@
                     "success"); //Swal for declaring success in adding a business
                 nav.NavigateTo("/business/view");
             }
-
-            
         }  
         catch
         {

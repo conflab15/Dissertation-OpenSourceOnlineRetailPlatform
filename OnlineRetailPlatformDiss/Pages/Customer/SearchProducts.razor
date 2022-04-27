@@ -2,13 +2,26 @@
 @using Microsoft.Extensions.Logging
 @inject OnlineRetailPlatformDiss.Data.ApplicationDbContext _context;
 
-<div class="container justify-content-center p-2">
+<div class="container justify-content-center p-2" id="productSearch">
     <div class="row">
         <div class="col-md-12">
             <div class="input-group mb-3"> <input type="text" class="form-control input-text" name="SearchString" @bind-value="SearchText" placeholder="Search by description....">
-                <div class="input-group-append"> <input type="submit" class="btn btn-outline-warning btn-lg" value="Submit" @onclick="ShowProducts" /> </div>
+                <div class="input-group-append"> <input type="submit" class="btn btn-outline-primary btn-lg" value="Search" @onclick="ShowProducts" /> </div>
             </div>
-            @message
+        </div>
+    </div>
+    <div class="row text-center p-2">
+        <div class="col-2">
+            <h2>Sort by:</h2>
+        </div>
+        <div class="col-3">
+            <a class="btn btn-outline-primary" @onclick='(() => FilterProducts("Ascending"))'>Price (Ascending)</a>
+        </div>
+        <div class="col-3">
+            <a class="btn btn-outline-primary" @onclick='(() => FilterProducts("AZ"))'>Title (A-Z)</a>
+        </div>
+        <div class="col-4">
+            <h2>@message</h2>
         </div>
     </div>
 </div>
@@ -43,17 +56,38 @@ else
     protected override void OnInitialized()
     {
         Products = _context.Products?.ToList();
-        //FilteredProducts = Products; //This is always overriding the search field.
+        //FilteredProducts = Products; //Unnecessary Value assignment
     }
 
+    //Searching Products by the title
     private void ShowProducts()
     {
         //Searching for products by Title...
         Products = _context.Products?.ToList(); //This will ensure that the list is reset before the products are searched for again
-        //Reassign the list to show products which only match the search criteria
+                                                //Reassign the list to show products which only match the search criteria
         Products = Products.Where(p => p.ProductName.ToLower().Contains(SearchText?.ToLower())).ToList();
         message = "Showing Products which contain: '" + SearchText + "'";
         SearchText = ""; //Empty the search text field once assigned...
+        base.StateHasChanged();
+    }
+
+    //Filtering products by different parameters...
+    private void FilterProducts(string parameter)
+    {
+        Products = _context.Products?.ToList(); //Resetting the List to ensure the list is correctly sorted.
+
+        //Switch Case statement, provides the ability to easily add more sorting options 
+        switch (parameter)
+        {
+            case "Ascending":
+                Products = Products.OrderBy(p => p.ProductPrice).ToList(); //Order by Price, in ascending order
+                message = "Sorted by Price (Ascending)";
+                break;
+            case "AZ":
+                Products = Products.OrderBy(p => p.ProductName).ToList();
+                message = "Sorted by Title (A-Z)";
+                break;
+        }
         base.StateHasChanged();
     }
 }

@@ -81,6 +81,10 @@ a, .btn-link {
     height: auto;
 }
 
+#productSearch {
+    background-color: #DEE7E7;
+}
+
 td {
     text-align: center;
     vertical-align: middle;
