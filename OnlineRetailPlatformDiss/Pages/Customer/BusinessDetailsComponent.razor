@@ -19,8 +19,11 @@
 
 
     <div class="row pt-3">
-        <div class="col align-items-center justify-content-center"> <!-- Google Maps of the Business -->
-            <p>*map goes here*</p>
+        <div class="col align-items-center justify-content-center"> <!-- Address Details -->
+            <p>@business.AddressLine1</p>
+            <p>@business.AddressLine2</p>
+            <b>@business.Town</b>
+            <p>@business.PostCode</p>
         </div>
         <div class="col"> <!-- Business Details -->
             <h1 class="display-4 fw-bold">@business.BusinessName</h1>

@@ -1,0 +1,93 @@
+﻿@using OnlineRetailPlatformDiss.Models;
+@inject OnlineRetailPlatformDiss.Data.ApplicationDbContext _context;
+@inject IJSRuntime js;
+@inject NavigationManager nav;
+
+@attribute [Authorize] 
+@page "/business/edit/{BusinessId:guid}"
+
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <h1>Edit Details for Business: @business?.BusinessName</h1>
+        </div>
+    </div>
+
+    <!-- If the Business cannot be found... -->
+    @if(business is null)
+    {
+         <div class="alert alert-danger" role="alert">
+            <p>Uh Oh! We couldn't find the product...' </p>
+            <button class="btn btn-primary" href="">Back</button> <!-- Button needs a route -->
+        </div>
+    }
+    else
+    {
+        <EditForm Model="@business" OnSubmit="@SubmitBusinessChanges">
+        <DataAnnotationsValidator />
+        <div class="mb-3">
+            <label for="businessName" class="form-label">Business Name</label>
+            <InputText class="form-control" id="businessName" @bind-Value="business.BusinessName"></InputText>
+        </div>
+        <div class="mb-3">
+            <label for="businessDesc" class="form-label">Business Description</label>
+            <InputText class="form-control" id="businessDesc" @bind-Value="business.BusinessDesc"></InputText>
+        </div>
+        <div class="mb-3">
+            <label for="businessManager" class="form-label">Business Manager</label>
+            <label class="alert-warning">This field cannot be changed, as this is tied to your user account.</label>
+            <InputText class="form-control disabled" id="businessManager" @bind-Value="business.ManagerID"></InputText>
+        </div>
+        <div class="mb-3">
+            <label for="businessAddr1" class="form-label">Address Line 1</label>
+            <InputText class="form-control" id="businessAddr1" @bind-Value="business.AddressLine1"></InputText>
+        </div>
+        <div class="mb-3">
+            <label for="businessAddr2" class="form-label">Address Line 2</label>
+            <InputText class="form-control" id="businessAddr2" @bind-Value="business.AddressLine2"></InputText>
+        </div>
+        <div class="mb-3">
+            <label for="businessTown" class="form-label">Business Town</label>
+            <InputText class="form-control" id="businessTown" @bind-Value="business.Town"></InputText>
+        </div>
+        <div class="mb-3">
+            <label for="businessPostcode" class="form-label">Business Post Code</label>
+            <InputText class="form-control" id="businessPostcode" @bind-Value="business.PostCode"></InputText>
+        </div>
+        </EditForm>
+    }
+</div>
+
+@code 
+{
+    [Parameter]
+    public Guid? BusinessId { get; set; } //Page Parameter
+    public BusinessAccountModel? business { get; set; }
+
+    protected override void OnInitialized()
+    {
+        business = _context.BusinessAccount.FirstOrDefault(x => x.Id == BusinessId);
+    }
+
+    private async void SubmitBusinessChanges()
+    {
+        //Submit Business Changes
+        try
+        {
+            _context.BusinessAccount?.Update(business);
+            await _context.SaveChangesAsync();
+            var accepted = js.InvokeAsync<bool>("confirmChanges",
+                "Business Amended!",
+                "Your product changes have been saved!",
+                "success"); //Swal for declaring success in adding a business
+            nav.NavigateTo("/business/view");
+        }
+        catch (Exception e)
+        {
+            await js.InvokeAsync<bool>("confirmChanges",
+                    "Error",
+                    $"The Business could not be edited: {e.Message}",
+                    "error"); //Swal for declaring errors
+        }
+    }
+}
