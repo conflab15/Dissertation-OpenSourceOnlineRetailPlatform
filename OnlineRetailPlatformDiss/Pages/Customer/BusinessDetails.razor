@@ -3,44 +3,48 @@
 @using Microsoft.Extensions.Logging
 @inject AuthenticationStateProvider auth;
 
-<!-- No Auth needed as this information is publically visible to a potential Customer -->
-<!-- This needs to be removed in the future to act as a component than an individual page -->
 @page "/customer/business/{businessName}"
 
 <!-- Business Details -->
-<div class="container">
-    <div class="px-4 pt-3 my-5 mt-2 text-center">
-        <div class="overflow-hidden" style="max-height: 30vh;">
-            <div class="container px-5">
-            @if(Business.BannerUrl == null)
-            {
-                <img src="/images/business/placeholderimg.jpg" class="img-fluid border rounded-3 shadow-lg mb-4 pb-2" alt="Placeholder Image" width="700" height="500" loading="lazy">
-            }
-            else
-            {
-                <img src="@Business.BannerUrl" class="img-fluid border rounded-3 shadow-lg mb-4 pb-2" alt="Business Image" width="700" height="500" loading="lazy">
-            }
-            </div>
-        </div>
-
-
-        <div class="row">
-            <div class="col"> <!-- Google Maps of the Business -->
-                <p>*map goes here*</p>
-            </div>
-            <div class="col"> <!-- Business Details -->
-                <h1 class="display-4 fw-bold">@Business.BusinessName</h1>
-                <div class="col-lg-6 mx-auto">
-                  <p class="lead mb-4">@Business.BusinessDesc</p>
-                    <div class="d-grid gap-2 d-sm-flex justify-content-sm-center mb-5">
-                        <a class="btn btn-outline-secondary btn-lg px-4 disabled">Button</a>
-                    </div>
-                </div>
-            </div>
+<div class="container text-center">
+    <div class="overflow-hidden" style="max-height: 50vh;">
+        <div class="container">
+        @if(Business?.BannerUrl is null)
+        {
+            <img src="/images/business/placeholderimg.jpg" class="img-fluid border rounded-3 shadow-lg mb-4 pb-2" alt="Placeholder Image" width="700" height="500" loading="lazy">
+        }
+        else
+        {
+            <img src="@Business.BannerUrl" class="img-fluid border rounded-3 shadow-lg mb-4 pb-2" alt="Business Image" width="700" height="500" loading="lazy">
+        }
         </div>
     </div>
 
-<!-- List of Products sold by the business -->
+    <div class="row pb-3">
+        <h1 class="pb-3">@Business?.BusinessName</h1>
+        <h2 class="pb-2">@Business?.BusinessDesc</h2>
+    </div>
+    <div class="divider" />
+
+    <div class="row pt-3">
+         <div class="col-6 align-items-center justify-content-center"> <!-- Address Details -->
+            <h2 class="text-decoration-underline">Address</h2>
+            <p>@Business?.AddressLine1</p>
+            <p>@Business?.AddressLine2</p>
+            <b>@Business?.Town</b>
+            <p>@Business?.PostCode</p>
+        </div>
+        <div class="col-6">
+            <h2 class="text-decoration-underline">Opening Hours</h2> <!-- Opening Hours to be added -->
+        </div>
+    </div>
+
+    <!-- Listing all products sold by the business-->
+    <div class="divider" />
+
+    <div class="row pt-3">
+        <h1>Products from @Business?.BusinessName</h1>
+    </div>
 
     @if(!Products.Any())
     {
@@ -53,7 +57,7 @@
     }
     else
     {
-    <div class="row pt-5 mt-3 pl-3">
+    <div class="row pt-2 mt-3 pl-3">
         @foreach (var product in Products)
         {
         <div class="col-lg-4 d-flex align-items-center">
@@ -61,7 +65,7 @@
         </div>
         }
     </div>
-}
+    }
 </div>
 
 @code {
