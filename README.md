@@ -8,6 +8,13 @@ Customers are able to register an account, and browse products on the website.
 # Features to implement:
 As this assignment is ongoing, I have more features to implement:
 - Shopping Basket Functionality
-- Checkout and Ordering - Ideally, a payment provider, such as Stripe will be implemented to take payments
+- Checkout and Ordering - Ideally, a payment provider, such as Stripe, will be implemented to take payments
 - Order Management
-- Role and User Management - Only business owners will be able to access functionality for business and product management
+- Searching for Products by Business Location
+
+# Potential Extra Functionality
+- Multiple Images for products
+- Product Reviews
+- Chat Bot for Customer Service related queries
+- Order Status
+
