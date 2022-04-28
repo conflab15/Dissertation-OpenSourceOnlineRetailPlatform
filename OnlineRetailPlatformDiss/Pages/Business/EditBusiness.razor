@@ -56,9 +56,11 @@
             </div>
             <div class="mb-3">
                 <button class="btn btn-primary p-2" type="submit" value="submit">Submit Changes</button> 
-                <button class="btn btn-danger p-2" value="submit" href="/business/view">Cancel</button>
            </div>
         </EditForm>
+        <div class="mb-3">
+            <a class="btn btn-danger p-2" href="/business/view">Cancel</a>
+        </div>
     }
 </div>
 
@@ -88,7 +90,7 @@
         }
         catch (Exception e)
         {
-            await js.InvokeAsync<bool>("confirmChanges",
+            await js.InvokeVoidAsync("confirmChanges",
                     "Error",
                     $"The Business could not be edited: {e.Message}",
                     "error"); //Swal for declaring errors
