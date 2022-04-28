@@ -5,6 +5,12 @@ The solution provides business owners with a login to create their own business 
 Business owners are able to use CRUD functionality on their products and businesses to make amendments.
 Customers are able to register an account, and browse products on the website.
 
+# Features of the application:
+- CRUD Functionality for Businesses and Products
+- Searching for Products, and filtering by Price and Title
+- Searching for Businesses by town, and viewing these details, and products sold by the business
+- 
+
 # Features to implement:
 As this assignment is ongoing, I have more features to implement:
 - Shopping Basket Functionality
