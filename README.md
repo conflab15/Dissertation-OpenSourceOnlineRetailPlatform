@@ -9,7 +9,7 @@ Customers are able to register an account, and browse products on the website.
 - CRUD Functionality for Businesses and Products
 - Searching for Products, and filtering by Price and Title
 - Searching for Businesses by town, and viewing these details, and products sold by the business
-- 
+- Quickly amended stock levels of products within the business products list
 
 # Features to implement:
 As this assignment is ongoing, I have more features to implement:
