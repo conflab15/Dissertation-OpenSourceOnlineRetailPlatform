@@ -2,7 +2,7 @@
 @using Microsoft.Extensions.Logging
 @inject OnlineRetailPlatformDiss.Data.ApplicationDbContext _context;
 
-<div class="container justify-content-center p-2" id="productSearch">
+<div class="container justify-content-center pt-2 pb-2" id="productSearch">
     <div class="row">
         <div class="col-md-12">
             <div class="input-group mb-3"> <input type="text" class="form-control input-text" name="SearchString" @bind-value="SearchText" placeholder="Search by description....">
@@ -37,7 +37,7 @@
 }
 else
 {
-    <div class="row pt-5 mt-3 pl-3">
+    <div class="row pt-5 mt-3 pl-3 bg-light">
         @foreach (var product in Products)
         {
         <div class="col-lg-4 d-flex align-items-center">
@@ -66,7 +66,7 @@ else
         Products = _context.Products?.ToList(); //This will ensure that the list is reset before the products are searched for again
                                                 //Reassign the list to show products which only match the search criteria
         Products = Products.Where(p => p.ProductName.ToLower().Contains(SearchText?.ToLower())).ToList();
-        message = "Showing Products which contain: '" + SearchText + "'";
+        message = "Search Criteria: '" + SearchText + "'";
         SearchText = ""; //Empty the search text field once assigned...
         base.StateHasChanged();
     }

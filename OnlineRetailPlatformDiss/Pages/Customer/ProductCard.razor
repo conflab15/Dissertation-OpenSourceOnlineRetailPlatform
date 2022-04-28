@@ -6,39 +6,41 @@
 @inject ShoppingBasketService basket;
 @inject IJSRuntime js; //JS functionality to create a SweetAlert.
 
-<!-- Product Card to be displayed within the Index of the application... -->
+<!-- Product Card (Customer) to be displayed within the Index of the application... -->
 
     @if(product is not null)
     {
-        <div class="card" id="productCard">
-        @if(product.ImageUrl == null)
-        {
-            <img class="card-img-top m-2" src="/images/products/noimageplaceholder.jpg" alt="Placeholder Image" />
-        }
-        else
-        {
-            <img class="card-img-top m-2" src="@product.ImageUrl" alt="Product Image">
-        }
-        <div class="card-body">
-            <h5 class="card-title text-center">@product.ProductName</h5>
-            <p class="card-text text-center">@product.ProductDescription</p>
-            <p class="card-text">@product.ProductPrice</p>
-            <a href="#" class="btn btn-primary">View</a>
-                @if(product.StockLevel <= 0)
-                {
-                    <span class="b-1"><a class="btn btn-danger disabled">Out of Stock</a></span>
-                
-                }
-                else
-                {
-                    <span class="b-1"><a class="btn btn-success" @onclick="(() => addToBasket(product))">Buy</a></span>
-                }          
+        <div class="card mb-4 shadow-sm" id="productCard">
+            @if(product.ImageUrl == null)
+            {
+                <img class="card-img-top mb-1 p-1" src="/images/products/noimageplaceholder.jpg" alt="Placeholder Image" />
+            }
+            else
+            {
+                <img class="card-img-top mb-1 p-1" src="@product.ImageUrl" alt="Product Image">
+            }
+            <div class="card-body">
+                <h1 class="card-title">@product.ProductName</h1>
+                <p class="card-text">@product.ProductDescription</p>
+                <p class="card-text pt-1">Sold by: @product.BusinessName</p>
+                <div class="d-flex justify-content-between align-items-center">
+                    <div class="btn-group">
+                        <a class="btn btn-sm btn-outline-secondary" href="#">View</a>
+                        @if (product.StockLevel <= 0)
+                        {
+                            <a class="btn btn-sm btn-outline-danger disabled">Out of Stock</a>
+                        }
+                        else
+                        {
+                            <a class="btn btn-sm btn-outline-primary" @onclick="(() => addToBasket(product))">Buy</a>
+                        }
+                    </div>
+                    <p class="text-muted pt-3">£@product.ProductPrice</p>
+                </div>
+            </div>
         </div>
-    </div>
     }
-
     
-
 @code {
     [Parameter]
     public ProductModel? product { get; set; }
@@ -49,7 +51,7 @@
         try
         {
             await basket.AddToBasket(product);
-            var accepted = js.InvokeAsync<bool>("confirmChanges", "Added to Basket", $"{product.ProductName} has been added to your basket!", "success");
+            var accepted = js.InvokeAsync<bool>("confirmChanges", "Added to Basket", $"1 x {product.ProductName} has been added to your basket!", "success");
         }
         catch (Exception e)
         {
