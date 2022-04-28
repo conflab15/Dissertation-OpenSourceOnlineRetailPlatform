@@ -11,9 +11,9 @@
 <!-- This needs to be removed in the future to act as a component than an individual page -->
 @page "/business/products/{businessName}"
 
-<div class="container p-3">
+<div class="container p-3 text-center">
 
-    <h1 class="display-4 fw-bold mb-3">@businessName : Products</h1>
+    <h1 class="display-4 mb-3">Products for: @businessName</h1>
 
     @if(products is not null)
     {
@@ -24,7 +24,8 @@
             <tr>
                 <th scope="col">Product Image</th>
                 <th scope="col">Product Name</th>
-                <th scope="col">Product Description</th>
+                <th scope="col">Stock Level</th>
+                <th scope="col">Add Stock</th>
                 <th scope="col">Options</th>
             </tr>
             </thead>
@@ -35,16 +36,25 @@
                         @if(product.ImageUrl == null)
                         {
                             //No image placeholder
-                            <td><image src="/images/products/noimageplaceholder.jpg" id="productListImg" class="img-thumbnail img-responsive w-15" alt="Product Image Placeholder" /></td>
+                            <td><image class="img w-15" src="/images/products/noimageplaceholder.jpg" alt="Product Image Placeholder" /></td>
                             
                         }
                         else
                         {
                             //Show the image
-                            <td><image src="@product.ImageUrl" id="productListImg" class="img-thumbnail img-responsive w-15" alt="Product Image" /></td>
+                            <td><image class="img w-15" src="@product.ImageUrl" alt="Product Image" /></td>
                         }
                         <td>@product.ProductName</td>
-                        <td>@product.ProductDescription</td>
+                        <td>@product.StockLevel</td>
+                        <!-- Input field with button to amend the stock level of the product -->
+                        <td>
+                            <div class="input-group">
+                                <input type="number" class="form-control input-value" @bind-value="amount" placeholder="Enter total units to add..."/>
+                                <div class="input-group-append"> <input type="submit" class="btn btn-outline-primary" value="Add" @onclick="(() => AddStockLevel(product.ProductID))" /></div>
+                            </div>
+
+                        </td>
+
                         <td><a class="btn btn-primary" href="/business/products/edit/@product.ProductID">Edit</a><button class="btn btn-danger" @onclick="(() => DeleteProduct(product))">Delete</button></td>
                     </tr>
                 }
@@ -69,6 +79,7 @@
 @code {
     [Parameter] //Parameter of the razor component page
     public string? businessName { get; set; }
+    public int amount { get; set; }
     List<ProductModel>? products = new();
 
     protected override void OnInitialized()
@@ -76,6 +87,34 @@
         products = _context.Products?.Where(x => x.BusinessName == businessName).ToList();
     }
 
+    //Quick method of amending the stock level...
+    private async void AddStockLevel(Guid productId)
+    {
+        //Find the Product by the Guid passed to method
+        try
+        {
+            //Find the product to amend stock level
+            ProductModel? product = await _context.Products?.FirstOrDefaultAsync(p => p.ProductID == productId);
+            if (product != null)
+            {
+                var proceed = await js.InvokeAsync<bool>("confirmAmendments", "Confirmation", $"Are you sure you want to add {amount} units of {product.ProductName}?", "question");
+                if (proceed)
+                {
+                    product.StockLevel = product.StockLevel + amount;
+                    await _context.SaveChangesAsync();
+                    await js.InvokeVoidAsync("confirmChanges", "Success", $"The stock level for {product.ProductName} has been amended!", "success");
+                    base.StateHasChanged();
+                }
+            }
+        }
+        catch (Exception e)
+        {
+            await js.InvokeVoidAsync("confirmChanges", "Failed", $"The stock amendment could not be actioned: {e.Message}!", "warning");
+        }
+
+    }
+
+    //Deleting a Product from the database...
     private async void DeleteProduct(ProductModel prodToDelete)
     {
         //Await for js SweetAlert Button to return a true or false value.
@@ -86,7 +125,7 @@
             _context.Products?.Remove(prodToDelete);
             await _context.SaveChangesAsync();
             products = _context.Products?.Where(x => x.BusinessName == businessName).ToList(); //Reloads a new list with the deleted products removed from the db
-            var accepted = js.InvokeAsync<bool>("confirmChanges", "Deleted", "The product has been successfully deleted!", "success");
+            await js.InvokeVoidAsync("confirmChanges", "Deleted", "The product has been successfully deleted!", "success");
             base.StateHasChanged();
         }
     }

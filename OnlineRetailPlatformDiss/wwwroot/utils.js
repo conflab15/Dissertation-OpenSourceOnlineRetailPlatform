@@ -14,6 +14,23 @@
     });
 }
 
+//Late Addition for different button colours...
+function confirmAmendments(title, text, icon) {
+    return new Promise(resolve => {
+        Swal.fire({
+            title,
+            text,
+            icon,
+            showCancelButton: true,
+            confirmButtonColor: '#0069D9',
+            cancelButtonColor: '#C82333',
+            confirmButtonText: 'Yes, add it!'
+        }).then((result) => {
+            resolve(result.isConfirmed);
+        })
+    });
+}
+
 function confirmChanges(title, text, icon) {
     Swal.fire({
         title,
