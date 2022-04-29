@@ -26,6 +26,8 @@
 @code {
     [Parameter]
     public BasketModel? Basket { get; set; }
+    [Parameter]
+    public EventCallback OnRemove { get; set; } //EventCallback to get the parent component to re-render when a product is deleted
 
     private async void RemoveFromBasket(Guid productId)
     {
@@ -34,6 +36,7 @@
             await basket.RemoveFromBasket(productId);
             await js.InvokeVoidAsync("confirmChanges", "Removed from Basket", $"1 x {Basket?.Product?.ProductName} has been removed from your basket!", "success");
             base.StateHasChanged();
+            await OnRemove.InvokeAsync(); //Invoking the EventCallback
         }
         catch (Exception e)
         {

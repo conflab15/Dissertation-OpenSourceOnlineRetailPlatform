@@ -21,7 +21,7 @@ else
 {
     @foreach(var basket in basketVM.BasketItems)
     {
-        <BasketProductCard Basket=basket/>
+        <BasketProductCard Basket=basket OnRemove=@UpdateBasketList/>
     }
 }
 
@@ -35,5 +35,13 @@ else
     protected override async Task OnInitializedAsync()
     {
         basketVM = await basket.shoppingBasket();
+    }
+
+    private async void UpdateBasketList()
+    {
+        //When the EventCallback is triggered, re-render the basket to show that items have been removed
+        Console.WriteLine("EventCallback has been invoked...");
+        basketVM = await basket.shoppingBasket();
+        base.StateHasChanged();
     }
 }
