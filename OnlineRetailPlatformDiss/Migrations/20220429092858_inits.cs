@@ -4,7 +4,7 @@
 
 namespace OnlineRetailPlatformDiss.Migrations
 {
-    public partial class changes : Migration
+    public partial class inits : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {

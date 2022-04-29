@@ -51,14 +51,14 @@
         try
         {
             await basket.AddToBasket(product);
-            var accepted = js.InvokeAsync<bool>("confirmChanges", "Added to Basket", $"1 x {product.ProductName} has been added to your basket!", "success");
+            await js.InvokeVoidAsync("confirmChanges", "Added to Basket", $"1 x {product.ProductName} has been added to your basket!", "success");
         }
         catch (Exception e)
         {
-            var accepted = js.InvokeAsync<bool>("confirmChanges", "Failed", $"The product could not be added to your Basket: {e.Message}", "warning");
+            await js.InvokeVoidAsync("confirmChanges", "Failed", $"The product could not be added to your Basket: {e.Message}", "warning");
         }
         
-        StateHasChanged();
+        base.StateHasChanged();
     }
 
 }

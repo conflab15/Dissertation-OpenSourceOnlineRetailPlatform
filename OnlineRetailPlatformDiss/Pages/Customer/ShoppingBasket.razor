@@ -21,9 +21,11 @@ else
 {
     @foreach(var basket in basketVM.BasketItems)
     {
-        <BasketProductCard basket=basket/>
+        <BasketProductCard Basket=basket/>
     }
 }
+
+<!-- https://www.pragimtech.com/blog/blazor/pass-data-from-child-to-parent-component-in-blazor/ -->
 
 @code 
 {

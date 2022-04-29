@@ -1,27 +1,44 @@
 ﻿@using OnlineRetailPlatformDiss.Models;
+@using OnlineRetailPlatformDiss.Services;
 @using Microsoft.EntityFrameworkCore;
 @using Microsoft.Extensions.Logging;
 @inject OnlineRetailPlatformDiss.Data.ApplicationDbContext _context;
+@inject ShoppingBasketService basket;
 @inject IJSRuntime js; //JS functionality to create a SweetAlert.
 
 
-@if(basket is not null)
+@if(Basket is not null)
 {
 <div class="card flex-md-row mb-4 box-shadow h-md-250">
         <div class="card-body d-flex flex-column align-items-start">
             <h3 class="mb-0">
-            <a class="text-dark" href="#">@basket.Product?.ProductName</a>
+            <a class="text-dark" href="#">@Basket.Product?.ProductName</a>
             </h3>
-            <div class="mb-1 text-muted">Quantity: @basket.Count</div>
-            <div class="mb-1 text-muted">Unit Price: £@basket.Product?.ProductPrice</div>
-            <a href="#" class="btn alert-danger btn-sm">Remove</a>
+            <div class="mb-1 text-muted">Quantity: @Basket.Count</div>
+            <div class="mb-1 text-muted">Unit Price: £@Basket.Product?.ProductPrice</div>
+            <a class="btn alert-danger btn-sm" @onclick="(() => RemoveFromBasket(Basket.ProductId))">Remove</a>
         </div>
-        <img class="card-img-right flex-auto d-none d-md-block" width="200" height="250" src="@basket.Product?.ImageUrl" alt="Card image cap">
+        <img class="card-img-right flex-auto d-none d-md-block" width="200" height="250" src="@Basket.Product?.ImageUrl" alt="Card image cap">
     </div>
 }
 
 
 @code {
     [Parameter]
-    public BasketModel? basket { get; set; }
+    public BasketModel? Basket { get; set; }
+
+    private async void RemoveFromBasket(Guid productId)
+    {
+        try
+        {
+            await basket.RemoveFromBasket(productId);
+            await js.InvokeVoidAsync("confirmChanges", "Removed from Basket", $"1 x {Basket?.Product?.ProductName} has been removed from your basket!", "success");
+            base.StateHasChanged();
+        }
+        catch (Exception e)
+        {
+            await js.InvokeVoidAsync("confirmChanges", "Failed", $"The product could not be removed from your Basket: {e.Message}", "warning");
+        }
+        base.StateHasChanged();
+    }
 }

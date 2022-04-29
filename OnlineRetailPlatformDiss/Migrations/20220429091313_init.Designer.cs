@@ -12,8 +12,8 @@ using OnlineRetailPlatformDiss.Data;
 namespace OnlineRetailPlatformDiss.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20220422161742_changes")]
-    partial class changes
+    [Migration("20220429091313_init")]
+    partial class init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -224,9 +224,6 @@ namespace OnlineRetailPlatformDiss.Migrations
 
                     b.Property<string>("ManagerID")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("MapsAddr")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("PostCode")

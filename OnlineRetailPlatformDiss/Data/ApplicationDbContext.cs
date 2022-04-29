@@ -28,7 +28,7 @@ namespace OnlineRetailPlatformDiss.Data
             {
                 //WARNING: Sensitive Data is potentially being exposed here... 
                 //This should ideally be moved out of here, or stored within a secret and accessed using that!
-                optionsBuilder.UseSqlServer("Server=(localdb)\\mssqllocaldb;Database=aspnet-OnlineRetailPlatformDiss-32E64638-FAD9-49BB-A45C-39BA988FBBF2;Trusted_Connection=True;MultipleActiveResultSets=true");
+                optionsBuilder.UseSqlServer("Server=(localdb)\\mssqllocaldb;Database=ConnorTest;");
             }
         }
 

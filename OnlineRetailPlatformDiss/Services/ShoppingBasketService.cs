@@ -87,9 +87,16 @@ namespace OnlineRetailPlatformDiss.Services
         {
             BasketModel? basketItem = null; //Allows the function to run if it cannot find a pre-existing basket...
 
-            basketItem = await context.Baskets.SingleOrDefaultAsync(
-                b => b.BasketId == BasketId
-                && b.ProductId == product.ProductID);
+            //Used for testing issues with the db...
+            //context.Baskets.Add(new BasketModel
+            //{
+            //    ProductId = product.ProductID,
+            //    BasketId = BasketId,
+            //    Count = 1,
+            //    DateCreated = DateTime.Now
+            //});
+
+            basketItem = context.Baskets.Where(b => b.BasketId == BasketId && b.ProductId == product.ProductID).FirstOrDefault();
 
             if (basketItem == null)
             {
