@@ -17,10 +17,10 @@ namespace OnlineRetailPlatformDiss.Data
         }
 
         public DbSet<BusinessAccountModel>? BusinessAccount { get; set; }
-
         public DbSet<ProductModel>? Products { get; set; }
-
         public DbSet<BasketModel>? Baskets { get; set; }
+        public DbSet<OrderModel>? Orders { get; set; }
+        public DbSet<OrderLineModel>? OrderLines { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {

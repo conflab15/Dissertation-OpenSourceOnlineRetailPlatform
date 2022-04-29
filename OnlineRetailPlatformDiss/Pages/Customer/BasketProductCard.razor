@@ -24,10 +24,8 @@
 
 
 @code {
-    [Parameter]
-    public BasketModel? Basket { get; set; }
-    [Parameter]
-    public EventCallback OnRemove { get; set; } //EventCallback to get the parent component to re-render when a product is deleted
+    [Parameter] public BasketModel? Basket { get; set; }
+    [Parameter] public EventCallback OnRemove { get; set; } //EventCallback to get the parent component to re-render when a product is deleted
 
     private async void RemoveFromBasket(Guid productId)
     {

@@ -202,7 +202,41 @@ namespace OnlineRetailPlatformDiss.Services
 
         //Create an Order
         //To be added once shopping basket works as intended...
+        public async Task<OrderModel> CreateOrder(OrderModel order)
+        {
+            decimal total = 0;
+            order.OrderLines = new List<OrderLineModel>();
 
+            var basketItems = await GetBasketItems();
+
+            //For each item in the cart, add it to the order...
+            foreach(var product in basketItems)
+            {
+                var orderline = new OrderLineModel
+                {
+                    ProductId = product.ProductId,
+                    OrderId = order.OrderId,
+                    ProductPrice = product.Product.ProductPrice,
+                    ProductQuantity = product.Count
+                };
+                //Set the Order Total!
+                total += (product.Count * product.Product.ProductPrice);
+                //Add the OrderLine to the Order...
+                order.OrderLines.Add(orderline);
+                //Add to the db...
+                context.OrderLines?.Add(orderline);
+            }
+            order.OrderTotal = total;
+
+            //Save the changes to the db...
+            await context.SaveChangesAsync();
+
+            //Empty the basket
+            await EmptyCart();
+
+            //When the order is returned, we can use the ID to show the success of the order to the user...
+            return order;
+        }
 
 
 
