@@ -24,16 +24,24 @@
             <span class="text-muted">Your Shopping Cart</span>
           </h4>
           <ul class="list-group mb-3">
-            @foreach(var product in products)
+            @if (products != null)
             {
+                @foreach(var product in products)
+                {
                 <li class="list-group-item d-flex justify-content-between lh-condensed">
                   <div>
-                    <h6 class="my-0">@product?.Product?.ProductName</h6>
-                    <small class="text-muted">Quantity: @product?.Count</small>
+                    <h6 class="my-0">@product.Product.ProductName</h6>
+                    <small class="text-muted">Quantity: @product.Count</small>
                   </div>
-                  <span class="text-muted">£@product?.Product?.ProductPrice</span>
+                  <span class="text-muted">£@product.Product.ProductPrice</span>
                 </li>  
-            }
+                    }
+                }
+                else
+                {
+                    <p>Error</p>
+                }
+            
             <li class="list-group-item d-flex justify-content-between">
               <span>Total (GBP)</span>
               <strong>£@BasketTotal</strong>
@@ -47,11 +55,11 @@
             <div class="row">
               <div class="col-md-6 mb-3">
                 <label for="forename">First Name</label>
-                <InputText class="form-control" id="forename" placeholder="Enter your first name" @bind-Value="@order?.Forename" />
+                <InputText class="form-control" id="forename" placeholder="Enter your first name" @bind-Value="@order.Forename" />
               </div>
               <div class="col-md-6 mb-3">
                 <label for="surname">Surname</label>
-                <InputText class="form-control" id="surname" placeholder="Enter your second name" @bind-Value="@order?.Surname" />
+                <InputText class="form-control" id="surname" placeholder="Enter your second name" @bind-Value="@order.Surname" />
               </div>
             </div>
             <div class="mb-3">
@@ -59,27 +67,27 @@
               <!-- Disabling this field ensures that the email address cannot be changed by the user, as the solution
                     requires the same email as the account to find the orders associated with their email.
               -->
-              <InputText class="form-control" id="email" placeholder="you@example.com" @bind-Value="@order?.Email" disabled/>
+              <InputText class="form-control" id="email" placeholder="you@example.com" @bind-Value="@order.Email" disabled/>
             </div>
             <div class="mb-3">
                 <label for="AddressLine1">Address Line 1</label>
-                <InputText id="AddressLine1" class="form-control" placeholder="1234 Main St" @bind-Value="@order?.AddressLine1" />
+                <InputText class="form-control" id="AddressLine1" placeholder="1234 Main St" @bind-Value="@order.AddressLine1" />
             </div>
             <div class="mb-3">
               <label for="AddressLine2">Address Line 2</label>
-              <InputText id="AddressLine2" class="form-control" placeholder="Apartment or suite" @bind-Value="@order?.AddressLine2"/>
+              <InputText class="form-control" id="AddressLine2" placeholder="Apartment or suite" @bind-Value="@order.AddressLine2"/>
             </div>
             <div class="mb-3">
               <label for="Town"></label>
-              <InputText id="Town" class="form-control" placeholder="Bridgwater" @bind-Value="@order?.Town" />
+              <InputText class="form-control" id="Town" placeholder="Bridgwater" @bind-Value="@order.Town" />
             </div>
             <div class="mb-3">
               <label for="County"></label>
-              <InputText id="County" class="form-control" placeholder="Somerset" @bind-Value="@order?.County" />
+              <InputText class="form-control" id="County" placeholder="Somerset" @bind-Value="@order.County" />
             </div>
             <div class="mb-3">
               <label for="PostCode"></label>
-              <InputText id="PostCode" class="form-control" placeholder="AB1 2CD" @bind-Value="@order?.PostCode" />
+              <InputText class="form-control" id="PostCode" placeholder="AB1 2CD" @bind-Value="@order.PostCode" />
             </div>
             
             <hr class="mb-4">
@@ -104,7 +112,7 @@
         var userName = auth.GetAuthenticationStateAsync().Result.User.Identity?.Name; //Get the current user
         var userModel = context.Users.FirstOrDefault(u => u.Email == userName);
 
-        products = await basket.GetBasketItems(); //Getting the products in the users basket...
+        //products = await basket.GetBasketItems(); //Getting the products in the users basket...
         BasketTotal = await basket.GetTotal();
 
         order = new OrderModel();

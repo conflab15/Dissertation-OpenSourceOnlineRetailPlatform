@@ -27,7 +27,7 @@ else
     }
 
     <!-- Button Options -->
-    <a class="btn btn-primary">Checkout</a>
+    <a class="btn btn-primary" @onclick="(() => CheckoutConfirm())">Checkout</a>
     <a class="btn btn-outline-secondary" href="/">Continue Shopping</a>
     <a class="btn btn-danger" @onclick="(() => EmptyBasket())">
         <svg style="width:24px;height:24px" viewBox="0 0 24 24">
@@ -76,7 +76,7 @@ else
         var itemCount = await basket.GetCount();
         if (itemCount > 0)
         {
-            nav.NavigateTo("Checkout");
+            nav.NavigateTo("/Checkout");
         }
         else
         {
