@@ -201,7 +201,6 @@ namespace OnlineRetailPlatformDiss.Services
         }
 
         //Create an Order
-        //To be added once shopping basket works as intended...
         public async Task<OrderModel> CreateOrder(OrderModel order)
         {
             decimal total = 0;

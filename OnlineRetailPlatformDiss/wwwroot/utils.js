@@ -14,6 +14,22 @@
     });
 }
 
+function confirmEmpty(title, text, icon) {
+    return new Promise(resolve => {
+        Swal.fire({
+            title,
+            text,
+            icon,
+            showCancelButton: true,
+            confirmButtonColor: '#C82333',
+            cancelButtonColor: '#218838',
+            confirmButtonText: 'Yes, empty the basket!'
+        }).then((result) => {
+            resolve(result.isConfirmed);
+        })
+    });
+}
+
 //Late Addition for different button colours...
 function confirmAmendments(title, text, icon) {
     return new Promise(resolve => {

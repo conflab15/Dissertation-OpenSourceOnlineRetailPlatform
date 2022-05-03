@@ -82,7 +82,7 @@
         {
             _context.BusinessAccount?.Update(business);
             await _context.SaveChangesAsync();
-            var accepted = js.InvokeAsync<bool>("confirmChanges",
+            await js.InvokeVoidAsync("confirmChanges",
                 "Business Amended!",
                 "Your product changes have been saved!",
                 "success"); //Swal for declaring success in adding a business
