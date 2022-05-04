@@ -17,7 +17,7 @@
             </h3>
             <div class="mb-1 text-muted">Quantity: @Basket.Count</div>
             <div class="mb-1 text-muted">Unit Price: £@Basket.Product?.ProductPrice</div>
-            <div class="input-group">
+            <div class="input-group p-3">
                 <input type="number" class="form-control w-5 input-value" @bind-value="Amount"  />
                 <div class="input-group-append"> 
                     <input type="submit" class="btn btn-outline-primary" value="Add" @onclick="(() => AddToBasket(Basket.ProductId, Amount))" />

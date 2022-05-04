@@ -1,14 +1,13 @@
 ﻿@using OnlineRetailPlatformDiss.Models;
 @using OnlineRetailPlatformDiss.Services;
 @inject ShoppingBasketService basket;
+@inject AppState state;
 @inject IJSRuntime js;
 @inject NavigationManager nav;
 
 @attribute [Authorize]
 
 @page "/ShoppingBasket"
-
-<h3>Your Shopping Basket: </h3>
 
 @if (basketVM?.BasketItems == null)
 {
@@ -23,22 +22,30 @@ else
 {
     <div class="container">
         <div class="row">
-            <div class="col-9">
+            <div class="col-8 mr-1">
                 @foreach(var basket in basketVM.BasketItems)
                 {
                     <BasketProductCard Basket=basket OnChange=@UpdateBasketList/>
                 }
             </div>
-            <div class="col-3 text-center">
-                <h3>Total Cost: £@basketVM.BasketTotal</h3>
-                <!-- Button Options -->
-                <a class="btn btn-primary w-100 p-2 m-1" @onclick="(() => CheckoutConfirm())">Checkout</a>
-                <a class="btn btn-outline-secondary w-100 p-2 m-1" href="/">Continue Shopping</a>
-                <a class="btn btn-danger w-100 p-2 m-1" @onclick="(() => EmptyBasket())">
-                    <svg style="width:24px;height:24px" viewBox="0 0 24 24">
-                        <path fill="currentColor" d="M3,10H6V7H3V10M5,5H8V2H5V5M8,10H11V7H8V10M17,1L12,6H15V10H19V6H22L17,1M7.5,22C6.72,22 6.04,21.55 5.71,20.9V20.9L3.1,13.44L3,13A1,1 0 0,1 4,12H20A1,1 0 0,1 21,13L20.96,13.29L18.29,20.9C17.96,21.55 17.28,22 16.5,22H7.5M7.61,20H16.39L18.57,14H5.42L7.61,20Z" />
-                    </svg>
-                    Empty Basket</a>
+            <div class="col-4 text-center">
+                <div class="container bg-light mb-2">
+                    <h2>Your Shopping Basket:</h2>
+                    <h3>Total Items: @state.BasketCount</h3>
+                    <h3>Total Cost: £@basketVM.BasketTotal</h3>
+                    <!-- Button Options -->
+                    <a class="btn btn-primary w-100 p-2 m-1" @onclick="(() => CheckoutConfirm())">Checkout</a>
+                    <a class="btn btn-outline-secondary w-100 p-2 m-1" href="/">Continue Shopping</a>
+                    <a class="btn btn-danger w-100 p-2 m-1" @onclick="(() => EmptyBasket())">
+                        <svg style="width:24px;height:24px" viewBox="0 0 24 24">
+                            <path fill="currentColor" d="M3,10H6V7H3V10M5,5H8V2H5V5M8,10H11V7H8V10M17,1L12,6H15V10H19V6H22L17,1M7.5,22C6.72,22 6.04,21.55 5.71,20.9V20.9L3.1,13.44L3,13A1,1 0 0,1 4,12H20A1,1 0 0,1 21,13L20.96,13.29L18.29,20.9C17.96,21.55 17.28,22 16.5,22H7.5M7.61,20H16.39L18.57,14H5.42L7.61,20Z" />
+                        </svg>
+                        Empty Basket</a>
+                </div>
+                <div class="container mb-2 bg-light">
+                    <!-- Postage Options shall be added here... -->
+                </div>
+                
             </div>
         </div>
     </div>

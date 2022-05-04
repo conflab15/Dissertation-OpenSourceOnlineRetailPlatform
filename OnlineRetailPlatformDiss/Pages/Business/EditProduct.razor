@@ -32,35 +32,37 @@
     else
     {
         <EditForm Model="@product" OnSubmit="@SubmitProductChanges">
-        <DataAnnotationsValidator />
-        <!--<ValidationSummary />-->
-        <div class="mb-3">
-            <label for="businessName" class="form-label">Business Name</label>
-            <label class="alert-warning">The product cannot be assigned to another business. Please create a new product for the correct business!</label> <!-- Message because this field is disabled -->
-            <InputText class="form-control" id="businessName" @bind-Value="product.BusinessName" disabled/>
+            <DataAnnotationsValidator />
+            <!--<ValidationSummary />-->
+            <div class="mb-3">
+                <label for="businessName" class="form-label">Business Name</label>
+                <label class="alert-warning">The product cannot be assigned to another business. Please create a new product for the correct business!</label> <!-- Message because this field is disabled -->
+                <InputText class="form-control" id="businessName" @bind-Value="product.BusinessName" disabled/>
 
-        </div>
+            </div>
+            <div class="mb-3">
+                <label for="productName" class="form-label">Product Name</label>
+                <InputText class="form-control" id="productName" @bind-Value="product.ProductName" />
+            </div>
+            <div class="mb-3">
+                <label for="productDesc" class="form-label">Product Description</label>
+                <InputText class="form-control" id="productDesc" @bind-Value="product.ProductDescription" />
+            </div>
+            <div class="mb-3">
+                <label for="productPrice" class="form-label">Product Price</label>
+                <InputNumber class="form-control" id="productPrice" @bind-Value="product.ProductPrice" />
+            </div>
+            <div class="mb-3">
+                <label for="productStock" class="form-label">Stock Level</label>
+                <InputNumber class="form-control" id="productStock" @bind-Value="product.StockLevel" />
+            </div>
+           <div class="mb-3">
+                <button class="btn btn-primary p-2" type="submit" value="submit">Submit Changes</button> 
+           </div>
+        </EditForm>
         <div class="mb-3">
-            <label for="productName" class="form-label">Product Name</label>
-            <InputText class="form-control" id="productName" @bind-Value="product.ProductName" />
+            <button class="btn btn-danger p-2" href="/business/products/@product.BusinessName">Cancel</button>
         </div>
-        <div class="mb-3">
-            <label for="productDesc" class="form-label">Product Description</label>
-            <InputText class="form-control" id="productDesc" @bind-Value="product.ProductDescription" />
-        </div>
-        <div class="mb-3">
-            <label for="productPrice" class="form-label">Product Price</label>
-            <InputNumber class="form-control" id="productPrice" @bind-Value="product.ProductPrice" />
-        </div>
-        <div class="mb-3">
-            <label for="productStock" class="form-label">Stock Level</label>
-            <InputNumber class="form-control" id="productStock" @bind-Value="product.StockLevel" />
-        </div>
-       <div class="mb-3">
-            <button class="btn btn-primary p-2" type="submit" value="submit">Submit Changes</button> 
-            <button class="btn btn-danger p-2" value="submit" href="/business/products/@product.BusinessName">Cancel</button>
-       </div>
-    </EditForm>
     }
 </div>
 

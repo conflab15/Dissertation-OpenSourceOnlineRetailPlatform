@@ -1,16 +1,16 @@
 ﻿<div class="container bg-opacity-25">
     <div class="text-center p-4">
-        <h1 pb-2>Welcome back, @UserEmail, Business Management Options are shown below!</h1>
-        <a class="btn btn-primary btn-lg" href="/product/create">Create Product</a>
+        <h1 pb-2>Welcome back, @UserForename, Business Management Options are shown below!</h1>
+        <a class="btn btn-primary btn-sm" href="/product/create">Create Product</a>
 
-        <a class="btn btn-primary btn-lg" href="/business/create">Create Business</a>
+        <a class="btn btn-primary btn-sm" href="/business/create">Create Business</a>
 
-        <a class="btn btn-primary btn-lg" href="/business/view">View My Businesses</a>
+        <a class="btn btn-primary btn-sm" href="/business/view">View My Businesses</a>
     </div>
 </div>
 
 @code
 {
     [Parameter]
-    public string? UserEmail { get; set; }
+    public string? UserForename { get; set; }
 }
