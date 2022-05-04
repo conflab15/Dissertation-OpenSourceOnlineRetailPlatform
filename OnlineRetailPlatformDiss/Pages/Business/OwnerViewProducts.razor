@@ -50,7 +50,10 @@
                         <td>
                             <div class="input-group">
                                 <input type="number" class="form-control input-value" @bind-value="amount" placeholder="Enter total units to add..."/>
-                                <div class="input-group-append"> <input type="submit" class="btn btn-outline-primary" value="Add" @onclick="(() => AddStockLevel(product.ProductID))" /></div>
+                                <div class="input-group-append"> 
+                                    <input type="submit" class="btn btn-outline-primary" value="Add" @onclick="(() => AddStockLevel(product.ProductID, true))" />
+                                    <input type="submit" class="btn btn-outline-danger" value="Remove" @onclick="(() => AddStockLevel(product.ProductID, false))" />
+                                </div>
                             </div>
 
                         </td>
@@ -88,7 +91,7 @@
     }
 
     //Quick method of amending the stock level...
-    private async void AddStockLevel(Guid productId)
+    private async void AddStockLevel(Guid productId, bool ToAdd)
     {
         //Find the Product by the Guid passed to method
         try
@@ -97,13 +100,24 @@
             ProductModel? product = await _context.Products?.FirstOrDefaultAsync(p => p.ProductID == productId);
             if (product != null)
             {
-                var proceed = await js.InvokeAsync<bool>("confirmAmendments", "Confirmation", $"Are you sure you want to add {amount} units of {product.ProductName}?", "question");
+                var proceed = await js.InvokeAsync<bool>("confirmAmendments", "Confirmation", $"Are you sure you want to add/remove {amount} units of {product.ProductName}?", "question");
                 if (proceed)
                 {
-                    product.StockLevel = product.StockLevel + amount;
-                    await _context.SaveChangesAsync();
-                    await js.InvokeVoidAsync("confirmChanges", "Success", $"The stock level for {product.ProductName} has been amended!", "success");
-                    base.StateHasChanged();
+                    if(ToAdd) //If true, add stock
+                    {
+                        product.StockLevel = product.StockLevel + amount;
+                        await _context.SaveChangesAsync();
+                        await js.InvokeVoidAsync("confirmChanges", "Success", $"The stock level for {product.ProductName} has been amended!", "success");
+                        base.StateHasChanged();
+                    }
+                    else //If false, remove stock
+                    {
+                        product.StockLevel = product.StockLevel - amount;
+                        await _context.SaveChangesAsync();
+                        await js.InvokeVoidAsync("confirmChanges", "Success", $"The stock level for {product.ProductName} has been amended!", "success");
+                        base.StateHasChanged();
+                    }
+
                 }
             }
         }

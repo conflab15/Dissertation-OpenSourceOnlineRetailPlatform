@@ -4,6 +4,7 @@
 @using Microsoft.Extensions.Logging;
 @inject OnlineRetailPlatformDiss.Data.ApplicationDbContext _context;
 @inject ShoppingBasketService basket;
+@inject AppState state;
 @inject IJSRuntime js; //JS functionality to create a SweetAlert.
 
 
@@ -16,7 +17,14 @@
             </h3>
             <div class="mb-1 text-muted">Quantity: @Basket.Count</div>
             <div class="mb-1 text-muted">Unit Price: £@Basket.Product?.ProductPrice</div>
-            <a class="btn alert-danger btn-sm" @onclick="(() => RemoveFromBasket(Basket.ProductId))">Remove</a>
+            <div class="input-group">
+                <input type="number" class="form-control w-5 input-value" @bind-value="Amount"  />
+                <div class="input-group-append"> 
+                    <input type="submit" class="btn btn-outline-primary" value="Add" @onclick="(() => AddToBasket(Basket.ProductId, Amount))" />
+                    <input type="submit" class="btn btn-outline-danger" value="Remove" @onclick="(() => RemoveFromBasket(Basket.ProductId, Amount))" />
+                    <input type="submit" class="btn btn-danger" value="Remove All" @onclick="(() => RemoveFromBasket(Basket.ProductId, Basket.Count))" />
+                </div>
+            </div>
         </div>
         <img class="card-img-right flex-auto d-none d-md-block" width="200" height="250" src="@Basket.Product?.ImageUrl" alt="Card image cap">
     </div>
@@ -25,16 +33,37 @@
 
 @code {
     [Parameter] public BasketModel? Basket { get; set; }
-    [Parameter] public EventCallback OnRemove { get; set; } //EventCallback to get the parent component to re-render when a product is deleted
+    [Parameter] public EventCallback OnChange { get; set; } //EventCallback to get the parent component to re-render when a product is deleted
+    public int Amount { get; set; } //Amount to add or remove from the basket...
 
-    private async void RemoveFromBasket(Guid productId)
+    private async void AddToBasket(Guid productId, int quantity)
+    {
+        //Add the product to the basket, followed by the quantity...
+        try
+        {
+            var vm = await basket.AddToBasket(productId, quantity);
+            await js.InvokeVoidAsync("confirmChanges", "Added to Basket", $"{quantity} x {Basket?.Product?.ProductName} has been added to your basket!", "success");
+            state.SetBasketCount(vm.BasketCount); //Changes the Basket Count value when the product is removed...
+            base.StateHasChanged();
+            await OnChange.InvokeAsync(); //Invoking the EventCallback
+
+        }
+        catch (Exception e)
+        {
+            await js.InvokeVoidAsync("confirmChanges", "Failed", $"The product could not be added to your Basket: {e.Message}", "warning");
+        }
+        base.StateHasChanged();
+    }
+
+    private async void RemoveFromBasket(Guid productId, int quantity)
     {
         try
         {
-            await basket.RemoveFromBasket(productId);
-            await js.InvokeVoidAsync("confirmChanges", "Removed from Basket", $"1 x {Basket?.Product?.ProductName} has been removed from your basket!", "success");
+            var vm = await basket.RemoveFromBasket(productId, quantity);
+            await js.InvokeVoidAsync("confirmChanges", "Removed from Basket", $"{quantity} x {Basket?.Product?.ProductName} has been removed from your basket!", "success");
+            state.SetBasketCount(vm.BasketCount); //Changes the Basket Count value when the product is removed...
             base.StateHasChanged();
-            await OnRemove.InvokeAsync(); //Invoking the EventCallback
+            await OnChange.InvokeAsync(); //Invoking the EventCallback
         }
         catch (Exception e)
         {

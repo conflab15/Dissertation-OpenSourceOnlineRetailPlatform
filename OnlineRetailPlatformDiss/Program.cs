@@ -21,6 +21,7 @@ builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 builder.Services.AddScoped<AuthenticationStateProvider, RevalidatingIdentityAuthenticationStateProvider<UserModel>>();
 builder.Services.AddScoped<ShoppingBasketService>(); //Adding Scoped Shopping Basket Service here...
+builder.Services.AddScoped<AppState>(); //Implementing the AppState Service...
 builder.Services.AddHttpClient();
 
 builder.Services.AddSession();

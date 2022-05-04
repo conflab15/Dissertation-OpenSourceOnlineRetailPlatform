@@ -4,6 +4,7 @@
 @using OnlineRetailPlatformDiss.Services;
 @inject OnlineRetailPlatformDiss.Data.ApplicationDbContext _context;
 @inject ShoppingBasketService basket;
+@inject AppState state;
 @inject IJSRuntime js; //JS functionality to create a SweetAlert.
 
 <!-- Product Card (Customer) to be displayed within the Index of the application... -->
@@ -58,7 +59,9 @@
     {
         try
         {
-            await basket.AddToBasket(product);
+            var count = await basket.AddToBasket(product, 1); //Getting the returned product count to update the appstate...
+            state.SetBasketCount(count); //Setting the AppState with the returned count...
+
             await js.InvokeVoidAsync("confirmChanges", "Added to Basket", $"1 x {product.ProductName} has been added to your basket!", "success");
         }
         catch (Exception e)

@@ -26,18 +26,28 @@ namespace OnlineRetailPlatformDiss.Services
                 BasketItems = await basket.GetBasketItems(),
                 BasketTotal = await basket.GetTotal()
             };
-            return vm; 
+            return vm;
         }
 
-        //Add Items to Cart...
-        public async Task<ShoppingBasketRemoveVM> AddToBasket(Guid id)
+        //Add Items to the Basket...
+        public async Task<ShoppingBasketRemoveVM> AddToBasket(Guid id, int quantity)
         {
             //Find the product to add from the db...
             ProductModel? productToAdd = await context.Products.SingleAsync(p => p.ProductID == id);
+            int finalQuantity = 0;
+            if (quantity > productToAdd.StockLevel)
+            {
+                finalQuantity = productToAdd.StockLevel; //If the Quantity To Add exceeds the stock level, change it...
+            }
+            else
+            {
+                finalQuantity = quantity; //Assign the Quantity To Add...
+            }
+
 
             //Add it to the Shopping Basket
             var basket = await GetBasket();
-            int count = await basket.AddToBasket(productToAdd);
+            int count = await basket.AddToBasket(productToAdd, quantity);
 
             //ViewModel to present a message to the user
             var result = new ShoppingBasketRemoveVM
@@ -52,19 +62,19 @@ namespace OnlineRetailPlatformDiss.Services
         }
 
         //Remove an item from the basket...
-        public async Task<ShoppingBasketRemoveVM> RemoveFromBasket(Guid id)
+        public async Task<ShoppingBasketRemoveVM> RemoveFromBasket(Guid id, int quantity)
         {
             var basket = await GetBasket();
 
             //Get Item name to display within the message...
-            string? productName = context.Products?.Single(p => p.ProductID == id).ProductName;
+            ProductModel? product = context.Products?.Single(p => p.ProductID == id);
 
             //Remove the item
-            int productCount = await basket.RemoveFromBasketItem(id);
+            int productCount = await basket.RemoveFromBasketItem(id, quantity);
 
             var result = new ShoppingBasketRemoveVM
             {
-                Message = $"One of {productName} has been removed from your basket!",
+                Message = $"{quantity} of {product?.ProductName} has been removed from your basket!",
                 BasketTotal = await basket.GetTotal(),
                 BasketCount = await basket.GetCount(),
                 ProductCount = productCount,
@@ -73,10 +83,10 @@ namespace OnlineRetailPlatformDiss.Services
             return result;
         }
 
-        private bool IsNotNull(Guid id)
-        {
-            throw new NotImplementedException();
-        }
+        //private bool IsNotNull(Guid id)
+        //{
+        //    throw new NotImplementedException();
+        //}
 
         public async Task<int> BasketCount()
         {
@@ -84,7 +94,7 @@ namespace OnlineRetailPlatformDiss.Services
             return await basket.GetCount();
         }
 
-        public async Task<int> AddToBasket(ProductModel product)
+        public async Task<int> AddToBasket(ProductModel product, int quantity)
         {
             BasketModel? basketItem = null; //Allows the function to run if it cannot find a pre-existing basket...
 
@@ -99,6 +109,17 @@ namespace OnlineRetailPlatformDiss.Services
 
             basketItem = context.Baskets.Where(b => b.BasketId == BasketId && b.ProductId == product.ProductID).FirstOrDefault();
 
+            //Checking if the quantity to add exceeds the stock level...
+            int finalQuantity = 0;
+            if (quantity > product.StockLevel)
+            {
+                finalQuantity = product.StockLevel; //If the Quantity To Add exceeds the stock level, change it...
+            }
+            else
+            {
+                finalQuantity = quantity; //Assign the Quantity To Add...
+            }
+
             if (basketItem == null)
             {
                 //Create a Basket Item if it doesn't exist... If it does exist, increase the quantity by 1
@@ -106,7 +127,7 @@ namespace OnlineRetailPlatformDiss.Services
                 {
                     ProductId = product.ProductID,
                     BasketId = BasketId,
-                    Count = 1,
+                    Count = finalQuantity,
                     DateCreated = DateTime.Now
                 };
                 context.Baskets.Add(basketItem);
@@ -114,8 +135,15 @@ namespace OnlineRetailPlatformDiss.Services
             else
             {
                 //Increasing the quantity by 1
-                basketItem.Count = 1;
+                //Error here, was originally assigning the count to 1 instead of increasing by 1...
+                basketItem.Count += finalQuantity;
             }
+
+            //Modify the Stock Level of the product...
+            product.StockLevel -= quantity;
+            context.Products?.Update(product);
+            await context.SaveChangesAsync();
+
             //Save Changes to the db
             await context.SaveChangesAsync();
 
@@ -123,12 +151,15 @@ namespace OnlineRetailPlatformDiss.Services
         }
 
         //Remove from Basket
-        public async Task<int> RemoveFromBasketItem(Guid id)
+        public async Task<int> RemoveFromBasketItem(Guid id, int quantity)
         {
             //Get the Basket
             BasketModel basketItem = await context.Baskets.SingleAsync(
                 b => b.BasketId == BasketId
                      && b.ProductId == id);
+
+            ProductModel? product = await context.Products.SingleAsync(
+                p => p.ProductID == basketItem.ProductId);
 
             int prodCount = 0;
 
@@ -136,11 +167,17 @@ namespace OnlineRetailPlatformDiss.Services
             {
                 if (basketItem.Count > 1)
                 {
-                    basketItem.Count--;
+                    basketItem.Count -= quantity;
                     prodCount = basketItem.Count;
+
+                    //Add the Stock back to the item...
+                    product.StockLevel += quantity;
+                    context.Products?.Update(product);
                 }
                 else
                 {
+                    product.StockLevel += 1;
+                    context.Products?.Update(product);
                     context.Baskets?.Remove(basketItem);
                 }
                 await context.SaveChangesAsync();
@@ -211,7 +248,7 @@ namespace OnlineRetailPlatformDiss.Services
             var basketItems = await GetBasketItems();
 
             //For each item in the cart, add it to the order...
-            foreach(var product in basketItems)
+            foreach (var product in basketItems)
             {
                 var orderline = new OrderLineModel
                 {
