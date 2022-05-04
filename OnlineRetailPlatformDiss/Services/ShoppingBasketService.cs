@@ -23,7 +23,8 @@ namespace OnlineRetailPlatformDiss.Services
             //Implementing ViewModel
             var vm = new ShoppingBasketVM
             {
-                BasketItems = await basket.GetBasketItems()
+                BasketItems = await basket.GetBasketItems(),
+                BasketTotal = await basket.GetTotal()
             };
             return vm; 
         }
@@ -197,6 +198,7 @@ namespace OnlineRetailPlatformDiss.Services
                                     where basket.BasketId == BasketId
                                     select (int?)basket.Count *
                                     basket.Product.ProductPrice).SumAsync();
+
             return total ?? decimal.Zero;
         }
 
