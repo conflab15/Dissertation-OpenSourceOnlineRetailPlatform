@@ -49,22 +49,23 @@ else
 }
 
 @code {
+    [Parameter] public string? BusinessName { get; set; } //Addition which allows this component to be used within the ViewBusiness page
+                                                          //This allows the ViewBusiness page to sort and filter products sold by the business.
     public string? SearchText = "";
     public string? message = "";
     public List<ProductModel>? Products;
 
-    protected override void OnInitialized()
+    protected override async void OnInitialized()
     {
-        Products = _context.Products?.ToList();
-        //FilteredProducts = Products; //Unnecessary Value assignment
+        Products = await GetProducts(BusinessName);
     }
 
     //Searching Products by the title
-    private void ShowProducts()
+    private async void ShowProducts()
     {
         //Searching for products by Title...
-        Products = _context.Products?.ToList(); //This will ensure that the list is reset before the products are searched for again
-                                                //Reassign the list to show products which only match the search criteria
+        Products = await GetProducts(BusinessName); //This will ensure that the list is reset before the products are searched for again
+                                                    //Reassign the list to show products which only match the search criteria
         Products = Products.Where(p => p.ProductName.ToLower().Contains(SearchText?.ToLower())).ToList();
         message = "Search Criteria: '" + SearchText + "'";
         SearchText = ""; //Empty the search text field once assigned...
@@ -72,9 +73,9 @@ else
     }
 
     //Filtering products by different parameters...
-    private void FilterProducts(string parameter)
+    private async void FilterProducts(string parameter)
     {
-        Products = _context.Products?.ToList(); //Resetting the List to ensure the list is correctly sorted.
+        Products = await GetProducts(BusinessName); //Resetting the List to ensure the list is correctly sorted.
 
         //Switch Case statement, provides the ability to easily add more sorting options 
         switch (parameter)
@@ -89,5 +90,22 @@ else
                 break;
         }
         base.StateHasChanged();
+    }
+
+    //Task - Get Products by Business Name is parameter is present, else, get all products...
+    private async Task<List<ProductModel>> GetProducts(string BusinessName)
+    {
+        List<ProductModel>? products;
+
+        @if (BusinessName != null)
+        {
+            products = _context.Products?.Where(b => b.BusinessName == BusinessName).ToList();
+        }
+        else
+        {
+            products = _context.Products?.ToList();
+        }
+
+        return products;
     }
 }

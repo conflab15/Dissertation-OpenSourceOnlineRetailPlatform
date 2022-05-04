@@ -57,14 +57,7 @@
     }
     else
     {
-    <div class="row pt-2 mt-3 pl-3">
-        @foreach (var product in Products)
-        {
-        <div class="col-lg-4 d-flex align-items-center">
-            <ProductCard product="product" />
-        </div>
-        }
-    </div>
+        <SearchProducts BusinessName=@Business?.BusinessName />
     }
 </div>
 
