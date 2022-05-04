@@ -2,7 +2,7 @@
 @using OnlineRetailPlatformDiss.Services
 @using OnlineRetailPlatformDiss.Data;
 @inject ApplicationDbContext context;
-@inject ShoppingBasketService basket
+@inject ShoppingBasketService basket;
 @inject IJSRuntime js;
 @inject AuthenticationStateProvider auth;
 @inject NavigationManager nav;
@@ -24,83 +24,93 @@
             <span class="text-muted">Your Shopping Cart</span>
           </h4>
           <ul class="list-group mb-3">
-            @if (basketVM is not null)
+            @if (basketVM != null)
             {
-                @foreach(var product in basketVM.BasketItems)
+                @foreach (var product in basketVM.BasketItems)
                 {
-                <li class="list-group-item d-flex justify-content-between lh-condensed">
-                  <div>
-                    <h6 class="my-0">@product.Product.ProductName</h6>
-                    <small class="text-muted">Quantity: @product.Count</small>
-                  </div>
-                  <span class="text-muted">£@product.Product.ProductPrice</span>
-                </li>  
-                    }
+                    <li class="list-group-item d-flex justify-content-between lh-condensed">
+                        <div>
+                            <h6 class="my-0">@product.Product.ProductName</h6>
+                            <small class="text-muted">Quantity: @product.Count</small>
+                        </div>
+                        <span class="text-muted">£@product.Product.ProductPrice</span>
+                    </li>
+                }
+
+                <li class="list-group-item d-flex justify-content-between">
+                    <span>Total (GBP)</span>
+                    <strong>£@basketVM.BasketTotal</strong>
+                </li>
                 }
             else
             {
                 <li>Error</li>
             }
             
-            <li class="list-group-item d-flex justify-content-between">
-              <span>Total (GBP)</span>
-              <strong>£@basketVM.BasketTotal</strong>
-            </li>
+            
           </ul>
 
         </div>
         <div class="col-md-8 order-md-1">
-          <h4 class="mb-3">Shipping/Billing Address</h4>
-          <EditForm Model="@order" OnSubmit="@PlaceOrder" class="form-horizontal" role="form">
-            <div class="row">
-              <div class="col-md-6 mb-3">
-                <label for="forename">First Name</label>
-                <InputText class="form-control" id="forename" placeholder="Enter your first name" @bind-Value="@order.Forename" />
-              </div>
-              <div class="col-md-6 mb-3">
-                <label for="surname">Surname</label>
-                <InputText class="form-control" id="surname" placeholder="Enter your second name" @bind-Value="@order.Surname" />
-              </div>
-            </div>
+            <h4 class="mb-3">Shipping/Billing Address</h4>
+            <EditForm Model="order" OnSubmit="PlaceOrder">
+                <DataAnnotationsValidator/>
+                <div class="row">
+                  <div class="col-md-6 mb-3">
+                    <label for="forename">First Name</label>
+                    <InputText class="form-control" id="forename" placeholder="Enter your first name" @bind-Value="@order.Forename" />
+                  </div>
+                  <div class="col-md-6 mb-3">
+                    <label for="surname">Surname</label>
+                    <InputText class="form-control" id="surname" placeholder="Enter your second name" @bind-Value="@order.Surname" />
+                  </div>
+                </div>
+                <div class="mb-3">
+                  <label for="email">Email Address</label>
+                  <!-- Disabling this field ensures that the email address cannot be changed by the user, as the solution
+                        requires the same email as the account to find the orders associated with their email.
+                  -->
+                  <InputText class="form-control" id="email" placeholder="you@example.com" @bind-Value="@order.Email" disabled/>
+                </div>
+                <div class="mb-3">
+                    <label for="AddressLine1">Address Line 1</label>
+                    <InputText class="form-control" id="AddressLine1" placeholder="1234 Main St" @bind-Value="@order.AddressLine1" />
+                </div>
+                <div class="mb-3">
+                  <label for="AddressLine2">Address Line 2</label>
+                  <InputText class="form-control" id="AddressLine2" placeholder="Apartment or suite" @bind-Value="@order.AddressLine2"/>
+                </div>
+                <div class="mb-3">
+                  <label for="Town">Town</label>
+                  <InputText class="form-control" id="Town" placeholder="Bridgwater" @bind-Value="@order.Town" />
+                </div>
+                <div class="mb-3">
+                  <label for="County">County</label>
+                  <InputText class="form-control" id="County" placeholder="Somerset" @bind-Value="@order.County" />
+                </div>
+                <div class="mb-3">
+                  <label for="PostCode">Post Code</label>
+                  <InputText class="form-control" id="PostCode" placeholder="AB1 2CD" @bind-Value="@order.PostCode" />
+                </div>
+                <div class="mb-3">
+                  <label for="Telephone">Telephone (Mobile or Home)</label>
+                  <InputText class="form-control" id="Telephone" placeholder="01234 987654" @bind-Value="@order.Telephone" />
+                </div>
+                <div class="mb-3">
+                    <button class="btn btn-primary btn-lg btn-block" type="submit">Proceed to Payment</button>
+                </div>
+
+            </EditForm>
             <div class="mb-3">
-              <label for="email">Email Address</label>
-              <!-- Disabling this field ensures that the email address cannot be changed by the user, as the solution
-                    requires the same email as the account to find the orders associated with their email.
-              -->
-              <InputText class="form-control" id="email" placeholder="you@example.com" @bind-Value="@order.Email" disabled/>
+                <a class="btn btn-danger btn-lg btn-block" href="/">Cancel</a>
             </div>
-            <div class="mb-3">
-                <label for="AddressLine1">Address Line 1</label>
-                <InputText class="form-control" id="AddressLine1" placeholder="1234 Main St" @bind-Value="@order.AddressLine1" />
-            </div>
-            <div class="mb-3">
-              <label for="AddressLine2">Address Line 2</label>
-              <InputText class="form-control" id="AddressLine2" placeholder="Apartment or suite" @bind-Value="@order.AddressLine2"/>
-            </div>
-            <div class="mb-3">
-              <label for="Town"></label>
-              <InputText class="form-control" id="Town" placeholder="Bridgwater" @bind-Value="@order.Town" />
-            </div>
-            <div class="mb-3">
-              <label for="County"></label>
-              <InputText class="form-control" id="County" placeholder="Somerset" @bind-Value="@order.County" />
-            </div>
-            <div class="mb-3">
-              <label for="PostCode"></label>
-              <InputText class="form-control" id="PostCode" placeholder="AB1 2CD" @bind-Value="@order.PostCode" />
-            </div>
-            
-            <hr class="mb-4">
-            <button class="btn btn-primary btn-lg btn-block" type="submit">Proceed to Payment</button>
-          </EditForm>
-            <a class="btn btn-danger btn-lg btn-block" href="/">Cancel</a>
         </div>
       </div>
     </div>
 
 @code {
-    OrderModel? order;
     ShoppingBasketVM? basketVM;
+    OrderModel? order = new OrderModel();
 
     protected override async Task OnInitializedAsync()
     {
@@ -110,7 +120,7 @@
         var userName = auth.GetAuthenticationStateAsync().Result.User.Identity?.Name; //Get the current user
         var userModel = context.Users.FirstOrDefault(u => u.Email == userName);
 
-        order = new OrderModel();
+        //order = new OrderModel();
 
         if (userModel is not null)
         {   
@@ -119,15 +129,16 @@
             order.Surname = userModel.Surname;
             order.AddressLine1 = userModel.AddressLine1;
             order.AddressLine2 = userModel.AddressLine2;
+            order.Town = userModel.Town;
             order.County = userModel.County;
             order.PostCode = userModel.PostCode;
-
             order.OrderDate = DateTime.Now;
         }
     }
 
-    private void PlaceOrder()
+    private async void PlaceOrder()
     {
         //Place the order using the ShoppingBasketService
+        var vm = await basket.CreateOrder(order);
     }
 }

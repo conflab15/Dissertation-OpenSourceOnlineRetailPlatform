@@ -266,6 +266,8 @@ namespace OnlineRetailPlatformDiss.Services
             }
             order.OrderTotal = total;
 
+            context.Orders?.Add(order); //Adding the order, which creates a Guid...
+
             //Save the changes to the db...
             await context.SaveChangesAsync();
 

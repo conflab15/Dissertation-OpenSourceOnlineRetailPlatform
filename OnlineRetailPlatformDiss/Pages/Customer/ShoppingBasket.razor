@@ -30,11 +30,15 @@ else
             </div>
             <div class="col-4 text-center">
                 <div class="container bg-light mb-2">
-                    <h2>Your Shopping Basket:</h2>
-                    <h3>Total Items: @state.BasketCount</h3>
+                    <h2 class="mb-3">Your Shopping Basket:</h2>
+                    <h3 class="mb-1">Total Items: @state.BasketCount</h3>
                     <h3>Total Cost: £@basketVM.BasketTotal</h3>
                     <!-- Button Options -->
-                    <a class="btn btn-primary w-100 p-2 m-1" @onclick="(() => CheckoutConfirm())">Checkout</a>
+                    <a class="btn btn-primary w-100 p-2 m-1" @onclick="(() => CheckoutConfirm())">
+                        <svg style="width:24px;height:24px" viewBox="0 0 24 24">
+                            <path fill="currentColor" d="M20,8H4V6H20M20,18H4V12H20M20,4H4C2.89,4 2,4.89 2,6V18A2,2 0 0,0 4,20H20A2,2 0 0,0 22,18V6C22,4.89 21.1,4 20,4Z" />
+                        </svg>
+                        Checkout</a>
                     <a class="btn btn-outline-secondary w-100 p-2 m-1" href="/">Continue Shopping</a>
                     <a class="btn btn-danger w-100 p-2 m-1" @onclick="(() => EmptyBasket())">
                         <svg style="width:24px;height:24px" viewBox="0 0 24 24">
