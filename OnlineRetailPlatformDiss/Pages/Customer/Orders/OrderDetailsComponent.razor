@@ -1,0 +1,63 @@
+﻿@using OnlineRetailPlatformDiss.Models
+
+<!-- Modal to show the details of the Customers orders when they click to view details -->
+<div class="modal fade show d-block" id="OrderDetailsModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="titleLabel">Order Details: @Order.OrderId</h5>
+                <button class="btn btn-outline-danger" @onclick="@(() => Close())">Close</button>
+            </div>
+            <div class="modal-body p-2">
+                <div class="row">
+                    <div class="col">
+                        <p><strong>Order Date: </strong>@Order.OrderDate</p>
+                        <p><strong>Order Total: </strong>@Order.OrderTotal</p>
+                        <p><strong>Total Items: </strong>@Order.OrderLines.Count</p>
+                    </div>
+                    <div class="col text-center">
+                        <strong>Customer Details:</strong>
+                        <ul id="addresslist">
+                            <li>@Order.Forename @Order.Surname</li>
+                            <li>@Order.AddressLine1</li>
+                            @if(Order.AddressLine2 != null)
+                            {
+                                <li>@Order.AddressLine2</li>
+                            }
+                            <li>@Order.Town</li>
+                            <li>@Order.County</li>
+                            <li >@Order.PostCode</li>
+                        </ul>                   
+                    </div>
+                </div>
+                <div class="container text-center">
+                    <strong>Products within your order:</strong>
+                    @foreach (var item in Order.OrderLines)
+                    {
+                        <div class="row">
+                            <div class="col">
+                                <ul id="addresslist">
+                                    <li>@Order.OrderLines.</li>
+                                </ul>
+                            </div>
+                            <div class="col">
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        <button class="btn btn-outline-danger" @onclick="@(() => Close())">Close</button>
+        </div>
+    </div>
+
+</div>
+
+@code {
+    [Parameter] public OrderModel? Order { get; set; }
+    [Parameter] public EventCallback CloseDetails { get; set; }
+
+    private async void Close()
+    {
+        await CloseDetails.InvokeAsync();
+    }
+}

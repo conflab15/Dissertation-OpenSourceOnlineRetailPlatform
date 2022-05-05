@@ -82,6 +82,7 @@ else
             await basket.EmptyCart();
             await js.InvokeVoidAsync("confirmChanges", "Success", $"Your shopping basket has been emptied!", "success");
             basketVM = await basket.shoppingBasket();
+            state.SetBasketCount(0);
         }
         base.StateHasChanged();
     }

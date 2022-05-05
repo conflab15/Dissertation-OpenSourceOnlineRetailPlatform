@@ -1,0 +1,14 @@
+﻿@using OnlineRetailPlatformDiss.Models
+
+<li class="list-group-item d-flex justify-content-between lh-condensed">
+    <div>
+        <h6 class="my-0">@basket.Product.ProductName</h6>
+        <small class="text-muted">Quantity: @basket.Count</small>
+    </div>
+    <span>£@basket.Product.ProductPrice</span>
+</li>
+
+@code 
+{
+    [Parameter] public BasketModel? basket { get; set; }
+}

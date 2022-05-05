@@ -11,5 +11,6 @@ namespace OnlineRetailPlatformDiss.Models
         public int ProductQuantity { get; set; }
         public decimal ProductPrice { get; set; }
         public ProductModel? Product { get; set; } //Product Model
+        public string? Status { get; set; } //Status of the Order Item, because orders can have items from different businesses.
     }
 }

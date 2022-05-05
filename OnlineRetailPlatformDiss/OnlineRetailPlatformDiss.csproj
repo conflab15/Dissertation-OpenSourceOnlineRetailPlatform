@@ -21,7 +21,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Pages\Customer\Orders\" />
     <Folder Include="wwwroot\images\business\" />
     <Folder Include="wwwroot\images\products\" />
     <Folder Include="wwwroot\lib\" />

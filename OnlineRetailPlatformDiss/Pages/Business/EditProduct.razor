@@ -83,7 +83,7 @@
         {
             _context.Products?.Update(product); <!-- Updating product and saving changes... -->
             await _context.SaveChangesAsync();
-            var accepted = js.InvokeAsync<bool>("confirmChanges",
+            await js.InvokeVoidAsync("confirmChanges",
                 "Product Amended!",
                 "Your product changes have been saved!",
                 "success"); //Swal for declaring success in adding a business
@@ -91,7 +91,7 @@
         }
         catch (Exception e)
         {
-            var accepted = js.InvokeAsync<bool>("confirmChanges",
+            await js.InvokeVoidAsync("confirmChanges",
                     "Error",
                     $"The product could not be edited: {e.Message}",
                     "error"); //Swal for declaring error in the 

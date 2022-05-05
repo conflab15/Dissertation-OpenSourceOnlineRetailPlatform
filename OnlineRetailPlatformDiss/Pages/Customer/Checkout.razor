@@ -3,6 +3,7 @@
 @using OnlineRetailPlatformDiss.Data;
 @inject ApplicationDbContext context;
 @inject ShoppingBasketService basket;
+@inject AppState state;
 @inject IJSRuntime js;
 @inject AuthenticationStateProvider auth;
 @inject NavigationManager nav;
@@ -12,47 +13,38 @@
 <PageTitle>Checkout</PageTitle>
 
 <div class="container">
-      <div class="py-5 text-center">
-        <img class="d-block mx-auto mb-4" src="https://www.logolynx.com/images/logolynx/cf/cff9eb13659bb9ea6af7af6522f4d309.png" alt="Shopping Cart Img" width="80" height="80">
-        <h1>Checkout</h1>
-        <p class="lead">Please enter the required details:</p>
-      </div>
-
-      <div class="row">
+    <div class="row">
         <div class="col-md-4 order-md-2 mb-4">
-          <h4 class="d-flex justify-content-between align-items-center mb-3">
-            <span class="text-muted">Your Shopping Cart</span>
-          </h4>
-          <ul class="list-group mb-3">
+            <div class="py-5 text-center">
+                <img class="d-block mx-auto mb-4" src="https://www.logolynx.com/images/logolynx/cf/cff9eb13659bb9ea6af7af6522f4d309.png" alt="Shopping Cart Img" width="80" height="80">
+                <h1>Checkout</h1>
+                <p class="lead">Please enter the required details:</p>
+            </div>
+            <h4 class="d-flex justify-content-center align-items-center mb-3">
+                <span>Your Shopping Cart</span>
+            </h4>
+            <ul class="list-group mb-3">
             @if (basketVM != null)
             {
                 @foreach (var product in basketVM.BasketItems)
                 {
-                    <li class="list-group-item d-flex justify-content-between lh-condensed">
-                        <div>
-                            <h6 class="my-0">@product.Product.ProductName</h6>
-                            <small class="text-muted">Quantity: @product.Count</small>
-                        </div>
-                        <span class="text-muted">£@product.Product.ProductPrice</span>
-                    </li>
+                    <CheckoutItemComponent basket=@product />
                 }
-
                 <li class="list-group-item d-flex justify-content-between">
-                    <span>Total (GBP)</span>
+                    <span>Total Items:</span>
+                    <strong>@state.BasketCount</strong>
+                </li>
+                <li class="list-group-item d-flex justify-content-between">
+                    <span>Total (GBP):</span>
                     <strong>£@basketVM.BasketTotal</strong>
                 </li>
-                }
-            else
-            {
-                <li>Error</li>
             }
-            
-            
-          </ul>
-
+            </ul>
         </div>
         <div class="col-md-8 order-md-1">
-            <h4 class="mb-3">Shipping/Billing Address</h4>
+            <h4 class="d-flex mb-3 justify-content-center align-items-center">
+                <span>Shipping/Billing Address</span>
+            </h4>
             <EditForm Model="order" OnSubmit="PlaceOrder">
                 <DataAnnotationsValidator/>
                 <div class="row">
@@ -138,7 +130,23 @@
 
     private async void PlaceOrder()
     {
-        //Place the order using the ShoppingBasketService
-        var vm = await basket.CreateOrder(order);
+        try
+        {
+            var vm = await basket.CreateOrder(order); //Place the order using the ShoppingBasketService
+            await js.InvokeVoidAsync("confirmChanges",
+            "Thank you for your order!",
+            $"Order Number: {vm.OrderId} has been placed!",
+            "success"); //Swal for declaring success in placing an order!
+            state.SetBasketCount(0); //Reset the basket state to zero...
+            nav.NavigateTo("/"); //Redirect to the index page
+        }
+        catch (Exception e)
+        {
+            await js.InvokeVoidAsync("confirmChanges",
+                    "Uh Oh, something went wrong!",
+                    $"The order could not be placed: {e.Message}",
+                    "error"); //Swal for declaring errors to the user
+        }
+
     }
 }
