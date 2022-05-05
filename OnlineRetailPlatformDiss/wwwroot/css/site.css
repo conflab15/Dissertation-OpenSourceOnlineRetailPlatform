@@ -104,3 +104,11 @@ td {
     list-style: none;
     padding-left: 0;
 }
+
+#orderImage{
+    display: block;
+    max-width: 220px;
+    max-height: 200px;
+    width: auto;
+    height: auto;
+}

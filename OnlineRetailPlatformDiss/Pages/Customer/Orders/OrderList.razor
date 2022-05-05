@@ -20,19 +20,26 @@
         <div class="col-7">
             @if(orders != null)
             {
+                <!-- List Group to show each order within the basket... -->
+                <div class="list-group">
                 @foreach(var order in orders)
                 {
-                    <div class="card">
-                        <h5 class="card-header">Order ID: @order.OrderId</h5>
-                        <div class="card-body">
-                            <h5 class="card-title">Order Date: @order.OrderDate</h5>
-                            <p class="card-text">Order Total: £@order.OrderTotal</p>
-                            <p class="card-text">Total Items: @order.OrderLines.Count</p>
+                    <div class="list-group-item list-group-item-action">
+                        <div class="d-flex w-95 justify-content-between">
+                            <h5 class="mb-1">Order ID: @order.OrderId</h5>
+                            <small>@order.OrderDate</small>
+                        </div>
+                        <p>Order Date: @order.OrderDate</p>
+                        <p>Order Total: £@order.OrderTotal</p>
+                        <small>Total Items: @order.OrderLines.Count</small>
+                        <div class="d-flex w-100 pt-2">
                             <button class="btn btn-outline-primary" @onclick="@(() => ShowDetails(order))">View Details</button>
+                            <button class="btn btn-outline-danger">Cancel Order</button>
                         </div>
                     </div>
                     <div class="divider pt-2" />
                 }
+                </div>
             }
         </div>
         <div class="col-5 text-center">
@@ -54,7 +61,7 @@
     protected override void OnInitialized()
     {
         UserEmail = auth.GetAuthenticationStateAsync().Result.User.Identity?.Name; //Get the current user
-        orders = context.Orders?.Include("OrderLines").Where(
+        orders = context.Orders?.Include(orders => orders.OrderLines).ThenInclude(orderlines => orderlines.Product).Where(
             o => o.Email == UserEmail).ToList(); //Get the Order, as well as the Items in the Order...
     }
 
