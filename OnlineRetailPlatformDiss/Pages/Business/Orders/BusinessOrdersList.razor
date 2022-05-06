@@ -1,0 +1,92 @@
+﻿@using Microsoft.EntityFrameworkCore
+@using OnlineRetailPlatformDiss.Models
+@using OnlineRetailPlatformDiss.Services
+@using OnlineRetailPlatformDiss.Data;
+@inject ApplicationDbContext context;
+@inject IJSRuntime js;
+
+@page "/business/orders/{BusinessId:guid}";
+@attribute [Authorize];
+<PageTitle>Orders</PageTitle>
+
+<div class="container">
+    <div class="row">
+        <div class="col-7">
+            @if(orders != null)
+            {
+                <!-- List Group to show each order within the basket... -->
+                <div class="list-group">
+                @foreach(var order in orders)
+                {
+                    <div class="list-group-item list-group-item-action">
+                        <div class="d-flex w-95 justify-content-between">
+                            <h5 class="mb-1">Order ID: @order.OrderId</h5>
+                            <small>@order.OrderDate</small>
+                        </div>
+                        <p>Order Date: @order.OrderDate</p>
+                        <p>Order Total: £@order.OrderTotal</p>
+                        <small>Total Items: @order.OrderLines.Count</small>
+                        <div class="d-flex w-100 pt-2">
+                            <button class="btn btn-outline-primary">Open Order Details</button>
+                        </div>
+                    </div>
+                    <div class="divider pt-2" />
+                }
+                </div>
+            }
+        </div>
+        <div class="col-5 text-center">
+            <div class="container bg-light mb-2">
+                <h2 class="mb-3">Orders for: @Business.BusinessName</h2>
+                <h3 class="mb-1">Total Orders: @orders?.Count</h3>
+                <!-- Button Options -->
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public Guid? BusinessId { get; set; }
+    BusinessAccountModel? Business;
+    List<OrderModel>? orders = new List<OrderModel>(); //List of Orders to sort through...
+
+
+    protected override void OnInitialized()
+    {
+        try
+        {
+            //Get the Business
+            Business = context.BusinessAccount.FirstOrDefault(b => b.Id == BusinessId); 
+
+            //Get the Orders
+            var PlacedOrders = context.Orders?.Include(o => o.OrderLines)
+            .ThenInclude(orderlines => orderlines.Product)
+            .ToList(); //Get the Order, as well as the Items in the Order...
+
+            //This probably isn't efficient, but it works so nevermind....
+            if(PlacedOrders != null)
+            {
+                //For each Order, and the Line within each order, if the product is sold by the business, add it to the list?
+                foreach(var order in PlacedOrders) //For each Order that has been placed...
+                {
+                    if(order != null)
+                    {
+                        foreach(var item in order.OrderLines) //For each item within the order...
+                        {
+                            if(item.Product?.BusinessName == Business?.BusinessName) //If the item is sold by the BusinessName within param...
+                            {
+                                orders?.Add(order); //Add to the order...
+                            }
+                        }
+                    }
+                } 
+            }
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e.Message);
+        }
+
+    } 
+} 
