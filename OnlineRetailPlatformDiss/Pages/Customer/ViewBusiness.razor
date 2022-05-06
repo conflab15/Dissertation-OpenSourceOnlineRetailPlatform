@@ -69,8 +69,11 @@
     {
         //Resetting the list, which ensures search results are not restricted to the results of the previous search
         businesses = _context.BusinessAccount?.ToList();
-        //Filter the list to show results which are 
-        businesses = _context.BusinessAccount?.Where(b => b.Town.ToLower().Contains(SearchText.ToLower())).ToList();
-        message = "Showing Businesses within: '" + SearchText + "'";
+        //Filter the list to show results by search criteria
+        if(SearchText != null)
+        {
+            businesses = _context.BusinessAccount?.Where(b => b.Town.ToLower().Contains(SearchText.ToLower())).ToList();
+            message = "Showing Businesses within: '" + SearchText + "'";
+        }
     }
 }

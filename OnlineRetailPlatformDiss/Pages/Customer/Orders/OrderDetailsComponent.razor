@@ -5,49 +5,52 @@
     <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header bg-light">
-                <h5 class="modal-title" id="titleLabel">Order Details: @Order.OrderId</h5>
+                <h5 class="modal-title" id="titleLabel">Order Details: @Order?.OrderId</h5>
                 <button class="btn btn-outline-danger" @onclick="@(() => Close())">Close</button>
             </div>
             <div class="modal-body p-2 m-1">
                 <div class="row">
                     <div class="col">
-                        <p><strong>Order Date: </strong>@Order.OrderDate</p>
-                        <p><strong>Order Total: </strong>@Order.OrderTotal</p>
-                        <p><strong>Total Items: </strong>@Order.OrderLines.Count</p>
+                        <p><strong>Order Date: </strong>@Order?.OrderDate</p>
+                        <p><strong>Order Total: </strong>@Order?.OrderTotal</p>
+                        <p><strong>Total Items: </strong>@Order?.OrderLines?.Count</p>
                     </div>
                     <div class="col text-center">
                         <strong>Customer Details:</strong>
                         <ul id="addresslist">
-                            <li>@Order.Forename @Order.Surname</li>
-                            <li>@Order.AddressLine1</li>
-                            @if(Order.AddressLine2 != null)
+                            <li>@Order?.Forename @Order?.Surname</li>
+                            <li>@Order?.AddressLine1</li>
+                            @if(Order?.AddressLine2 != null)
                             {
                                 <li>@Order.AddressLine2</li>
                             }
-                            <li>@Order.Town</li>
-                            <li>@Order.County</li>
-                            <li >@Order.PostCode</li>
+                            <li>@Order?.Town</li>
+                            <li>@Order?.County</li>
+                            <li >@Order?.PostCode</li>
                         </ul>                   
                     </div>
                 </div>
                 <div class="container text-center pt-2">
                     <strong>Items in your order:</strong>
-                    @foreach (var item in Order.OrderLines)
+                    @if(Order?.OrderLines is not null)
                     {
+                        @foreach (var item in Order.OrderLines)
+                        {
                         <div class="row p-2 m-1">
                             <div class="col-6">
                                 <ul id="addresslist">
-                                    <li>@item.Product.ProductName</li>
-                                    <li>@item.Product.ProductDescription</li>
-                                    <li>£@item.Product.ProductPrice</li>
+                                    <li>@item.Product?.ProductName</li>
+                                    <li>@item.Product?.ProductDescription</li>
+                                    <li>£@item.Product?.ProductPrice</li>
                                     <li class="badge bg-primary rounded-pill mt-2">Quantity: @item.ProductQuantity</li>
                                 </ul>
                             </div>
                             <div class="col-6 d-flex justify-content-end align-items-end">
-                                <img src="@item.Product.ImageUrl" alt="Product Image" class="img-thumbnail" id="orderImage">
+                                <img src="@item.Product?.ImageUrl" alt="Product Image" class="img-thumbnail" id="orderImage">
                             </div>
                         </div>
-                    }
+                        }
+                    }           
                 </div>
             </div>
         </div>

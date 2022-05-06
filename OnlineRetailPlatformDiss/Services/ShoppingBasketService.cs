@@ -233,8 +233,8 @@ namespace OnlineRetailPlatformDiss.Services
             //Add them all together...
             decimal? total = await (from basket in context.Baskets
                                     where basket.BasketId == BasketId
-                                    select (int?)basket.Count *
-                                    basket.Product.ProductPrice).SumAsync();
+                                    select (int?)basket.Count
+                                           * basket.Product.ProductPrice).SumAsync();
 
             return total ?? decimal.Zero;
         }
@@ -255,7 +255,8 @@ namespace OnlineRetailPlatformDiss.Services
                     ProductId = product.ProductId,
                     OrderId = order.OrderId,
                     ProductPrice = product.Product.ProductPrice,
-                    ProductQuantity = product.Count
+                    ProductQuantity = product.Count,
+                    Status = "Order Accepted" //Setting Default Order Status
                 };
                 //Set the Order Total!
                 total += (product.Count * product.Product.ProductPrice);

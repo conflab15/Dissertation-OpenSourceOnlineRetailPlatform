@@ -26,18 +26,21 @@
             <ul class="list-group mb-3">
             @if (basketVM != null)
             {
-                @foreach (var product in basketVM.BasketItems)
+                @if (basketVM.BasketItems is not null)
                 {
-                    <CheckoutItemComponent basket=@product />
-                }
-                <li class="list-group-item d-flex justify-content-between">
-                    <span>Total Items:</span>
-                    <strong>@state.BasketCount</strong>
-                </li>
-                <li class="list-group-item d-flex justify-content-between">
-                    <span>Total (GBP):</span>
-                    <strong>£@basketVM.BasketTotal</strong>
-                </li>
+                    @foreach (var product in basketVM.BasketItems)
+                    {
+                        <CheckoutItemComponent basket=@product />
+                    }
+                    <li class="list-group-item d-flex justify-content-between">
+                        <span>Total Items:</span>
+                        <strong>@state.BasketCount</strong>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between">
+                        <span>Total (GBP):</span>
+                        <strong>£@basketVM.BasketTotal</strong>
+                    </li>     
+                }  
             }
             </ul>
         </div>
@@ -45,7 +48,9 @@
             <h4 class="d-flex mb-3 justify-content-center align-items-center">
                 <span>Shipping/Billing Address</span>
             </h4>
-            <EditForm Model="order" OnSubmit="PlaceOrder">
+            @if(order is not null)
+            {
+                <EditForm Model="order" OnSubmit="PlaceOrder">
                 <DataAnnotationsValidator/>
                 <div class="row">
                   <div class="col-md-6 mb-3">
@@ -91,11 +96,11 @@
                 <div class="mb-3">
                     <button class="btn btn-primary btn-lg btn-block" type="submit">Proceed to Payment</button>
                 </div>
-
-            </EditForm>
-            <div class="mb-3">
-                <a class="btn btn-danger btn-lg btn-block" href="/">Cancel</a>
-            </div>
+                </EditForm>
+                <div class="mb-3">
+                    <a class="btn btn-danger btn-lg btn-block" href="/">Cancel</a>
+                </div>
+            }           
         </div>
       </div>
     </div>
@@ -114,7 +119,7 @@
 
         //order = new OrderModel();
 
-        if (userModel is not null)
+        if (userModel is not null && order is not null)
         {   
             order.Email = userName;
             order.Forename = userModel.Forename;

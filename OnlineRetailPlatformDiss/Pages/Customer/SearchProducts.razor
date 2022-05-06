@@ -1,4 +1,5 @@
-﻿@using OnlineRetailPlatformDiss.Models;
+﻿@using Microsoft.EntityFrameworkCore
+@using OnlineRetailPlatformDiss.Models;
 @using Microsoft.Extensions.Logging
 @inject OnlineRetailPlatformDiss.Data.ApplicationDbContext _context;
 
@@ -97,7 +98,7 @@ else
     {
         List<ProductModel>? products;
 
-        @if (BusinessName != null)
+        @if (BusinessName is not null)
         {
             products = _context.Products?.Where(b => b.BusinessName == BusinessName).ToList();
         }

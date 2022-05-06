@@ -31,7 +31,7 @@
                         </div>
                         <p>Order Date: @order.OrderDate</p>
                         <p>Order Total: £@order.OrderTotal</p>
-                        <small>Total Items: @order.OrderLines.Count</small>
+                        <small>Total Items: @order?.OrderLines?.Count</small>
                         <div class="d-flex w-100 pt-2">
                             <button class="btn btn-outline-primary" @onclick="@(() => ShowDetails(order))">View Details</button>
                             <button class="btn btn-outline-danger">Cancel Order</button>
