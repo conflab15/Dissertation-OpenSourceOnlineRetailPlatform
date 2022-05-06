@@ -10,17 +10,16 @@ Customers are able to register an account, and browse products on the website.
 - Searching for Products, and filtering by Price and Title
 - Searching for Businesses by town, and viewing these details, and products sold by the business
 - Quickly amended stock levels of products within the business products list
+- Shopping Basket and Ordering Functionality (Ability to manage the stock level within the basket)
+- Order views for the Customers to see their orders
 
 # Features to implement:
 As this assignment is ongoing, I have more features to implement:
-- Shopping Basket Functionality
-- Checkout and Ordering - Ideally, a payment provider, such as Stripe, will be implemented to take payments
-- Order Management
+- Order Management for Businesses
 - Searching for Products by Business Location
 
 # Potential Extra Functionality
 - Multiple Images for products
 - Product Reviews
 - Chat Bot for Customer Service related queries
-- Order Status
 
