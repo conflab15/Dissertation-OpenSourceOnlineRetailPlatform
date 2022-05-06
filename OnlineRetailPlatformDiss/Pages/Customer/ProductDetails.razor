@@ -1,0 +1,112 @@
+﻿@using OnlineRetailPlatformDiss.Models;
+@using Microsoft.EntityFrameworkCore;
+@using Microsoft.Extensions.Logging;
+@using OnlineRetailPlatformDiss.Services;
+@inject OnlineRetailPlatformDiss.Data.ApplicationDbContext _context;
+@inject ShoppingBasketService basket;
+@inject AppState state;
+@inject IJSRuntime js; //JS functionality to create a SweetAlert.
+
+@page "/product/{ProductId:guid}"
+
+<!-- Product Details -->
+@if (Product is not null)
+{
+    <div class="container m-4 shadow-lg">
+        <div class="row">
+            <div class="col-6">
+                @if(Product.ImageUrl == null)
+                {
+                    <img src="/images/products/noimageplaceholder.jpg" alt="Placeholder Image" id="ProductDetailsImg" />
+                }
+                else
+                {
+                    <img src="@Product.ImageUrl" alt="Product Image" id="ProductDetailsImg" />
+                }
+            </div>
+            <div class="col-6 pt-5 text-center align-items-center">
+                <h3 class="mb-3">@Product.ProductName</h3>
+                <h5 class="mb-3">@Product.ProductDescription</h5>
+                <div class="divider m-2 pb-2" />
+                <ul id="addresslist">
+                    <li><h5>Sold by: @Product.BusinessName</h5></li>
+                    @if(Product.StockLevel <= 0)
+                    {
+                        <li class="text-danger"><h5>Available units: 0</h5></li>
+                    }
+                    else
+                    {
+                        <li><h5>Available units: @Product.StockLevel</h5></li>
+                    }
+                    <li><h5><strong>£@Product.ProductPrice</strong></h5></li>
+                </ul>
+                @if (Product.StockLevel <= 0)
+                {
+                    <button class="btn btn-sm btn-outline-danger disabled">      
+                        <svg style="width:24px;height:24px" viewBox="0 0 24 24">
+                            <path fill="currentColor" d="M23 10L22.96 10.29L20.9 17.7L12.2 9H15L12 4.74L10.32 7.12L8.89 5.69L11.18 2.43C11.36 2.17 11.66 2 12 2S12.65 2.17 12.83 2.44L17.42 9H22C22.55 9 23 9.45 23 10M22.11 21.46L20.84 22.73L19.03 20.92C18.86 20.97 18.68 21 18.5 21H5.5C4.72 21 4.04 20.55 3.71 19.9L1.1 10.44L1 10C1 9.45 1.45 9 2 9H6.58L6.8 8.69L1.11 3L2.39 1.73L22.11 21.46M13.85 15.74L11.26 13.15C10.5 13.44 10 14.16 10 15C10 16.11 10.9 17 12 17C12.84 17 13.56 16.5 13.85 15.74Z" />
+                        </svg>Out of Stock
+                    </button>
+                }
+                else
+                {
+                <div class="input-group p-3 w-85">
+                    <input type="number" class="form-control w-5 input-value" @bind-value="Amount"  />
+                    <div class="input-group-append"> 
+                        <input type="submit" class="btn btn-outline-primary" value="Add to Basket" @onclick="(() => AddToBasket(Product, Amount))" />
+                    </div>
+                </div>
+                }
+                <div class="d-flex justify-content-evenly align-items-center">
+                    <a href="/customer/business/@Product.BusinessName" class="btn btn-primary">View the Business</a>
+                    <a href="/ShoppingBasket" class="btn btn-success">My Basket</a>
+                </div>
+
+                
+            </div>
+        </div>
+    </div>
+}
+
+<!-- Reviews Section to go here! -->
+
+
+@code {
+    [Parameter]
+    public Guid? ProductId { get; set; }
+    ProductModel? Product;
+    int Amount = 1;
+
+    protected override void OnInitialized()
+    {
+        if (ProductId is not null)
+        {
+            Product = _context.Products.FirstOrDefault(p => p.ProductID == ProductId); //Get the Product Model...
+        }
+    }
+
+    //Add To Basket Method...
+    private async void AddToBasket(ProductModel product, int quantity)
+    {
+        if(quantity <= 0)
+        {
+            quantity = 1;
+        }
+
+        try
+        {
+            var count = await basket.AddToBasket(product.ProductID, quantity); //Getting the returned product count to update the appstate...
+            state.SetBasketCount(count.BasketCount); //Setting the AppState with the returned count...
+
+            await js.InvokeVoidAsync("confirmChanges", "Added to Basket", $"{quantity} x {product.ProductName} has been added to your basket!", "success");
+        }
+        catch (Exception e)
+        {
+            await js.InvokeVoidAsync("confirmChanges", "Failed", $"The product could not be added to your Basket: {e.Message}", "warning");
+        }
+        
+        StateHasChanged();
+    }
+
+
+}
