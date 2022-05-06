@@ -49,7 +49,7 @@
 
     protected override void OnInitialized()
     {
-        manager = auth.GetAuthenticationStateAsync().Result.User.Identity.Name;
+        manager = auth.GetAuthenticationStateAsync().Result.User.Identity?.Name;
         businesses = _context.BusinessAccount?.Where(x => x.ManagerID == manager).ToList();
     }
 }
