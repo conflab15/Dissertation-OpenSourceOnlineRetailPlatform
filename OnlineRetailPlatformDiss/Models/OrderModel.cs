@@ -27,6 +27,8 @@ namespace OnlineRetailPlatformDiss.Models
         public string? Telephone { get; set; }
         public decimal OrderTotal { get; set; }
 
+        public string? OrderStatus { get; set; }
+
         //List of Order Lines
         public List<OrderLineModel>? OrderLines { get; set; }
     }

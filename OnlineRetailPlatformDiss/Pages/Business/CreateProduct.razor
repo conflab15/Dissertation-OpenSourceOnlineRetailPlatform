@@ -121,7 +121,7 @@
 
             _context.Products?.AddAsync(product); //Add the new product
             await _context.SaveChangesAsync(); //Save the product to the db
-            var accepted = js.InvokeAsync<bool>("confirmChanges",
+            await js.InvokeVoidAsync("confirmChanges",
                 "Product Added!",
                 "You've successfully added a product!",
                 "success"); //Swal for declaring success in adding a business
@@ -129,7 +129,7 @@
         }  
         catch (Exception e)
         {
-             var accepted = js.InvokeAsync<bool>("confirmChanges",
+             await js.InvokeVoidAsync("confirmChanges",
                     "Error",
                     $"The product could not be added to your business: {e.Message}",
                     "error"); //Swal for declaring success in adding a business

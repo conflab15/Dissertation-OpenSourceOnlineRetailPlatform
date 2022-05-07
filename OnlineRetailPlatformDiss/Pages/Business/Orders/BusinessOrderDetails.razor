@@ -1,0 +1,17 @@
+﻿@using Microsoft.EntityFrameworkCore
+@using OnlineRetailPlatformDiss.Models
+@using OnlineRetailPlatformDiss.Services
+@using OnlineRetailPlatformDiss.Data;
+@inject ApplicationDbContext context;
+@inject IJSRuntime js;
+
+@page "/business/orders/{OrderId:guid}";
+@attribute [Authorize];
+<PageTitle>Order Details</PageTitle>
+
+
+
+@code {
+    [Parameter]
+    public Guid OrderId { get; set; }
+}

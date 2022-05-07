@@ -78,4 +78,37 @@
         //When EventCallback is triggered, do this...
         ShowOrderDetails = false;
     }
+
+    private void CancelOrder(OrderModel order)
+    {
+        try
+        {
+            //For each item within the order, cancel it...
+            order.OrderStatus = "Cancelled"; //Change the Order Status to cancelled...
+            if (order.OrderLines != null)
+            {
+                foreach (var item in order.OrderLines)
+                {
+                    if (item.Status != "Shipped") //If the Product has not been shipped...
+                    {
+                        item.Status = "Cancelled"; //Product cancelled....
+                    }
+                }
+            }
+
+            js.InvokeVoidAsync("confirmChanges",
+                "Order Cancelled!",
+                "The order has been cancelled. NOTE: If an item within your order has been shipped, this cannot be cancelled. You should contact the retailer to return the product once you have recieved it.",
+                "success"); //Swal for declaring if the cancellation has been a success...
+        }
+        catch (Exception e)
+        {
+             js.InvokeVoidAsync("confirmChanges",
+                    "Error",
+                    $"The order could not be cancelled: {e.Message}",
+                    "error"); //Swal for declaring success in adding a business
+        }
+        
+
+    }
 }

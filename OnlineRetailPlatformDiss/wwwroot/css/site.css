@@ -120,3 +120,11 @@ td {
     width: auto;
     height: auto;
 }
+
+#tableImg {
+    display: block;
+    max-width: 200px;
+    max-height: 180px;
+    width: auto;
+    height: auto;
+}

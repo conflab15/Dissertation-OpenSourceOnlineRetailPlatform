@@ -36,13 +36,13 @@
                         @if(product.ImageUrl == null)
                         {
                             //No image placeholder
-                            <td><image class="img w-15" src="/images/products/noimageplaceholder.jpg" alt="Product Image Placeholder" /></td>
+                            <td><image class="img img-thumbnail img-fluid" src="/images/products/noimageplaceholder.jpg" alt="Product Image Placeholder" id="tableImg" /></td>
                             
                         }
                         else
                         {
                             //Show the image
-                            <td><image class="img w-15" src="@product.ImageUrl" alt="Product Image" /></td>
+                            <td><image class="img img-thumbnail img-fluid" src="@product.ImageUrl" alt="Product Image" id="tableImg" /></td>
                         }
                         <td>@product.ProductName</td>
                         <td>@product.StockLevel</td>
