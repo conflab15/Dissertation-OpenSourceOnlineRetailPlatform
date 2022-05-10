@@ -5,13 +5,134 @@
 @inject ApplicationDbContext context;
 @inject IJSRuntime js;
 
-@page "/business/orders/{OrderId:guid}";
+@page "/business/orders/details/{OrderID:guid}/{BusinessId:guid}";
 @attribute [Authorize];
-<PageTitle>Order Details</PageTitle>
 
-
+<div class="container">
+    <!-- Order Details Card -->
+    <div class="card m-2 p-1">
+      <h5 class="card-header bg-light">Order Details: @Order?.OrderId</h5>
+      <div class="card-body">
+        <h5 class="card-title">Order Date: @Order?.OrderDate</h5>
+        <p class="card-text">Order Status: @Order?.OrderStatus</p>
+        <p class="card-text">Order Total: £@Order?.OrderTotal</p>
+      </div>
+    </div>
+    <!-- Shipping Information Card -->
+    <div class="card m-2 p-1">
+      <h5 class="card-header bg-light">Shipping Information</h5>
+      <div class="card-body">
+        <ul id="addresslist" class="card-text">
+            <li>@Order?.Forename @Order?.Surname</li>
+            <li>@Order?.AddressLine1</li>
+            @if(Order?.AddressLine2 != null)
+            {
+                <li>@Order.AddressLine2</li>
+            }
+            <li>@Order?.Town</li>
+            <li>@Order?.County</li>
+            <li>@Order?.PostCode</li>
+        </ul> 
+      </div>
+    </div>
+    <!-- Order Items Card... -->
+    <div class="card m-2 p-1">
+        <h5 class="card-header bg-light">Items in the order:</h5>
+    </div>
+    @if (Order?.OrderLines is not null)
+    {
+        @foreach (var item in Order.OrderLines)
+        {
+            @if (item.Product?.BusinessName != Business?.BusinessName)
+            {
+                <div class="card m-2 p-1 border-danger">
+                    <div class="card-body">
+                        <div class="row m-1">
+                                <div class="row m-1">
+                                    <!-- If the Product in the order does not belong to the business... -->
+                                    <div class="col-6">
+                                        <ul id="addresslist">
+                                            <li>@item.Product?.ProductName</li>
+                                            <li>Unit Price: £@item.Product?.ProductPrice</li>
+                                            <li>Quantity: @item.ProductQuantity</li>
+                                            <li>Total Price: £@(item.ProductPrice * item.ProductQuantity)</li>
+                                            <li>Status: @item.Status</li>
+                                        </ul>
+                                    </div>
+                                    <div class="col-6 d-flex justify-content-end align-items-end">
+                                        <img src="@item.Product?.ImageUrl" alt="Product Image" class="img-thumbnail" id="orderImage">
+                                    </div>   
+                                </div>
+                        </div>
+                    </div>
+                </div>
+            }
+            else
+            {
+                <div class="card m-2 p-1 border-success">
+                    <div class="card-body">
+                        <div class="row m-1">
+                            <div class="row m-1">
+                                <!-- If the Product in the order does not belong to the business... -->
+                                <div class="col-6">
+                                    <ul id="addresslist">
+                                        <li>@item.Product?.ProductName</li>
+                                        <li>Unit Price: £@item.Product?.ProductPrice</li>
+                                        <li>Quantity: @item.ProductQuantity</li>
+                                        <li>Total Price: £@(item.ProductPrice * item.ProductQuantity)</li>
+                                        <li>Status: @item.Status</li>
+                                    </ul>
+                                </div>
+                                <div class="col-6 d-flex justify-content-end align-items-end">
+                                    <img src="@item.Product?.ImageUrl" alt="Product Image" class="img-thumbnail" id="orderImage">
+                                </div>    
+                            </div>
+                        </div>
+                        <div class="input-group">
+                            <label class="p-3">Select Status of the item...</label>
+                            <select class="form-control" @bind="Status">
+                                <option selected disabled>Select a status...</option>
+                                <option value="Processing">Processing</option>
+                                <option value="Manufacturing">Manufacturing</option>
+                                <option value="Shipped">Shipped</option>
+                                <option value="Cancelled (Out of Stock)">Cancelled (Out of Stock)</option>
+                                <option value="Cancelled (Other)">Cancelled (Other)</option>
+                                <option value="Awaiting Stock">Awaiting Stock</option>
+                            </select>
+                            <div class="input-group append">
+                                <button class="btn btn-outline-primary" @onclick="(() => ChangeStatus(item))">Update Status</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+    }
+</div>
 
 @code {
     [Parameter]
     public Guid OrderId { get; set; }
+    [Parameter]
+    public Guid BusinessId { get; set; }
+
+    OrderModel? Order;
+    BusinessAccountModel? Business;
+    //Variable for Order Status Selection
+    string? Status;
+
+    protected override void OnInitialized()
+    {
+        Order = context.Orders.FirstOrDefault(o => o.OrderId == OrderId);
+        Business = context.BusinessAccount.FirstOrDefault(b => b.Id == BusinessId);
+    }
+
+    //Change the Status of the products that the business sells...
+    private void ChangeStatus(OrderLineModel item)
+    {
+        item.Status = Status;
+        context.Orders?.Update(Order);
+        context.SaveChanges();
+        base.StateHasChanged();
+    }
 }

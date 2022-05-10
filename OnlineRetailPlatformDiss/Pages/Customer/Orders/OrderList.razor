@@ -29,12 +29,12 @@
                             <h5 class="mb-1">Order ID: @order.OrderId</h5>
                             <small>@order.OrderDate</small>
                         </div>
-                        <p>Order Date: @order.OrderDate</p>
                         <p>Order Total: £@order.OrderTotal</p>
                         <small>Total Items: @order?.OrderLines?.Count</small>
+                        <p>Order Status: @order?.OrderStatus</p>
                         <div class="d-flex w-100 pt-2">
                             <button class="btn btn-outline-primary" @onclick="@(() => ShowDetails(order))">View Details</button>
-                            <button class="btn btn-outline-danger">Cancel Order</button>
+                            <button class="btn btn-outline-danger" @onclick="@(() => CancelOrder(order))">Cancel Order</button>
                         </div>
                     </div>
                     <div class="divider pt-2" />
@@ -95,6 +95,9 @@
                     }
                 }
             }
+
+            context.Orders?.Update(order);
+            context.SaveChanges();
 
             js.InvokeVoidAsync("confirmChanges",
                 "Order Cancelled!",

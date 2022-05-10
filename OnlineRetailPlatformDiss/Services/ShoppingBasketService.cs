@@ -266,6 +266,7 @@ namespace OnlineRetailPlatformDiss.Services
                 context.OrderLines?.Add(orderline);
             }
             order.OrderTotal = total;
+            order.OrderStatus = "Order Placed";
 
             context.Orders?.Add(order); //Adding the order, which creates a Guid...
 

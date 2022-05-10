@@ -27,7 +27,7 @@
                         <p>Order Total: £@order.OrderTotal</p>
                         <small>Total Items: @order.OrderLines.Count</small>
                         <div class="d-flex w-100 pt-2">
-                            <button class="btn btn-outline-primary">Open Order Details</button>
+                            <a class="btn btn-outline-primary" href="/business/orders/details/@order.OrderId/@Business.Id">Open Order Details</a>
                         </div>
                     </div>
                     <div class="divider pt-2" />
@@ -37,7 +37,7 @@
         </div>
         <div class="col-5 text-center">
             <div class="container bg-light mb-2">
-                <h2 class="mb-3">Orders for: @Business.BusinessName</h2>
+                <h2 class="mb-3">Orders for: @Business?.BusinessName</h2>
                 <h3 class="mb-1">Total Orders: @orders?.Count</h3>
                 <!-- Button Options -->
             </div>
