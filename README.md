@@ -12,14 +12,16 @@ Customers are able to register an account, and browse products on the website.
 - Quickly amended stock levels of products within the business products list
 - Shopping Basket and Ordering Functionality (Ability to manage the stock level within the basket)
 - Order views for the Customers to see their orders
+- Order Management for Businesses
 
 # Features to implement:
 As this assignment is ongoing, I have more features to implement:
-- Order Management for Businesses
-- Searching for Products by Business Location
+- bUnit/xUnit Unit Testing
 
 # Potential Extra Functionality
 - Multiple Images for products
 - Product Reviews
 - Chat Bot for Customer Service related queries
+- Order comments field for special requests
+- Ability to add colours and styles to products
 
