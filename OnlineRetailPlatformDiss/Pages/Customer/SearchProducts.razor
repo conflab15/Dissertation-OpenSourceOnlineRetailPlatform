@@ -93,7 +93,7 @@ else
         base.StateHasChanged();
     }
 
-    //Task - Get Products by Business Name is parameter is present, else, get all products...
+    //Task - Get Products by Business Name if parameter is present, else, get all products...
     private async Task<List<ProductModel>> GetProducts(string BusinessName)
     {
         List<ProductModel>? products;

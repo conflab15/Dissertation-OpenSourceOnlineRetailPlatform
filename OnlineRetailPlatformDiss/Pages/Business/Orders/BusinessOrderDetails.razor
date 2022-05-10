@@ -43,31 +43,7 @@
     {
         @foreach (var item in Order.OrderLines)
         {
-            @if (item.Product?.BusinessName != Business?.BusinessName)
-            {
-                <div class="card m-2 p-1 border-danger">
-                    <div class="card-body">
-                        <div class="row m-1">
-                                <div class="row m-1">
-                                    <!-- If the Product in the order does not belong to the business... -->
-                                    <div class="col-6">
-                                        <ul id="addresslist">
-                                            <li>@item.Product?.ProductName</li>
-                                            <li>Unit Price: £@item.Product?.ProductPrice</li>
-                                            <li>Quantity: @item.ProductQuantity</li>
-                                            <li>Total Price: £@(item.ProductPrice * item.ProductQuantity)</li>
-                                            <li>Status: @item.Status</li>
-                                        </ul>
-                                    </div>
-                                    <div class="col-6 d-flex justify-content-end align-items-end">
-                                        <img src="@item.Product?.ImageUrl" alt="Product Image" class="img-thumbnail" id="orderImage">
-                                    </div>   
-                                </div>
-                        </div>
-                    </div>
-                </div>
-            }
-            else
+            @if (item.Product?.BusinessName == Business?.BusinessName)
             {
                 <div class="card m-2 p-1 border-success">
                     <div class="card-body">

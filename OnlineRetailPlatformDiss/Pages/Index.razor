@@ -21,7 +21,7 @@
 
     protected override void OnInitialized()
     {
-        user =  auth.GetAuthenticationStateAsync().Result.User.Identity?.Name; //Get the current user
+        user = auth.GetAuthenticationStateAsync().Result.User.Identity?.Name; //Get the current user
         BusinessCount = _context.BusinessAccount.Where(x => x.ManagerID == user).Count();
     }
 }
