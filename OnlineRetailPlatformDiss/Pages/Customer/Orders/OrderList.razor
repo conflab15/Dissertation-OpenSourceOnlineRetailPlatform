@@ -41,12 +41,23 @@
                 }
                 </div>
             }
+            else
+            {
+            <div class="m-4 pt-7">
+                <div class="alert alert-danger alert-dismissible fade show">
+                    <h4 class="alert-heading"><i class="bi-exclamation-octagon-fill"></i> Uh oh!</h4>
+                    <p>It looks like you haven't placed an order...</p>
+                    <hr>
+                    <p class="mb-0">Click the button below to access the shop!</p>
+                    <a type="button" class="btn btn-outline-danger mt-3" href="/">Shop</a>
+                </div>
+            </div>
+            }
         </div>
         <div class="col-5 text-center">
             <div class="container bg-light mb-2">
                 <h2 class="mb-3">Orders for: @UserEmail</h2>
                 <h3 class="mb-1">Total Orders: @orders?.Count</h3>
-                <!-- Button Options -->
             </div>
         </div>
     </div>
