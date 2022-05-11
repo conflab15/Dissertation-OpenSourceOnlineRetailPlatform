@@ -60,7 +60,7 @@ namespace OnlineRetailPlatformDissUnitTests
         [Fact]
         public void ShoppingBasketEmptiesBasketWhenEmptyBasketIsPressed()
         {
-            //Test - Count returns to zero when Empty Basket is pressed
+            //Test - Basket Item returns to zero when Empty Basket is pressed
             //Arrange
             using var ctx = new TestContext();
 
@@ -117,6 +117,37 @@ namespace OnlineRetailPlatformDissUnitTests
 
             //Assert
             cut.Markup.Contains(warning);
+        }
+
+        [Fact]
+        public void ShoppingBasketCheckoutLoadsWhenProductIsPresent()
+        {
+            //Test - Checkout loads when button is pressed AND a product is present within the basket
+            //Arrange
+            using var ctx = new TestContext();
+
+            //Registering Services
+            ctx.Services.AddSingleton<ApplicationDbContext>(new ApplicationDbContext());
+            ctx.Services.AddScoped<AppState>();
+            ctx.Services.AddScoped<ShoppingBasketService>();
+            var nav = ctx.Services.GetRequiredService<NavigationManager>();
+            ctx.JSInterop.Mode = JSRuntimeMode.Loose;
+
+            //Act
+            var cutProduct = ctx.RenderComponent<SearchProducts>();
+            var a = cutProduct.FindAll("a");
+            var btn = a.FirstOrDefault(a => a.ParentElement.TextContent.Contains("Add to Basket"));
+            btn?.Click();
+
+            var cut = ctx.RenderComponent<ShoppingBasket>();
+
+            //Find all Buttons with an a tag
+            var aTags = cut.FindAll("a");
+            var button = aTags.FirstOrDefault(a => a.ParentElement.TextContent.Contains("Checkout"));
+            button?.Click(); //Click the Checkout Button
+
+            cut.Markup.Contains("Checkout");
+
         }
     }
 }
