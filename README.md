@@ -1,9 +1,9 @@
-# Dissertation - Developing a SaaS Retail Single Page Application which provides low-cost sales opportunities for small businesses
-My Dissertation Project is to create a SaaS Retail Single Page Application (SPA) using Blazor, .NET 6, EntityFramework and front-end frameworks such as Bootstrap, 
+# Dissertation - Developing an Open Source Single Page Application which provides low-cost sales opportunities for small businesses
+My Dissertation Project is to create a Open Source Single Page Application (SPA) using Blazor, .NET 6, EntityFramework and front-end frameworks such as Bootstrap, 
 and tools like SweetAlert. This solution is being developed using Feature Driven Development.
 The solution provides business owners with a login to create their own business on the application, and add products to their given business. 
-Business owners are able to use CRUD functionality on their products and businesses to make amendments.
-Customers are able to register an account, and browse products on the website.
+Business owners are able to use CRUD functionality on their products and businesses to make amendments. Business owners can view orders and change the status of items in the order!
+Customers are able to register an account, browse products, and place and view their orders.
 
 # Features of the application:
 - CRUD Functionality for Businesses and Products
@@ -14,14 +14,5 @@ Customers are able to register an account, and browse products on the website.
 - Order views for the Customers to see their orders
 - Order Management for Businesses
 
-# Features to implement:
-As this assignment is ongoing, I have more features to implement:
-- bUnit/xUnit Unit Testing
-
-# Potential Extra Functionality
-- Multiple Images for products
-- Product Reviews
-- Chat Bot for Customer Service related queries
-- Order comments field for special requests
-- Ability to add colours and styles to products
+- Tested using bUnit (Blazor Testing Framework) and xUnit, as well as functional testing methods
 
