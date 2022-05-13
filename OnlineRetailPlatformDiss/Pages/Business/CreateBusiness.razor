@@ -21,12 +21,13 @@
 
         <div class="mb-3">
             <label for="businessName" class="form-label">Business Name</label>
-            <label class="alert-warning">If you have multiple branches across different towns, it would be sensible to name them with the town, for example: Business Name (Town)</label>
+            <label class="alert-warning ml-2 pl-2">If you have multiple branches across different towns, it would be sensible to name them with the town, for example: Business Name (Town)</label>
             <InputText class="form-control" id="businessName" @bind-Value="businessAccount.BusinessName" placeholder="name@example.com" />
         </div>
 
         <div class="mb-3">
             <label for="businessDesc" class="form-label">Business Description</label>
+            <label class="alert-warning ml-2 pl-2">This should briefly summarise what your business is all about and it's background</label>
             <InputTextArea class="form-control" id="businessDesc" @bind-Value="businessAccount.BusinessDesc" placeholder="My business sells this and that..." />
         </div>
 
@@ -54,8 +55,57 @@
             <label for="businessPostCode" class="form-label">Post Code</label>
             <InputText class="form-control" id="businessPostCode" @bind-Value="businessAccount.PostCode" placeholder="BU12 2ES" />
         </div>
-         <div class="mb-3">
-            <label for="bannerUrl" class="form-label">Product Image</label>
+
+        <!-- Add Social Media Links, using a select dropdownlist, and a text field to add the Link-->
+        <label class="form-label">Social Media Links</label>
+        <label class="alert-warning ml-2 pl-2">If you have any social media pages which showcase your business, add them here</label>
+        <div class="input-group mb-3">
+            <span class="input-group-text">Type</span>
+            <select class="form-control" id="socialLinkType" @bind="type">
+                <option selected disabled value="">Select a Social Media Type</option>
+                <option value="Facebook">Facebook</option>
+                <option value="Twitter">Twitter</option>
+                <option value="Instagram">Instagram</option>
+                <option value="YouTube">YouTube</option>
+                <option value="LinkedIn">LinkedIn</option>
+            </select>  
+            <span class="input-group-text">URL</span>
+            <InputText class="form-control" id="socialLinkURL" @bind-Value="URL" placeholder="www.facebook.com/mypage" />
+            <button class="btn btn-outline-success" @onclick="(() => AddSocialLink())">Add Link</button>
+        </div>
+
+        <!-- When a link has been added, this table shall load -->
+        @if (SocialMediaLinks?.Count != 0)
+        {
+        <div class="mb-3">
+            <table class="table">
+                <thead class="text-center">
+                    <tr>
+                        <th scope="col">Social Media Type</th>
+                        <th scope="col">URL</th>
+                        <th scope="col">Options</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if(SocialMediaLinks is not null)
+                    {
+                        @foreach (var link in SocialMediaLinks)
+                        {
+                        <tr>
+                            <td>@link.Type</td>
+                            <td>@link.Url</td>
+                            <td><button class="btn btn-danger" @onclick="(() => DeleteLink(link.Type))">Remove</button></td>
+                        </tr>        
+                        }    
+                    }
+                </tbody>
+            </table>
+        </div>  
+        }
+
+        <div class="mb-3">
+            <label for="bannerUrl" class="form-label">Business Image</label>
+            <label class="alert-warning ml-2 pl-2">This image will act as a banner for your business page, please choose an appropriately sized image</label>
             <InputFile class="form-control" id="bannerUrl" OnChange="OnInputFileChange" />
         </div>
         <div class="mb-3">
@@ -79,29 +129,66 @@
 </div>
 
 @code {
-    private BusinessAccountModel businessAccount = new();
+    BusinessAccountModel? businessAccount = new BusinessAccountModel();
+    List<SocialMediaLink> SocialMediaLinks = new List<SocialMediaLink>(); //Initialising the list
     private string? manager;
     private string Message = "No Image(s) selected"; //Variables for handling the image upload
     IReadOnlyList<IBrowserFile>? selectedImages; //File to handle uploaded images
 
+    private string? type; //Used to handle social media links
+    private string? URL;
+
     protected override void OnInitialized()
     {
-        manager = auth.GetAuthenticationStateAsync().Result.User.Identity?.Name;
-        businessAccount.ManagerID = manager;
+        if(businessAccount is not null)
+        {
+            manager = auth.GetAuthenticationStateAsync().Result.User.Identity?.Name;
+            businessAccount.ManagerID = manager; //Assigning the manager
+        }
+    }
+
+    private async void AddSocialLink()
+    {
+        if(type != null && URL != null) //If the variables are not null...
+        {
+            var model = new SocialMediaLink
+                {
+                    Type = type,
+                    Url = URL
+                }; //Create a new model
+            SocialMediaLinks?.Add(model); //Add model to the list...
+            await js.InvokeVoidAsync("confirmChanges",
+                    "Added",
+                    $"You've added a {type} link to your business!",
+                    "success"); //Swal for declaring success
+        }
+    }
+
+    private async void DeleteLink(string type)
+    {
+        if (type != null)
+        {
+            var link = SocialMediaLinks.FirstOrDefault(i => i.Type == type); //Find the Link
+            SocialMediaLinks.Remove(link); //Delete it
+            await js.InvokeVoidAsync("confirmChanges",
+                    "Success",
+                    $"You've removed the {type} link to your business!",
+                    "success"); //Swal for declaring success in adding a business
+        }
     }
 
     private void OnInputFileChange(InputFileChangeEventArgs e)
     {
         selectedImages = e.GetMultipleFiles();
         Message = $"{selectedImages.Count} image(s) selected";
-        this.StateHasChanged();
+        StateHasChanged();
     }
 
     private async void SubmitBusinessAccount()
     {
         try
         {
-            if (selectedImages is not null)
+            if (selectedImages is not null && businessAccount is not null)
             {
                 foreach (var image in selectedImages)
                 {
@@ -116,22 +203,37 @@
 
                 Message = $"{selectedImages.Count} image(s) uploaded"; //Updating the message within the form...
 
+                businessAccount.SocialMediaLinks = new List<SocialMediaLink>();
+
+                foreach (var link in SocialMediaLinks)
+                {
+                    businessAccount.SocialMediaLinks.Add(link);
+                }
+
                 _context.BusinessAccount?.AddAsync(businessAccount);
                 await _context.SaveChangesAsync();
 
-                var accepted = js.InvokeAsync<bool>("confirmChanges",
+                await js.InvokeVoidAsync("confirmChanges",
                     "Added",
                     "You've successfully added your business!",
                     "success"); //Swal for declaring success in adding a business
                 nav.NavigateTo("/business/view");
             }
+            else
+            {
+                await js.InvokeVoidAsync("confirmChanges",
+                    "Error",
+                    $"You need to upload an image for your business!",
+                    "error"); 
+            }
         }  
-        catch
+        catch (Exception e)
         {
-            base.StateHasChanged();
+             await js.InvokeVoidAsync("confirmChanges",
+                    "Error",
+                    $"The business could not be added: {e.Message}",
+                    "error"); 
 
         }
-        businessAccount = new BusinessAccountModel();
-        base.StateHasChanged();
     }
 }

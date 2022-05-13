@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations;
 
 namespace OnlineRetailPlatformDiss.Models
 {
@@ -12,7 +13,7 @@ namespace OnlineRetailPlatformDiss.Models
         public string? BusinessDesc { get; set; }
         [Required, MaxLength(50)]
         public string? AddressLine1 { get; set; }
-        [Required, MaxLength(50)]
+        [MaxLength(50)]
         public string? AddressLine2 { get; set; }    
         [Required, MaxLength(30)]
         public string? Town { get; set; }    
@@ -23,8 +24,8 @@ namespace OnlineRetailPlatformDiss.Models
         public string? BannerUrl { get; set; }
         [Required]
         public string? ManagerID { get; set; }
-        
-        //Redundant field, using the Google Maps API is too difficult and too costly on time.
-        //public string? MapsAddr { get; set; }
+
+        //Dictionary of Social Media Types and Links
+        public List<SocialMediaLink>? SocialMediaLinks;
     }
 }
