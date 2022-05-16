@@ -54,6 +54,54 @@
                 <label for="businessPostcode" class="form-label">Business Post Code</label>
                 <InputText class="form-control" id="businessPostcode" @bind-Value="business.PostCode" />
             </div>
+
+            <!-- Add Social Media Links, using a select dropdownlist, and a text field to add the Link-->
+            <label class="form-label">Social Media Links</label>
+            <label class="alert-warning ml-2 pl-2">If you have any social media pages which showcase your business, add them here</label>
+            <div class="input-group mb-3">
+                <span class="input-group-text">Type</span>
+                <select class="form-control" id="socialLinkType" @bind="type">
+                    <option selected disabled value="">Select a Social Media Type</option>
+                    <option value="Facebook">Facebook</option>
+                    <option value="Twitter">Twitter</option>
+                    <option value="Instagram">Instagram</option>
+                    <option value="YouTube">YouTube</option>
+                    <option value="LinkedIn">LinkedIn</option>
+                </select>  
+                <span class="input-group-text">URL</span>
+                <InputText class="form-control" id="socialLinkURL" @bind-Value="URL" placeholder="www.facebook.com/mypage" />
+                <button type="button" class="btn btn-outline-success" @onclick="(() => AddSocialLink())">Add Link</button>
+            </div>
+
+            <!-- When a link has been added, this table shall load -->
+            @if (business.SocialMediaLinks?.Count != 0)
+            {
+            <div class="mb-3">
+                <table class="table">
+                    <thead class="text-center">
+                        <tr>
+                            <th scope="col">Social Media Type</th>
+                            <th scope="col">URL</th>
+                            <th scope="col">Options</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if(business.SocialMediaLinks is not null)
+                        {
+                            @foreach (var link in business.SocialMediaLinks)
+                            {
+                            <tr>
+                                <td>@link.Type</td>
+                                <td>@link.Url</td>
+                                <td><button class="btn btn-danger" @onclick="(() => DeleteLink(link.Type))">Remove</button></td>
+                            </tr>        
+                            }    
+                        }
+                    </tbody>
+                </table>
+            </div>  
+            }
+
             <div class="mb-3">
                 <button class="btn btn-primary p-2" type="submit" value="submit">Submit Changes</button> 
            </div>
@@ -70,9 +118,42 @@
     public Guid? BusinessId { get; set; } //Page Parameter
     public BusinessAccountModel? business { get; set; }
 
+    private string? type; //Used to handle social media links
+    private string? URL;
+
     protected override void OnInitialized()
     {
         business = _context.BusinessAccount.FirstOrDefault(x => x.Id == BusinessId);
+    }
+
+    private async void AddSocialLink()
+    {
+        if(type != null && URL != null) //If the variables are not null...
+        {
+            var model = new SocialMediaLink
+                {
+                    Type = type,
+                    Url = URL
+                }; //Create a new model
+            business?.SocialMediaLinks?.Add(model); //Add model to the list...
+            await js.InvokeVoidAsync("confirmChanges",
+                    "Added",
+                    $"You've added a {type} link to your business!",
+                    "success"); //Swal for declaring success
+        }
+    }
+
+    private async void DeleteLink(string type)
+    {
+        if (type != null)
+        {
+            var link = business?.SocialMediaLinks.FirstOrDefault(i => i.Type == type); //Find the Link
+            business?.SocialMediaLinks.Remove(link); //Delete it
+            await js.InvokeVoidAsync("confirmChanges",
+                    "Success",
+                    $"You've removed the {type} link to your business!",
+                    "success"); //Swal for declaring success in adding a business
+        }
     }
 
     private async void SubmitBusinessChanges()
@@ -84,7 +165,7 @@
             await _context.SaveChangesAsync();
             await js.InvokeVoidAsync("confirmChanges",
                 "Business Amended!",
-                "Your product changes have been saved!",
+                "Your business changes have been saved!",
                 "success"); //Swal for declaring success in adding a business
             nav.NavigateTo("/business/view");
         }

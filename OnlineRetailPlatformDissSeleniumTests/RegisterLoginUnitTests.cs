@@ -64,9 +64,9 @@ namespace OnlineRetailPlatformDissSeleniumTests
         {
             driver.Navigate().GoToUrl("https://dissertationonlineretailplatform.azurewebsites.net/Identity/Account/Login");
             var inputEmail = driver.FindElement(By.Id("Input_Email"));
-            inputEmail.SendKeys("selenium1@test.com");
+            inputEmail.SendKeys("selenium2@test.com");
             var inputPass = driver.FindElement(By.Id("Input_Pass"));
-            inputPass.SendKeys("Selenium1!");
+            inputPass.SendKeys("Password!");
 
             var submitBtn = driver.FindElement(By.Id("login-submit"));
             submitBtn.Click();

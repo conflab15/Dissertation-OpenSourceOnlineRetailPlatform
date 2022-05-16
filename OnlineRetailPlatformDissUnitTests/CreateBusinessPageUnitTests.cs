@@ -34,6 +34,26 @@ namespace OnlineRetailPlatformDissUnitTests
         }
 
         [Fact]
+        public void CreateBusinessPageUnauthorizedReturnsError()
+        {
+            //Test - When a user tries to access this page without being logged in, a message appears...
+            //Arrange
+            using var ctx = new TestContext();
+            var authContext = ctx.AddTestAuthorization();
+            authContext.SetNotAuthorized();
+
+            //Registering Services.
+            ctx.Services.AddSingleton<ApplicationDbContext>(new ApplicationDbContext());
+            ctx.JSInterop.Mode = JSRuntimeMode.Loose;
+
+            //Act
+            var cut = ctx.RenderComponent<CreateBusiness>();
+
+            //Assert
+            cut.Markup.Contains("Oops! Something went wrong.");
+        }
+
+        [Fact]
         public void CreateEmptyBusinessReturnsError()
         {
             //Test - Check that the input forms change red when no data is entered...

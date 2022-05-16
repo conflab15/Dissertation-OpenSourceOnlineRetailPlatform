@@ -49,17 +49,52 @@
             <InputText class="form-control" id="productName" @bind-Value="product.ProductName" placeholder="My Product" />
         </div>
         <div class="mb-3">
-            <label for="productDesc" class="form-label">Product Description</label>
+            <label for="productDesc" class="form-label">Description</label>
             <InputText class="form-control" id="productDesc" @bind-Value="product.ProductDescription" placeholder="My Product does this and that!" />
         </div>
         <div class="mb-3">
-            <label for="productPrice" class="form-label">Product Price</label>
+            <label for="productPrice" class="form-label">Price (GBP)</label>
             <InputNumber class="form-control" id="productPrice" @bind-Value="product.ProductPrice" placeholder="5.99" />
         </div>
         <div class="mb-3">
             <label for="productStock" class="form-label">Stock Level</label>
             <InputNumber class="form-control" id="productStock" @bind-Value="product.StockLevel" placeholder="20" />
         </div>
+        <div class="form-check mb-3">
+            <label for="productHasCustomisation" class="form-check-label">Can this product be customised for the customer?</label>
+            <InputCheckbox class="form-check-input" type="checkbox" id="productCustomisable" @bind-Value="product.HasOptions" />
+        </div>
+
+        <label for="options" class="form-label">What colours/styles will this product have?</label>
+        <label class="alert-warning ml-2 pl-2">For example, a knitted bean can be made with orange, red or blue wool!</label>
+        <div class="input-group mb-3">
+            <InputText class="form-control" id="optionValue" @bind-Value="value"/>
+            <button type="button" class="btn btn-outline-success" id="addLinkBtn" @onclick="(() => AddOption())">Add Colour/Style</button>
+        </div>
+
+        <!-- When an option has been added, this table shall load -->
+        @if (options?.Count != 0)
+        {   
+            <div class="mb-3">
+                <label for="AddedOptions" class="form-label">Product Colour/Styles</label>
+                <ul class="list-group">
+                    @if (options is not null)
+                    {
+                        foreach (var option in options)
+                        {
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                @option.Colour
+                                <span>
+                                    <button type="button" class="btn btn-outline-danger" id="removeOption" @onclick="(() => RemoveOption(option.Id))">Remove</button>
+                                </span>
+                            </li>    
+                        }
+                    }
+                </ul>
+            </div>
+        }
+
+
         <div class="mb-3">
             <label for="imageUrl" class="form-label">Product Image</label>
             <InputFile class="form-control" id="imageUrl" OnChange="OnInputFileChange" />
@@ -76,6 +111,9 @@
             <button class="btn btn-primary" type="submit" value="submit">Submit</button>
        </div>
     </EditForm>
+        <div class="mb-3">
+            <button class="btn btn-danger" href="/business/view" type="button">Cancel</button>
+       </div>
     }
 </div>
 
@@ -86,11 +124,45 @@
     private string Message = "No Image(s) selected"; //Variables for handling the image upload
     IReadOnlyList<IBrowserFile>? selectedImages; //File to handle uploaded images
 
+    List<ProductOptions>? options = new List<ProductOptions>();
+    string value = "";
+
     protected override void OnInitialized()
     {
         user = auth.GetAuthenticationStateAsync().Result.User.Identity?.Name; //Get the current user
         product.CreatedDate = DateTime.Now; //Automatic setting of when the product will be made
         businessesList = _context.BusinessAccount?.Where(x => x.ManagerID == user).ToList(); //Retrieiving all of the businesses the current user manages.
+    }
+
+    private async void AddOption()
+    {
+        if (value != null)
+        {
+            var option = new ProductOptions
+                {
+                    Colour = value
+                };
+            options?.Add(option);
+            await js.InvokeVoidAsync("confirmChanges",
+                    "Added",
+                    $"You've added a {value} option to your product!",
+                    "success"); //Swal for declaring success
+            value = "";
+        }
+    }
+
+    private async void RemoveOption(Guid? id)
+    {
+        if (id != null)
+        {
+            var item = options?.FirstOrDefault(o => o.Id == id);
+            options?.Remove(item);
+             await js.InvokeVoidAsync("confirmChanges",
+                    "Removed",
+                    $"You've removed the {item?.Colour} option!",
+                    "success"); //Swal for declaring success in adding a business
+        }
+        
     }
 
     private void OnInputFileChange(InputFileChangeEventArgs e)
@@ -104,26 +176,36 @@
     {
         try
         {
-            foreach (var image in selectedImages)
+            if (selectedImages is not null)
             {
-                Stream stream = image.OpenReadStream(); //Open stream for the handled image
-                var path = $"/images/products/{image.Name}"; //Creating a product URL
-                FileStream fs = File.Create($"wwwroot{path}"); //Saving image in the URL
-                await stream.CopyToAsync(fs); 
-                stream.Close();
-                fs.Close();
-                product.ImageUrl = path;
+                foreach (var image in selectedImages)
+                {
+                    Stream stream = image.OpenReadStream(); //Open stream for the handled image
+                    var path = $"/images/products/{image.Name}"; //Creating a product URL
+                    FileStream fs = File.Create($"wwwroot{path}"); //Saving image in the URL
+                    await stream.CopyToAsync(fs);
+                    stream.Close();
+                    fs.Close();
+                    product.ImageUrl = path;
+                }
+
+                Message = $"{selectedImages.Count} image(s) uploaded"; //Updating the message within the form...
+
+                _context.Products?.AddAsync(product); //Add the new product
+                await _context.SaveChangesAsync(); //Save the product to the db
+                await js.InvokeVoidAsync("confirmChanges",
+                    "Product Added!",
+                    "You've successfully added a product!",
+                    "success"); //Swal for declaring success in adding a business
+                nav.NavigateTo($"/business/products/{product.BusinessName}");
             }
-
-            Message = $"{selectedImages.Count} image(s) uploaded"; //Updating the message within the form...
-
-            _context.Products?.AddAsync(product); //Add the new product
-            await _context.SaveChangesAsync(); //Save the product to the db
-            await js.InvokeVoidAsync("confirmChanges",
-                "Product Added!",
-                "You've successfully added a product!",
-                "success"); //Swal for declaring success in adding a business
-            nav.NavigateTo($"/business/products/{product.BusinessName}");
+            else
+            {
+                await js.InvokeVoidAsync("confirmChanges",
+                    "Error",
+                    $"You need to upload an image for your business!",
+                    "error"); 
+            }
         }  
         catch (Exception e)
         {

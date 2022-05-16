@@ -1,7 +1,6 @@
 ﻿@using OnlineRetailPlatformDiss.Models;
 @inject OnlineRetailPlatformDiss.Data.ApplicationDbContext _context;
 @using Microsoft.Extensions.Logging
-@inject ILogger<CreateBusiness> Logger
 @inject AuthenticationStateProvider auth;
 @inject NavigationManager nav;
 @inject IJSRuntime js;
@@ -55,7 +54,7 @@
             <label for="businessPostCode" class="form-label">Post Code</label>
             <InputText class="form-control" id="businessPostCode" @bind-Value="businessAccount.PostCode" placeholder="BU12 2ES" />
         </div>
-
+        
         <!-- Add Social Media Links, using a select dropdownlist, and a text field to add the Link-->
         <label class="form-label">Social Media Links</label>
         <label class="alert-warning ml-2 pl-2">If you have any social media pages which showcase your business, add them here</label>
@@ -71,7 +70,7 @@
             </select>  
             <span class="input-group-text">URL</span>
             <InputText class="form-control" id="socialLinkURL" @bind-Value="URL" placeholder="www.facebook.com/mypage" />
-            <button class="btn btn-outline-success" @onclick="(() => AddSocialLink())">Add Link</button>
+            <button type="button" class="btn btn-outline-success" id="addLinkBtn" @onclick="(() => AddSocialLink())">Add Link</button>
         </div>
 
         <!-- When a link has been added, this table shall load -->
@@ -116,6 +115,7 @@
                 </div>
             </div>
         </div>
+
         <!-- Hidden Field binding this.... -->
         <InputText type="hidden" id="businessManager" @bind-Value="businessAccount.ManagerID" placeholder="@manager"/>
 
@@ -130,11 +130,11 @@
 
 @code {
     BusinessAccountModel? businessAccount = new BusinessAccountModel();
-    List<SocialMediaLink> SocialMediaLinks = new List<SocialMediaLink>(); //Initialising the list
     private string? manager;
     private string Message = "No Image(s) selected"; //Variables for handling the image upload
     IReadOnlyList<IBrowserFile>? selectedImages; //File to handle uploaded images
 
+    List<SocialMediaLink> SocialMediaLinks = new List<SocialMediaLink>(); //Initialising the list
     private string? type; //Used to handle social media links
     private string? URL;
 

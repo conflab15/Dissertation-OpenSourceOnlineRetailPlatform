@@ -17,6 +17,12 @@ namespace OnlineRetailPlatformDiss.Models
         [Required, Display(Name = "Business Name")]
         public string? BusinessName { get; set; }
 
+        [Required, Display(Name = "Special Options")]
+        public bool HasOptions { get; set; } //If the product allows options, a text box shall be displayed within the basket to accept them
+
+        [Display(Name = "Colours or Styles")]
+        public List<ProductOptions>? Colours { get; set; } //List of colours for the user to add/amend
+
         [Required, Display(Name = "Available")]
         public int StockLevel { get; set; }
 
