@@ -144,3 +144,7 @@ td {
     padding-bottom: 40px;
     background-color: #f5f5f5!important;
 }
+
+#basketBtn {
+    width: 90%;
+}

@@ -104,5 +104,65 @@ namespace OnlineRetailPlatformDissUnitTests
             //Assert
             cut.Markup.Contains("<h2>Sorted by Title (A-Z)</h2>");
         }
+
+        [Fact]
+        public void IndexPageSearchProductsFiltersByNewest()
+        {
+            //Test - Checks if the Filter by What's new is applied when the button is clicked 
+            //Arrange
+            using var ctx = new TestContext();
+
+            //Registering Services.
+            ctx.Services.AddSingleton<ApplicationDbContext>(new ApplicationDbContext());
+            ctx.Services.AddScoped<AppState>();
+            ctx.Services.AddScoped<ShoppingBasketService>();
+
+            //Act
+            var cut = ctx.RenderComponent<SearchProducts>();
+            cut.Find("a:contains('Whats new')").Click();
+
+            //Assert
+            cut.Markup.Contains("<h2>Sorted by What's new</h2>");
+        }
+
+        [Fact]
+        public void IndexPageSearchFieldFiltersProducts()
+        {
+            //Test - Check if the Search Box displays appropriate results
+            //Arrange
+            using var ctx = new TestContext();
+
+            //Registering Services.
+            ctx.Services.AddSingleton<ApplicationDbContext>(new ApplicationDbContext());
+            ctx.Services.AddScoped<AppState>();
+            ctx.Services.AddScoped<ShoppingBasketService>();
+
+            //Act
+            var cut = ctx.RenderComponent<SearchProducts>();
+            cut.Find("#searchField").Change("Test");
+            cut.Find("#searchBtn").Click();
+
+            //Assert
+            cut.Markup.Contains("<h2>Search Criteria: 'Test'</h2>");
+        }
+
+        [Fact]
+        public void IndexPageAddsItemToBasket()
+        {
+            //Test - Add an Item to the basket returns message
+            //Arrange
+            using var ctx = new TestContext();
+
+            //Registering Services.
+            ctx.Services.AddSingleton<ApplicationDbContext>(new ApplicationDbContext());
+            ctx.Services.AddScoped<AppState>();
+            ctx.Services.AddScoped<ShoppingBasketService>();
+
+            //Act
+            var cut = ctx.RenderComponent<SearchProducts>();
+            cut.Find("a:contains('Add to Basket')").Click();
+
+            cut.Markup.Contains("1 Items");
+        }
     }
 }

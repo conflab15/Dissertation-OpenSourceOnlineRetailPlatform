@@ -25,7 +25,13 @@
                 }
             </div>
             <div class="col-6 pt-5 text-center align-items-center">
-                <h3 class="mb-3">@Product.ProductName</h3>
+                <h3 class="mb-3">
+                    @Product.ProductName
+                    @if ((Product.CreatedDate - DateTime.Today).TotalDays < 1)
+                    {
+                        <span class="badge bg-success m-2 w-90">New</span>
+                    }
+                </h3>
                 <h5 class="mb-3">@Product.ProductDescription</h5>
                 <div class="divider m-2 pb-2" />
                 <ul id="addresslist">
@@ -40,6 +46,24 @@
                     }
                     <li><h5><strong>£@Product.ProductPrice</strong></h5></li>
                 </ul>
+                @if(Product.Colours?.Count == 1)
+                {
+                    <p class="card-text pt-1">Colour/Style: @Product.Colours[0].Colour</p>
+                }
+                else
+                {
+                    @if (Product?.Colours?.Count > 0)
+                    {
+                    <h5 class="card-text pt-1">Select Style/Colour</h5>
+                    <select class="form-select form-select p-3 w-90" aria-label="StyleSelect" @bind="colour">
+                        <option selected>Please select a colour</option>
+                        @foreach (var item in Product?.Colours)
+                        {
+                            <option value="@item.Colour">@item.Colour</option>
+                        }
+                    </select>
+                    }                 
+                }
                 @if (Product.StockLevel <= 0)
                 {
                     <button class="btn btn-sm btn-outline-danger disabled">      
@@ -50,38 +74,64 @@
                 }
                 else
                 {
-                <div class="input-group p-3 w-85">
-                    <input type="number" class="form-control w-5 input-value" @bind-value="Amount"  />
+                <div class="input-group p-3 w-90">
+                    <input type="number" class="form-control input-value p-3" min="0" max="@Product.StockLevel" @bind-value="Amount"  />
                     <div class="input-group-append"> 
-                        <input type="submit" class="btn btn-outline-primary" value="Add to Basket" @onclick="(() => AddToBasket(Product, Amount))" />
+                        <input type="submit" class="btn btn-outline-primary p-3" value="Add to Basket" @onclick="(() => AddToBasket(Product, Amount))" />
                     </div>
                 </div>
                 }
                 <div class="d-flex justify-content-evenly align-items-center">
-                    <a href="/customer/business/@Product.BusinessName" class="btn btn-primary">View the Business</a>
-                    <a href="/ShoppingBasket" class="btn btn-success">My Basket</a>
+                    <a href="/ShoppingBasket" class="btn btn-lg btn-outline-success" id="basketBtn">My Basket</a>
                 </div>
 
                 
             </div>
         </div>
     </div>
+    <div class="divider m-4 pb-1" />
+    <div class="container m-4 shadow-lg">
+        <div class="row">
+            <div class="col-6 pt-5 text-center align-items-center">
+                <h3 class="mb-3">@Business.BusinessName</h3>
+                <h5 class="mb-3">@Business.BusinessDesc</h5>
+                <a class="btn btn-lg btn-outline-primary" href="/customer/business/@Product.BusinessName">View the Business</a>
+            </div>
+            <div class="col-6">
+                @if(Business.BannerUrl == null)
+                {
+                    <img src="/images/products/noimageplaceholder.jpg" alt="Placeholder Image" id="ProductDetailsImg" />
+                }
+                else
+                {
+                    <img src="@Business.BannerUrl" class="img-fluid border rounded-3 shadow-lg m-2 p-2" alt="Business Image" width="700" height="500" loading="lazy">
+                }
+            </div>
+        </div>
+    </div>
 }
 
-<!-- Reviews Section to go here! -->
+<!-- Business Details -->
 
 
 @code {
     [Parameter]
     public Guid? ProductId { get; set; }
     ProductModel? Product;
+    BusinessAccountModel? Business;
     int Amount = 1;
+    string? colour;
+
 
     protected override void OnInitialized()
     {
         if (ProductId is not null)
         {
             Product = _context.Products.FirstOrDefault(p => p.ProductID == ProductId); //Get the Product Model...
+            if (Product is not null)
+            {
+                Business = _context.BusinessAccount.FirstOrDefault(b => b.BusinessName == Product.BusinessName);
+            }
         }
     }
 
@@ -95,16 +145,37 @@
 
         try
         {
-            var count = await basket.AddToBasket(product.ProductID, quantity); //Getting the returned product count to update the appstate...
-            state.SetBasketCount(count.BasketCount); //Setting the AppState with the returned count...
-
-            await js.InvokeVoidAsync("confirmChanges", "Added to Basket", $"{quantity} x {product.ProductName} has been added to your basket!", "success");
+            //Handling of different types of potential errors
+            if (product.Colours?.Count == 1) //If only one style exists, use this
+            {
+                colour = product.Colours[0].Colour;
+                var count = await basket.AddToBasket(product, 1); //Getting the returned product count to update the appstate...
+                state.SetBasketCount(count); //Setting the AppState with the returned count.
+                await js.InvokeVoidAsync("confirmChanges", "Added to Basket", $"1 x {product.ProductName} has been added to your basket!", "success");
+            }
+            else if (product.Colours?.Count == 0) //If none exist, use a placeholder
+            {
+                colour = "N/A";
+                var count = await basket.AddToBasket(product, 1); //Getting the returned product count to update the appstate...
+                state.SetBasketCount(count); //Setting the AppState with the returned count.
+                await js.InvokeVoidAsync("confirmChanges", "Added to Basket", $"1 x {product.ProductName} has been added to your basket!", "success");
+            }
+            else if (product.Colours?.Count > 1 && colour is null) //If multiple exist and none are selected...
+            {
+                await js.InvokeVoidAsync("confirmChanges", "Failed", $"You need to select a colour or style before adding to the basket", "warning");
+            }
+            else //If one is selected from the list, proceed as normal...
+            {
+                var count = await basket.AddToBasket(product, 1); //Getting the returned product count to update the appstate...
+                state.SetBasketCount(count); //Setting the AppState with the returned count.
+                await js.InvokeVoidAsync("confirmChanges", "Added to Basket", $"1 x {product.ProductName} has been added to your basket!", "success");
+            }
         }
         catch (Exception e)
         {
             await js.InvokeVoidAsync("confirmChanges", "Failed", $"The product could not be added to your Basket: {e.Message}", "warning");
         }
-        
+
         StateHasChanged();
     }
 

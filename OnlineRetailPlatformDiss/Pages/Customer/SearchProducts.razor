@@ -6,8 +6,8 @@
 <div class="container justify-content-center pt-2 pb-2" id="productSearch">
     <div class="row">
         <div class="col-md-12">
-            <div class="input-group mb-3"> <input type="text" class="form-control input-text" name="SearchString" @bind-value="SearchText" placeholder="Search by description....">
-                <div class="input-group-append"> <input type="submit" class="btn btn-outline-primary btn-lg" value="Search" @onclick="ShowProducts" /> </div>
+            <div class="input-group mb-3"> <input type="text" class="form-control input-text" name="SearchString" id="searchField" @bind-value="SearchText" placeholder="Search by name....">
+                <div class="input-group-append"> <input type="submit" class="btn btn-outline-primary btn-lg" value="Search" id="searchBtn" @onclick="ShowProducts" /> </div>
             </div>
         </div>
     </div>
@@ -15,14 +15,17 @@
         <div class="col-2">
             <h2>Sort by:</h2>
         </div>
-        <div class="col-3">
+        <div class="col-2">
             <a class="btn btn-outline-primary" @onclick='(() => FilterProducts("Ascending"))'>Price (Ascending)</a>
         </div>
-        <div class="col-3">
+        <div class="col-2">
             <a class="btn btn-outline-primary" @onclick='(() => FilterProducts("AZ"))'>Title (A-Z)</a>
         </div>
+        <div class="col-2">
+            <a class="btn btn-outline-primary" @onclick='(() => FilterProducts("Newest"))'>Whats new</a>
+        </div>
         <div class="col-4">
-            <h2>@message</h2>
+            <h5>@message</h5>
         </div>
     </div>
 </div>
@@ -89,6 +92,10 @@ else
                 Products = Products.OrderBy(p => p.ProductName).ToList();
                 message = "Sorted by Title (A-Z)";
                 break;
+            case "Newest":
+                Products = Products.OrderByDescending(p => p.CreatedDate).ToList();
+                message = "Sorted by What's new";
+                break;
         }
         base.StateHasChanged();
     }
@@ -100,11 +107,11 @@ else
 
         @if (BusinessName is not null)
         {
-            products = _context.Products?.Where(b => b.BusinessName == BusinessName).ToList();
+            products = _context.Products?.Include("Colours").Where(b => b.BusinessName == BusinessName).ToList();
         }
         else
         {
-            products = _context.Products?.ToList();
+            products = _context.Products?.Include("Colours").ToList();
         }
 
         return products;
