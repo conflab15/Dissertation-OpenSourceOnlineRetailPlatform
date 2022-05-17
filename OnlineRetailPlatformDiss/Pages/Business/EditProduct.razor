@@ -56,6 +56,35 @@
                 <label for="productStock" class="form-label">Stock Level</label>
                 <InputNumber class="form-control" id="productStock" @bind-Value="product.StockLevel" />
             </div>
+            <label for="options" class="form-label">What colours/styles will this product have?</label>
+        <label class="alert-warning ml-2 pl-2">For example, a knitted bean can be made with orange, red or blue wool!</label>
+        <div class="input-group mb-3">
+            <InputText class="form-control" id="optionValue" @bind-Value="value"/>
+            <button type="button" class="btn btn-outline-success" id="addLinkBtn" @onclick="(() => AddOption())">Add Colour/Style</button>
+        </div>
+
+        <!-- When an option has been added, this table shall load -->
+        @if (product?.Colours?.Count != 0)
+        {   
+            <div class="mb-3">
+                <label for="AddedOptions" class="form-label">Product Colour/Styles</label>
+                <ul class="list-group">
+                    @if (product?.Colours?.Count != 0)
+                    {
+                        foreach (var option in product?.Colours)
+                        {
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                @option.Colour
+                                <span>
+                                    <button type="button" class="btn btn-outline-danger" id="removeOption" @onclick="(() => RemoveOption(option.Id))">Remove</button>
+                                </span>
+                            </li>    
+                        }
+                    }
+                </ul>
+            </div>
+        }
+
            <div class="mb-3">
                 <button class="btn btn-primary p-2" type="submit" value="submit">Submit Changes</button> 
            </div>
@@ -71,17 +100,54 @@
     public Guid? productId { get; set; } //Page parameter
     private ProductModel? product; //Product to edit
 
+    string value = "";
+
     protected override void OnInitialized()
     {
-        product = _context.Products?.FirstOrDefault(x => x.ProductID == productId); <!-- Finding the product to edit... -->
+        <!-- Finding the product to edit... -->
+        product = _context.Products?.Include("Colours").FirstOrDefault(x => x.ProductID == productId);
+
     }
+
+    private async void AddOption()
+    {
+        if (value != null)
+        {
+            var option = new ProductOptions
+                {
+                    Colour = value
+                };
+            product?.Colours?.Add(option);
+            await js.InvokeVoidAsync("confirmChanges",
+                    "Added",
+                    $"You've added a {value} option to your product!",
+                    "success"); //Swal for declaring success
+            value = "";
+        }
+    }
+
+    private async void RemoveOption(Guid? id)
+    {
+        if (id != null)
+        {
+            var item = product?.Colours.FirstOrDefault(o => o.Id == id);
+            product?.Colours?.Remove(item);
+            await js.InvokeVoidAsync("confirmChanges",
+                   "Removed",
+                   $"You've removed the {item?.Colour} option!",
+                   "success"); //Swal for declaring success in adding a business
+        }
+
+    }
+
 
     private async void SubmitProductChanges()
     {
         //Submit Product Changes
         try
         {
-            _context.Products?.Update(product); <!-- Updating product and saving changes... -->
+            _context.Products?.Update(product); 
+            <!-- Updating product and saving changes... -->
             await _context.SaveChangesAsync();
             await js.InvokeVoidAsync("confirmChanges",
                 "Product Amended!",

@@ -32,9 +32,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="Data\OnlineRetailPlatformDB.db">
+    <Compile Update="Data\ApplicationDbContext.cs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
+    </Compile>
   </ItemGroup>
 
 </Project>

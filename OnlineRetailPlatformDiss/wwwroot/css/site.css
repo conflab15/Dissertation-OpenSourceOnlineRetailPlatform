@@ -121,6 +121,14 @@ td {
     height: auto;
 }
 
+#productCardImg{
+    display: block;
+    max-width: 250px;
+    max-height: 300px;
+    width: auto;
+    height: auto;
+}
+
 #tableImg {
     display: block;
     max-width: 200px;

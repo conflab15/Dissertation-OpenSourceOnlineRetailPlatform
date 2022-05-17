@@ -64,7 +64,7 @@ namespace OnlineRetailPlatformDiss.Migrations
                     BusinessName = table.Column<string>(type: "TEXT", maxLength: 100, nullable: false),
                     BusinessDesc = table.Column<string>(type: "TEXT", maxLength: 500, nullable: false),
                     AddressLine1 = table.Column<string>(type: "TEXT", maxLength: 50, nullable: false),
-                    AddressLine2 = table.Column<string>(type: "TEXT", maxLength: 50, nullable: false),
+                    AddressLine2 = table.Column<string>(type: "TEXT", maxLength: 50, nullable: true),
                     Town = table.Column<string>(type: "TEXT", maxLength: 30, nullable: false),
                     County = table.Column<string>(type: "TEXT", maxLength: 30, nullable: false),
                     PostCode = table.Column<string>(type: "TEXT", maxLength: 8, nullable: false),
@@ -109,6 +109,7 @@ namespace OnlineRetailPlatformDiss.Migrations
                     ProductPrice = table.Column<decimal>(type: "TEXT", nullable: false),
                     CreatedDate = table.Column<DateTime>(type: "TEXT", nullable: false),
                     BusinessName = table.Column<string>(type: "TEXT", nullable: false),
+                    HasOptions = table.Column<bool>(type: "INTEGER", nullable: false),
                     StockLevel = table.Column<int>(type: "INTEGER", nullable: false),
                     ImageUrl = table.Column<string>(type: "TEXT", nullable: true)
                 },
@@ -273,6 +274,24 @@ namespace OnlineRetailPlatformDiss.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "ProductOptions",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "TEXT", nullable: false),
+                    Colour = table.Column<string>(type: "TEXT", nullable: true),
+                    ProductModelProductID = table.Column<Guid>(type: "TEXT", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ProductOptions", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ProductOptions_Products_ProductModelProductID",
+                        column: x => x.ProductModelProductID,
+                        principalTable: "Products",
+                        principalColumn: "ProductID");
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
                 table: "AspNetRoleClaims",
@@ -324,6 +343,11 @@ namespace OnlineRetailPlatformDiss.Migrations
                 name: "IX_OrderLines_ProductId",
                 table: "OrderLines",
                 column: "ProductId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ProductOptions_ProductModelProductID",
+                table: "ProductOptions",
+                column: "ProductModelProductID");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -351,6 +375,9 @@ namespace OnlineRetailPlatformDiss.Migrations
 
             migrationBuilder.DropTable(
                 name: "OrderLines");
+
+            migrationBuilder.DropTable(
+                name: "ProductOptions");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");

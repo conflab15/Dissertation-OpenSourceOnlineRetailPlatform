@@ -11,8 +11,8 @@ using OnlineRetailPlatformDiss.Data;
 namespace OnlineRetailPlatformDiss.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20220513141614_init")]
-    partial class init
+    [Migration("20220517112728_changes")]
+    partial class changes
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -188,7 +188,6 @@ namespace OnlineRetailPlatformDiss.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<string>("AddressLine2")
-                        .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("TEXT");
 
@@ -330,6 +329,9 @@ namespace OnlineRetailPlatformDiss.Migrations
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("TEXT");
 
+                    b.Property<bool>("HasOptions")
+                        .HasColumnType("INTEGER");
+
                     b.Property<string>("ImageUrl")
                         .HasColumnType("TEXT");
 
@@ -352,6 +354,47 @@ namespace OnlineRetailPlatformDiss.Migrations
                     b.HasKey("ProductID");
 
                     b.ToTable("Products");
+                });
+
+            modelBuilder.Entity("OnlineRetailPlatformDiss.Models.ProductOptions", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Colour")
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid?>("ProductModelProductID")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProductModelProductID");
+
+                    b.ToTable("ProductOptions");
+                });
+
+            modelBuilder.Entity("OnlineRetailPlatformDiss.Models.SocialMediaLink", b =>
+                {
+                    b.Property<Guid>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid?>("BusinessAccountModelId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Type")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Url")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("BusinessAccountModelId");
+
+                    b.ToTable("SocialMediaLink");
                 });
 
             modelBuilder.Entity("OnlineRetailPlatformDiss.Models.UserModel", b =>
@@ -532,9 +575,33 @@ namespace OnlineRetailPlatformDiss.Migrations
                     b.Navigation("Product");
                 });
 
+            modelBuilder.Entity("OnlineRetailPlatformDiss.Models.ProductOptions", b =>
+                {
+                    b.HasOne("OnlineRetailPlatformDiss.Models.ProductModel", null)
+                        .WithMany("Colours")
+                        .HasForeignKey("ProductModelProductID");
+                });
+
+            modelBuilder.Entity("OnlineRetailPlatformDiss.Models.SocialMediaLink", b =>
+                {
+                    b.HasOne("OnlineRetailPlatformDiss.Models.BusinessAccountModel", null)
+                        .WithMany("SocialMediaLinks")
+                        .HasForeignKey("BusinessAccountModelId");
+                });
+
+            modelBuilder.Entity("OnlineRetailPlatformDiss.Models.BusinessAccountModel", b =>
+                {
+                    b.Navigation("SocialMediaLinks");
+                });
+
             modelBuilder.Entity("OnlineRetailPlatformDiss.Models.OrderModel", b =>
                 {
                     b.Navigation("OrderLines");
+                });
+
+            modelBuilder.Entity("OnlineRetailPlatformDiss.Models.ProductModel", b =>
+                {
+                    b.Navigation("Colours");
                 });
 #pragma warning restore 612, 618
         }

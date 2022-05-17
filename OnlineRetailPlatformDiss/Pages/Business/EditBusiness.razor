@@ -1,4 +1,5 @@
-﻿@using OnlineRetailPlatformDiss.Models;
+﻿@using Microsoft.EntityFrameworkCore
+@using OnlineRetailPlatformDiss.Models;
 @inject OnlineRetailPlatformDiss.Data.ApplicationDbContext _context;
 @inject IJSRuntime js;
 @inject NavigationManager nav;
@@ -123,7 +124,7 @@
 
     protected override void OnInitialized()
     {
-        business = _context.BusinessAccount.FirstOrDefault(x => x.Id == BusinessId);
+        business = _context.BusinessAccount?.Include("SocialMediaLinks").FirstOrDefault(x => x.Id == BusinessId);
     }
 
     private async void AddSocialLink()
@@ -148,7 +149,7 @@
         if (type != null)
         {
             var link = business?.SocialMediaLinks.FirstOrDefault(i => i.Type == type); //Find the Link
-            business?.SocialMediaLinks.Remove(link); //Delete it
+            business?.SocialMediaLinks?.Remove(link); //Delete it
             await js.InvokeVoidAsync("confirmChanges",
                     "Success",
                     $"You've removed the {type} link to your business!",

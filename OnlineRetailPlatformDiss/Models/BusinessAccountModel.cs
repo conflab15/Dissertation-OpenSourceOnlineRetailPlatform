@@ -26,6 +26,6 @@ namespace OnlineRetailPlatformDiss.Models
         public string? ManagerID { get; set; }
 
         //Dictionary of Social Media Types and Links
-        public List<SocialMediaLink>? SocialMediaLinks;
+        public List<SocialMediaLink>? SocialMediaLinks { get; set; }
     }
 }

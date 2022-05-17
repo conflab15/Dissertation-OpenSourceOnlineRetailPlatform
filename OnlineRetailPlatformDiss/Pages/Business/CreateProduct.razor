@@ -112,7 +112,7 @@
        </div>
     </EditForm>
         <div class="mb-3">
-            <button class="btn btn-danger" href="/business/view" type="button">Cancel</button>
+            <a class="btn btn-danger" href="/business/view" type="button">Cancel</a>
        </div>
     }
 </div>
@@ -125,12 +125,13 @@
     IReadOnlyList<IBrowserFile>? selectedImages; //File to handle uploaded images
 
     List<ProductOptions>? options = new List<ProductOptions>();
-    string value = "";
+    string value = null;
 
     protected override void OnInitialized()
     {
         user = auth.GetAuthenticationStateAsync().Result.User.Identity?.Name; //Get the current user
         product.CreatedDate = DateTime.Now; //Automatic setting of when the product will be made
+        product.Colours = new(); //Initialising the List
         businessesList = _context.BusinessAccount?.Where(x => x.ManagerID == user).ToList(); //Retrieiving all of the businesses the current user manages.
     }
 
@@ -147,7 +148,7 @@
                     "Added",
                     $"You've added a {value} option to your product!",
                     "success"); //Swal for declaring success
-            value = "";
+            value = null;
         }
     }
 
@@ -157,12 +158,12 @@
         {
             var item = options?.FirstOrDefault(o => o.Id == id);
             options?.Remove(item);
-             await js.InvokeVoidAsync("confirmChanges",
-                    "Removed",
-                    $"You've removed the {item?.Colour} option!",
-                    "success"); //Swal for declaring success in adding a business
+            await js.InvokeVoidAsync("confirmChanges",
+                   "Removed",
+                   $"You've removed the {item?.Colour} option!",
+                   "success"); //Swal for declaring success in adding a business
         }
-        
+
     }
 
     private void OnInputFileChange(InputFileChangeEventArgs e)
@@ -190,6 +191,11 @@
                 }
 
                 Message = $"{selectedImages.Count} image(s) uploaded"; //Updating the message within the form...
+
+                foreach(var item in options)
+                {
+                    product.Colours.Add(item); 
+                }
 
                 _context.Products?.AddAsync(product); //Add the new product
                 await _context.SaveChangesAsync(); //Save the product to the db

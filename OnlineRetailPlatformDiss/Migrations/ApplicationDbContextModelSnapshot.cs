@@ -373,6 +373,28 @@ namespace OnlineRetailPlatformDiss.Migrations
                     b.ToTable("ProductOptions");
                 });
 
+            modelBuilder.Entity("OnlineRetailPlatformDiss.Models.SocialMediaLink", b =>
+                {
+                    b.Property<Guid>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid?>("BusinessAccountModelId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Type")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Url")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("BusinessAccountModelId");
+
+                    b.ToTable("SocialMediaLink");
+                });
+
             modelBuilder.Entity("OnlineRetailPlatformDiss.Models.UserModel", b =>
                 {
                     b.Property<string>("Id")
@@ -556,6 +578,18 @@ namespace OnlineRetailPlatformDiss.Migrations
                     b.HasOne("OnlineRetailPlatformDiss.Models.ProductModel", null)
                         .WithMany("Colours")
                         .HasForeignKey("ProductModelProductID");
+                });
+
+            modelBuilder.Entity("OnlineRetailPlatformDiss.Models.SocialMediaLink", b =>
+                {
+                    b.HasOne("OnlineRetailPlatformDiss.Models.BusinessAccountModel", null)
+                        .WithMany("SocialMediaLinks")
+                        .HasForeignKey("BusinessAccountModelId");
+                });
+
+            modelBuilder.Entity("OnlineRetailPlatformDiss.Models.BusinessAccountModel", b =>
+                {
+                    b.Navigation("SocialMediaLinks");
                 });
 
             modelBuilder.Entity("OnlineRetailPlatformDiss.Models.OrderModel", b =>
