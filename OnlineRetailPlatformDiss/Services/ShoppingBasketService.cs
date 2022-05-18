@@ -143,7 +143,7 @@ namespace OnlineRetailPlatformDiss.Services
             }
 
             //Modify the Stock Level of the product...
-            product.StockLevel -= quantity;
+            product.StockLevel -= finalQuantity;
             context.Products?.Update(product);
             await context.SaveChangesAsync();
 
@@ -210,7 +210,12 @@ namespace OnlineRetailPlatformDiss.Services
             {
                 foreach (var item in basketItems)
                 {
+
+                    //When emptying the basket, add the stock back to the product...
+                    ProductModel product = await context.Products.FirstOrDefaultAsync(p => p.ProductID == item.ProductId);
+                    product.StockLevel += item.Count;
                     context.Baskets?.Remove(item);
+                    context.Products.Update(product);
                 }
             }
             //Save The Changes

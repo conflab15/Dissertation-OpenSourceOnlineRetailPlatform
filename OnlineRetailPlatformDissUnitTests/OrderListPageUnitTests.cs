@@ -19,7 +19,7 @@ namespace OnlineRetailPlatformDissUnitTests
             //Arrange
             using var ctx = new TestContext();
             var authContext = ctx.AddTestAuthorization();
-            authContext.SetAuthorized("test@test.com", AuthorizationState.Authorized);
+            authContext.SetAuthorized("connorclarke1511@hotmail.com", AuthorizationState.Authorized);
 
             //Registering Services.
             ctx.Services.AddSingleton<ApplicationDbContext>(new ApplicationDbContext());
@@ -29,7 +29,28 @@ namespace OnlineRetailPlatformDissUnitTests
             var cut = ctx.RenderComponent<OrderList>();
 
             //Assert
-            cut.Markup.Contains("Uh oh!");
+            cut.Markup.Contains("Order ID:");
+        }
+
+        [Fact]
+        public void OrderListPageRendersOrderDetails()
+        {
+            //Test - Check that the order details are correctly displayed...
+            //Arrange
+            using var ctx = new TestContext();
+            var authContext = ctx.AddTestAuthorization();
+            authContext.SetAuthorized("connorclarke1511@hotmail.com", AuthorizationState.Authorized);
+
+            //Registering Services.
+            ctx.Services.AddSingleton<ApplicationDbContext>(new ApplicationDbContext());
+            ctx.JSInterop.Mode = JSRuntimeMode.Loose;
+
+            //Act
+            var cut = ctx.RenderComponent<OrderList>();
+            cut.Find("button:contains('View Details')").Click();
+
+            //Assert
+            cut.Markup.Contains("Order ID:");
         }
     }
 }

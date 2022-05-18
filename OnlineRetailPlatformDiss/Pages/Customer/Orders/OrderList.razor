@@ -13,6 +13,7 @@
 <div class="container">
     @if(ShowOrderDetails)
     {
+        <!-- EventCallback here allows for the child component to tell the parent component to disable its visibility -->
         <OrderDetailsComponent Order=@OrderToShow CloseDetails=@CloseDetails />
     }
 

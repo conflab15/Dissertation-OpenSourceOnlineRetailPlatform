@@ -30,7 +30,8 @@
                 {
                     @foreach (var product in basketVM.BasketItems)
                     {
-                        <CheckoutItemComponent basket=@product />
+                        <!-- Reusing code by implementing this into its own component, which allows this to be easily edited whilst using hot reload -->
+                        <CheckoutItemComponent basket=@product /> 
                     }
                     <li class="list-group-item d-flex justify-content-between">
                         <span>Total Items:</span>
@@ -98,7 +99,7 @@
                 </div>
                 </EditForm>
                 <div class="mb-3">
-                    <a class="btn btn-danger btn-lg btn-block" href="/">Cancel</a>
+                    <a class="btn btn-danger btn-lg btn-block" href="/ShoppingBasket">Cancel</a>
                 </div>
             }           
         </div>
@@ -125,7 +126,10 @@
             order.Forename = userModel.Forename;
             order.Surname = userModel.Surname;
             order.AddressLine1 = userModel.AddressLine1;
-            order.AddressLine2 = userModel.AddressLine2;
+            if(userModel.AddressLine2 != null)
+            {
+                order.AddressLine2 = userModel.AddressLine2;
+            }
             order.Town = userModel.Town;
             order.County = userModel.County;
             order.PostCode = userModel.PostCode;

@@ -12,7 +12,7 @@
                 <div class="row">
                     <div class="col">
                         <p><strong>Order Date: </strong>@Order?.OrderDate</p>
-                        <p><strong>Order Total: </strong>@Order?.OrderTotal</p>
+                        <p><strong>Order Total: </strong>£@Order?.OrderTotal</p>
                         <p><strong>Total Items: </strong>@Order?.OrderLines?.Count</p>
                     </div>
                     <div class="col text-center">
@@ -41,6 +41,11 @@
                                 <ul id="addresslist">
                                     <li>@item.Product?.ProductName</li>
                                     <li>@item.Product?.ProductDescription</li>
+                                    <li>@item.ProductColour</li>
+                                    @if(item.ProductOptions != null)
+                                    {
+                                        <li>Customisation Request: @item.ProductOptions</li>
+                                    }
                                     <li>£@item.Product?.ProductPrice</li>
                                     <li class="badge bg-primary rounded-pill mt-2">Quantity: @item.ProductQuantity</li>
                                     <li>Status: @item.Status</li>

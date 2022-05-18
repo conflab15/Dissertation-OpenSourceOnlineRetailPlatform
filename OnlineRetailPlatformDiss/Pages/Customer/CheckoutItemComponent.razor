@@ -1,11 +1,18 @@
 ﻿@using OnlineRetailPlatformDiss.Models
 
-<li class="list-group-item d-flex justify-content-between lh-condensed">
-    <div>
-        <h6 class="my-0">@basket?.Product?.ProductName</h6>
-        <small class="text-muted">Quantity: @basket?.Count</small>
-    </div>
-    <span>£@basket?.Product?.ProductPrice</span>
+<li class="list-group-item">
+    <div class="d-flex justify-content-between">
+        <h5 class="fw-bold mb-1">@basket?.Product?.ProductName</h5>
+        <h5 class="badge bg-primary rounded-pill">£@basket?.Product?.ProductPrice</h5>
+    </div>  
+    <p class="mb-1">Colour/Style: @basket?.ProductColour</p>
+    @if(basket.CustomOptions != null)
+    {
+        <p class="mb-1">Customisation Request: @basket?.CustomOptions</p>
+    }
+    <small class="text-muted">Quantity: @basket?.Count</small>
+
+
 </li>
 
 @code 

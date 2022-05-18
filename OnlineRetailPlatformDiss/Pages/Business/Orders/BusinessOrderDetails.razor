@@ -22,17 +22,27 @@
     <div class="card m-2 p-1">
       <h5 class="card-header bg-light">Shipping Information</h5>
       <div class="card-body">
-        <ul id="addresslist" class="card-text">
-            <li>@Order?.Forename @Order?.Surname</li>
-            <li>@Order?.AddressLine1</li>
-            @if(Order?.AddressLine2 != null)
-            {
-                <li>@Order.AddressLine2</li>
-            }
-            <li>@Order?.Town</li>
-            <li>@Order?.County</li>
-            <li>@Order?.PostCode</li>
-        </ul> 
+          <div class="row">
+            <div class="col-6">
+                <ul id="addresslist" class="card-text">
+                    <li>@Order?.Forename @Order?.Surname</li>
+                    <li>@Order?.AddressLine1</li>
+                    @if(Order?.AddressLine2 != null)
+                    {
+                        <li>@Order.AddressLine2</li>
+                    }
+                    <li>@Order?.Town</li>
+                    <li>@Order?.County</li>
+                    <li>@Order?.PostCode</li>
+                </ul> 
+            </div>
+            <div class="col-6">
+                <ul id="addresslist" class="card-text">
+                    <li>@Order?.Email</li>
+                    <li>@Order?.Telephone</li>
+                </ul>
+          </div>
+        </div>
       </div>
     </div>
     <!-- Order Items Card... -->
@@ -55,7 +65,12 @@
                                         <li>@item.Product?.ProductName</li>
                                         <li>Unit Price: £@item.Product?.ProductPrice</li>
                                         <li>Quantity: @item.ProductQuantity</li>
-                                        <li>Total Price: £@(item.ProductPrice * item.ProductQuantity)</li>
+                                        <li>Style/Colour: @item.ProductColour</li>
+                                        @if(item.ProductOptions != null)
+                                        {
+                                            <li class="fw-bold">The customer has made a customisation request:</li>
+                                            <li>Customisation Details: @item.ProductOptions</li>
+                                        }
                                         <li>Status: @item.Status</li>
                                     </ul>
                                 </div>
