@@ -28,7 +28,7 @@ namespace OnlineRetailPlatformDiss.Data
             {
                 //WARNING: Sensitive Data is potentially being exposed here... 
                 //This should ideally be moved out of here, or stored within a secret and accessed using that!
-                optionsBuilder.UseSqlite("DataSource=./Data/OnlineRetailPlatformDB.db;");
+                optionsBuilder.UseSqlServer("Server=tcp:dissertationonlineretailplatform.database.windows.net,1433;Initial Catalog=DissOnlineRetailPlatform;Persist Security Info=False;User ID=connor;Password=Password1!;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;");
             }
         }
 

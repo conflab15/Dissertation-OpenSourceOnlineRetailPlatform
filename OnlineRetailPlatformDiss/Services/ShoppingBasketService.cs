@@ -30,7 +30,7 @@ namespace OnlineRetailPlatformDiss.Services
         }
 
         //Add Items to the Basket...
-        public async Task<ShoppingBasketRemoveVM> AddToBasket(Guid id, int quantity)
+        public async Task<ShoppingBasketRemoveVM> AddToBasket(Guid id, int quantity, string colour)
         {
             //Find the product to add from the db...
             ProductModel? productToAdd = await context.Products.SingleAsync(p => p.ProductID == id);
@@ -47,7 +47,7 @@ namespace OnlineRetailPlatformDiss.Services
 
             //Add it to the Shopping Basket
             var basket = await GetBasket();
-            int count = await basket.AddToBasket(productToAdd, quantity);
+            int count = await basket.AddToBasket(productToAdd, quantity, colour);
 
             //ViewModel to present a message to the user
             var result = new ShoppingBasketRemoveVM
@@ -83,18 +83,7 @@ namespace OnlineRetailPlatformDiss.Services
             return result;
         }
 
-        //private bool IsNotNull(Guid id)
-        //{
-        //    throw new NotImplementedException();
-        //}
-
-        public async Task<int> BasketCount()
-        {
-            var basket = await GetBasket();
-            return await basket.GetCount();
-        }
-
-        public async Task<int> AddToBasket(ProductModel product, int quantity)
+        public async Task<int> AddToBasket(ProductModel product, int quantity, string colour)
         {
             BasketModel? basketItem = null; //Allows the function to run if it cannot find a pre-existing basket...
 
@@ -128,6 +117,20 @@ namespace OnlineRetailPlatformDiss.Services
                     ProductId = product.ProductID,
                     BasketId = BasketId,
                     Count = finalQuantity,
+                    ProductColour = colour,
+                    DateCreated = DateTime.Now
+                };
+                context.Baskets.Add(basketItem);
+            }
+            else if (basketItem.ProductColour != colour)
+            {
+                //If the colour/style is different to the one in the basket, create a new product!
+                basketItem = new BasketModel
+                {
+                    ProductId = product.ProductID,
+                    BasketId = BasketId,
+                    Count = finalQuantity,
+                    ProductColour = colour,
                     DateCreated = DateTime.Now
                 };
                 context.Baskets.Add(basketItem);
@@ -147,7 +150,9 @@ namespace OnlineRetailPlatformDiss.Services
             //Save Changes to the db
             await context.SaveChangesAsync();
 
-            return basketItem.Count;
+            int count = await GetCount();
+
+            return count;
         }
 
         //Remove from Basket
@@ -185,6 +190,16 @@ namespace OnlineRetailPlatformDiss.Services
             return prodCount;
         }
 
+        //Add Custom Options IF the ProductModel in the basket allows to do so...
+        public async Task AddCustomOptions(int BasketId, string options)
+        {
+            BasketModel basketItem = context.Baskets.FirstOrDefault(b => b.Id == BasketId);
+            //Add the String to the field...
+            basketItem.CustomOptions = options;
+            context.Baskets?.Update(basketItem);
+            await context.SaveChangesAsync();
+        }
+
         //Empty everything from basket...
         public async Task EmptyCart()
         {
@@ -208,11 +223,6 @@ namespace OnlineRetailPlatformDiss.Services
         {
             return await context.Baskets.Include("Product").Where(
                 b => b.BasketId == BasketId).ToListAsync();
-        }
-
-        public async Task<List<ProductModel>> getProducts()
-        {
-            return await context.Products.ToListAsync();
         }
 
         //GetCount
@@ -258,6 +268,16 @@ namespace OnlineRetailPlatformDiss.Services
                     ProductQuantity = product.Count,
                     Status = "Order Accepted" //Setting Default Order Status
                 };
+
+                if(product.ProductColour != null)
+                {
+                    orderline.ProductColour = product.ProductColour;
+                }
+                if(product.CustomOptions != null)
+                {
+                    orderline.ProductOptions = product.CustomOptions;
+                }
+
                 //Set the Order Total!
                 total += (product.Count * product.Product.ProductPrice);
                 //Add the OrderLine to the Order...

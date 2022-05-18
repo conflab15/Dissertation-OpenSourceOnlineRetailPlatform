@@ -3,41 +3,29 @@
 @using Microsoft.Extensions.Logging;
 @inject OnlineRetailPlatformDiss.Data.ApplicationDbContext _context;
 
-<div class="px-4 pt-3 my-5 mt-2 text-center">
-    <div class="overflow-hidden" style="max-height: 30vh;">
-        <div class="container px-5">
-        @if(business?.BannerUrl == null)
-        {
-            <img src="/images/business/placeholderimg.jpg" class="img-fluid border rounded-3 shadow-lg mb-4 pb-2" alt="Placeholder Image" width="700" height="500" loading="lazy">
-        }
-        else
-        {
-            <img src="@business.BannerUrl" class="img-fluid border rounded-3 shadow-lg mb-4 pb-2" alt="Business Image" width="700" height="500" loading="lazy">
-        }
+<!-- Card style for each item within the Businesses List -->
+<div class="container mt-4 mb-4 shadow-lg">
+    <div class="row">
+        <div class="col-6 pt-5 text-center align-items-center">
+            <h3 class="mb-3">@Business?.BusinessName</h3>
+            <h5 class="mb-3">@Business?.BusinessDesc</h5>
+            <h5 class="mb-3">Town: @Business?.Town</h5>
+            <a class="btn btn-lg btn-outline-primary" href="/customer/business/@Business?.BusinessName">View Business</a>
         </div>
-    </div>
-
-
-    <div class="row pt-3">
-        <div class="col align-items-center justify-content-center"> <!-- Address Details -->
-            <p>@business?.AddressLine1</p>
-            <p>@business?.AddressLine2</p>
-            <b>@business?.Town</b>
-            <p>@business?.PostCode</p>
-        </div>
-        <div class="col"> <!-- Business Details -->
-            <h1 class="display-4 fw-bold">@business?.BusinessName</h1>
-            <div class="col-lg-6 mx-auto">
-              <p class="lead mb-4">@business?.BusinessDesc</p>
-                <div class="d-grid gap-2 d-sm-flex justify-content-sm-center mb-5">
-                    <a class="btn btn-outline-secondary btn-lg px-4" href="/customer/business/@business?.BusinessName">View Business</a>
-                </div>
-            </div>
+        <div class="col-6 pt-3">
+            @if(Business?.BannerUrl == null)
+            {
+                <img src="/images/business/placeholderimg.jpg" class="img-fluid border rounded-3 shadow-lg mb-4 pb-2" alt="Placeholder Image" width="700" height="500" loading="lazy">
+            }   
+            else
+            {
+                <img src="@Business.BannerUrl" class="img-fluid border rounded-3 shadow-lg mb-4 pb-2" alt="Business Image" width="700" height="500" loading="lazy">
+            }
         </div>
     </div>
 </div>
 
 @code {
     [Parameter]
-    public BusinessAccountModel? business { get; set; }
+    public BusinessAccountModel? Business { get; set; }
 }

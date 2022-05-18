@@ -29,7 +29,7 @@
                     @Product.ProductName
                     @if ((Product.CreatedDate - DateTime.Today).TotalDays < 1)
                     {
-                        <span class="badge bg-success m-2 w-90">New</span>
+                        <span class="badge bg-success m-2">New</span>
                     }
                 </h3>
                 <h5 class="mb-3">@Product.ProductDescription</h5>
@@ -77,7 +77,7 @@
                 <div class="input-group p-3 w-90">
                     <input type="number" class="form-control input-value p-3" min="0" max="@Product.StockLevel" @bind-value="Amount"  />
                     <div class="input-group-append"> 
-                        <input type="submit" class="btn btn-outline-primary p-3" value="Add to Basket" @onclick="(() => AddToBasket(Product, Amount))" />
+                        <button type="submit" class="btn btn-outline-primary p-3" value="Add to Basket" @onclick="(() => AddToBasket(Product, Amount))">Add to Basket</button>
                     </div>
                 </div>
                 }
@@ -149,14 +149,14 @@
             if (product.Colours?.Count == 1) //If only one style exists, use this
             {
                 colour = product.Colours[0].Colour;
-                var count = await basket.AddToBasket(product, 1); //Getting the returned product count to update the appstate...
+                var count = await basket.AddToBasket(product, Amount, colour); //Getting the returned product count to update the appstate...
                 state.SetBasketCount(count); //Setting the AppState with the returned count.
                 await js.InvokeVoidAsync("confirmChanges", "Added to Basket", $"1 x {product.ProductName} has been added to your basket!", "success");
             }
             else if (product.Colours?.Count == 0) //If none exist, use a placeholder
             {
                 colour = "N/A";
-                var count = await basket.AddToBasket(product, 1); //Getting the returned product count to update the appstate...
+                var count = await basket.AddToBasket(product, Amount, colour); //Getting the returned product count to update the appstate...
                 state.SetBasketCount(count); //Setting the AppState with the returned count.
                 await js.InvokeVoidAsync("confirmChanges", "Added to Basket", $"1 x {product.ProductName} has been added to your basket!", "success");
             }
@@ -166,7 +166,7 @@
             }
             else //If one is selected from the list, proceed as normal...
             {
-                var count = await basket.AddToBasket(product, 1); //Getting the returned product count to update the appstate...
+                var count = await basket.AddToBasket(product, Amount, colour); //Getting the returned product count to update the appstate...
                 state.SetBasketCount(count); //Setting the AppState with the returned count.
                 await js.InvokeVoidAsync("confirmChanges", "Added to Basket", $"1 x {product.ProductName} has been added to your basket!", "success");
             }

@@ -37,10 +37,4 @@
     </Compile>
   </ItemGroup>
 
-  <ItemGroup>
-    <None Update="Data\OnlineRetailPlatformDB.db">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-
 </Project>

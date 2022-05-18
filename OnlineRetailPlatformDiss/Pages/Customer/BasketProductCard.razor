@@ -15,19 +15,31 @@
             <h3 class="mb-0 mb-1">
                 <a class="text-dark" href="#">@Basket.Product?.ProductName</a>
             </h3>
-            <div class="mb-1 text-muted">Sold by: @Basket.Product?.BusinessName</div>
-            <div class="mb-1 text-muted">Quantity: @Basket.Count</div>
+            <div class="mb-1">Colour/Style: @Basket.ProductColour</div>
+            <div class="mb-1">Sold by: @Basket.Product?.BusinessName</div>
+            <div class="mb-1">Quantity: @Basket.Count</div>
             <div class="mb-1 text-muted">Unit Price: £@Basket.Product?.ProductPrice</div>
             <div class="input-group p-3">
-                <input type="number" class="form-control w-5 input-value" @bind-value="Amount"  />
+                <input type="number" class="form-control input-value" @bind-value="Amount"  />
                 <div class="input-group-append"> 
                     <input type="submit" class="btn btn-outline-primary" value="Add" @onclick="(() => AddToBasket(Basket.ProductId, Amount))" />
                     <input type="submit" class="btn btn-outline-danger" value="Remove" @onclick="(() => RemoveFromBasket(Basket.ProductId, Amount))" />
                     <input type="submit" class="btn btn-danger" value="Remove All" @onclick="(() => RemoveFromBasket(Basket.ProductId, Basket.Count))" />
                 </div>
             </div>
+            @if (Basket.Product.HasOptions)
+            {
+                <div class="input-group p-3">
+                    <label class="form-label">You can personalise this item, please add the personalisation details here:</label>
+                    <input type="text" class="form-control" min="0" max="@Basket.Product.StockLevel" @bind-value="Options" />
+                        <input type="submit" class="btn btn-outline-primary" value="Add" @onclick="(() => AddCustomOptions())" />
+                    <div class="input-group-append">
+                    </div>
+                </div>
+            }
         </div>
-        <img class="card-img-right flex-auto d-none d-md-block" width="200" height="250" src="@Basket.Product?.ImageUrl" alt="Card image cap">
+        <img class="card-img-right flex-auto d-none d-md-block p-1" src="@Basket.Product?.ImageUrl" alt="Card image cap" id="basketImages">
+
 </div>
 <div class="divider" />
 }
@@ -37,13 +49,14 @@
     [Parameter] public BasketModel? Basket { get; set; }
     [Parameter] public EventCallback OnChange { get; set; } //EventCallback to get the parent component to re-render when a product is deleted
     public int Amount { get; set; } //Amount to add or remove from the basket...
+    public string? Options { get; set; }
 
     private async void AddToBasket(Guid productId, int quantity)
     {
         //Add the product to the basket, followed by the quantity...
         try
         {
-            var vm = await basket.AddToBasket(productId, quantity);
+            var vm = await basket.AddToBasket(productId, quantity, Basket?.ProductColour);
             await js.InvokeVoidAsync("confirmChanges", "Added to Basket", $"{quantity} x {Basket?.Product?.ProductName} has been added to your basket!", "success");
             state.SetBasketCount(vm.BasketCount); //Changes the Basket Count value when the product is removed...
             base.StateHasChanged();
@@ -55,6 +68,22 @@
             await js.InvokeVoidAsync("confirmChanges", "Failed", $"The product could not be added to your Basket: {e.Message}", "warning");
         }
         base.StateHasChanged();
+    }
+
+    private async void AddCustomOptions()
+    {
+        try
+        {
+            await basket.AddCustomOptions(Basket.Id, Options);
+            await js.InvokeVoidAsync("confirmChanges", "Options Added!", $"We have added your customisation to your order!", "success");
+            base.StateHasChanged();
+            await OnChange.InvokeAsync(); //Invoking the EventCallback
+        }
+        catch (Exception e)
+        {
+            await js.InvokeVoidAsync("confirmChanges", "Failed", $"We couldn't add your customisation to your order' {e.Message}", "warning");
+
+        }
     }
 
     private async void RemoveFromBasket(Guid productId, int quantity)

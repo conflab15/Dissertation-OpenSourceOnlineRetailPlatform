@@ -113,6 +113,14 @@ td {
     height: auto;
 }
 
+#basketImages {
+    display: block;
+    max-width: 250px;
+    max-height: 250px;
+    width: auto;
+    height: auto;
+}
+
 #ProductDetailsImg {
     display: block;
     max-width: 500px;
@@ -147,4 +155,29 @@ td {
 
 #basketBtn {
     width: 90%;
+}
+
+#FacebookBtn {
+    background-color: #1A6ED8 !important;
+    border-color: #1A6ED8 !important;
+}
+
+#TwitterBtn {
+    background-color: #1D9BF0 !important;
+    border-color: #1D9BF0 !important;
+}
+
+#InstagramBtn {
+    background-color: #B8008F !important;
+    border-color: #B8008F !important;
+}
+
+#YoutubeBtn {
+    background-color: #FF0000 !important;
+    border-color: #FF0000 !important;
+}
+
+#LinkedInBtn {
+    background-color: #0A66C2 !important;
+    border-color: #0A66C2 !important;
 }

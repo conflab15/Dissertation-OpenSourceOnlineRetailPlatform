@@ -92,14 +92,14 @@
             if(product.Colours?.Count == 1) //If only one style exists, use this
             {
                 colour = product.Colours[0].Colour;
-                var count = await basket.AddToBasket(product, 1); //Getting the returned product count to update the appstate...
+                var count = await basket.AddToBasket(product, 1, colour); //Getting the returned product count to update the appstate...
                 state.SetBasketCount(count); //Setting the AppState with the returned count.
                 await js.InvokeVoidAsync("confirmChanges", "Added to Basket", $"1 x {product.ProductName} has been added to your basket!", "success");
             }
             else if (product.Colours?.Count == 0) //If none exist, use a placeholder
             {
                 colour = "N/A";
-                var count = await basket.AddToBasket(product, 1); //Getting the returned product count to update the appstate...
+                var count = await basket.AddToBasket(product, 1, colour); //Getting the returned product count to update the appstate...
                 state.SetBasketCount(count); //Setting the AppState with the returned count.
                 await js.InvokeVoidAsync("confirmChanges", "Added to Basket", $"1 x {product.ProductName} has been added to your basket!", "success");
             }
@@ -109,7 +109,7 @@
             }
             else //If one is selected from the list, proceed as normal...
             {
-                var count = await basket.AddToBasket(product, 1); //Getting the returned product count to update the appstate...
+                var count = await basket.AddToBasket(product, 1, colour); //Getting the returned product count to update the appstate...
                 state.SetBasketCount(count); //Setting the AppState with the returned count.
                 await js.InvokeVoidAsync("confirmChanges", "Added to Basket", $"1 x {product.ProductName} has been added to your basket!", "success");
             }
