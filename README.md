@@ -2,7 +2,6 @@
 # Abstract
 This project aims to develop a new open source single page application for small, local independent businesses within towns to benefit from an online retailing presence whilst benefiting from low cost sales opportunities as a window of opportunity for sales and business growth. The single page application harnessed Blazor, Bootstrap, SweetAlert2 and semantic web languages to provide a proof of concept which showcases that an open source retailing application is beneficial for businesses and can effectively present the businesses and range of products to customers within the local area. The project has successfully demonstrated the ability for businesses to sign up, implement products and trade online at low-cost to the business, whilst avoiding expenses and restrictive functionality from existing solutions.
 
-
 # Features of the application:
 - CRUD Functionality for Businesses and Products
 ![image](https://user-images.githubusercontent.com/43405874/170272631-761d66f1-8dfc-4a90-ac84-4ead49598b64.png)
@@ -20,3 +19,6 @@ This project aims to develop a new open source single page application for small
 ![image](https://user-images.githubusercontent.com/43405874/170274752-fe36a48a-3f46-4202-a57c-a024346e4302.png)
 - Tested using bUnit (Blazor Testing Framework) and xUnit, as well as functional testing methods
 
+# Project Evaluation
+The final project has been successful in highlighting the potential benefits of an open source solution to support small businesses in harnessing online retailing solutions without the conventional expenses and negatives of existing solutions. Additional work would be required to implement this as a working project, including payment handling and retailer verification. 
+Additional features that would be beneficial include the use of product and business reviews, a gallery for product variants, and perhaps a business dashboard for reporting sales and outstanding orders
